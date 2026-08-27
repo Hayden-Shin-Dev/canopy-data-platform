@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# Local source data (large and redistributed separately)
+data/raw/*
+!data/raw/README.md
+
+# Reproducible generated artifacts
+data/processed/*.csv
+models/*.cbm
+
+# Local logs and editor files
+*.log
+.idea/
+.vscode/
+~$*
