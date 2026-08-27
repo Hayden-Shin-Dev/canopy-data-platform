@@ -25,3 +25,13 @@ KTDB_RAW_FILES = {
     "admin_area": "행정동코드_20210726(말소코드포함).xlsx",
 }
 
+# 출발 분은 15분 단위로 묶고, 자정 전후 시간도 같은 규칙으로 처리한다.
+MINUTE_BIN_SIZE = 15
+TIME_BANDS: tuple[tuple[str, int, int], ...] = (
+    ("late_night", 0, 4),
+    ("early_morning", 4, 7),
+    ("morning_peak", 7, 10),
+    ("daytime", 10, 17),
+    ("evening_peak", 17, 20),
+    ("night", 20, 24),
+)
