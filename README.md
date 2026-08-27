@@ -1,9 +1,51 @@
-# Canopy Population Mobility Pipeline
+# KTDB Population Baseline
 
-KTDB 2021년 개인통행실태조사 원본에서 Canopy의 Population Baseline과
-Expected Behaviour Model용 데이터를 재현 가능하게 만드는 Python 3.11 프로젝트입니다.
+## 목적
 
-원본 CSV는 `data/raw/ktdb/`에 그대로 두고, 아래 명령으로 중간·최종 산출물을 다시 만듭니다.
+특정 시간, 지역, OD 등의 조건에서 사람들이 일반적으로 어떤 이동수단을 선택하는지 확률을 만드는 데이터 Pipeline입니다.
+
+## Raw Data
+
+KTDB 개인통행실태조사 2021
+
+## 최종 Mode
+
+`walk`, `bike`, `car`, `bus`, `rail`
+
+## 주요 Feature
+
+`weekday`, `departure_hour`, `time_band`, `origin`, `destination`, `od_scope`, `commute_direction`
+
+거리 Feature는 원본에 좌표가 없어 현재 결측으로 유지합니다.
+
+## 처리 과정
+
+Raw → Codebook Mapping → Cleaning → Feature Engineering → Population Dataset → Baseline Lookup → Expected Behaviour Model
+
+## 결과
+
+- Raw trips: 356,899
+- Valid features: 331,189
+- Commute trips: 86,561
+- Train / Validation / Test: 232,489 / 49,396 / 49,304
+- Accuracy: 약 0.677
+- Macro F1: 약 0.411
+
+## 주요 산출물
+
+- `01_population_model_training_all.csv`
+- `02_population_model_training_commute.csv`
+- `03_population_lookup_all.csv`
+- `04_population_lookup_commute.csv`
+- `05_mode_mapping.csv`
+- `06_dataset_summary.json`
+- Model: `models/expected_behaviour/ktdb_population_baseline.pkl`
+
+## 현재 한계
+
+- 행정동 좌표가 없어 거리 Feature 미완성
+- 현재 환경에서는 sklearn fallback 사용
+- 원본과 대용량 생성 데이터는 Git에서 제외
 
 ## 실행
 
@@ -12,22 +54,4 @@ python -m pytest -q
 python -m src.build_population_dataset
 python -m src.validate_dataset
 python -m src.train_expected_behaviour
-```
-
-기본 산출물은 `data/processed/population_baseline/ktdb/`에 생성됩니다.
-원본에는 좌표가 없어 `od_straight_distance_km`와 `distance_band`는 현재 결측으로 남습니다.
-대표좌표 CSV/XLSX가 준비되면 `--centroid-file` 옵션으로 같은 빌드에 연결할 수 있습니다.
-
-모델 학습은 CatBoost가 설치된 환경에서 CatBoost를 사용하고, 미설치 환경에서는 sklearn fallback을 사용합니다.
-식별자와 원시 응답 코드는 모델 입력에서 제외합니다.
-
-## 디렉터리
-
-```text
-data/raw/        로컬 원본 데이터(버전 관리 제외)
-data/processed/  전처리 산출물(코드로 재생성)
-src/             데이터 빌드·학습·예측 코드
-models/          학습 모델(코드로 재생성)
-reports/         요약 및 평가 결과
-tests/           핵심 변환 규칙 테스트
 ```
