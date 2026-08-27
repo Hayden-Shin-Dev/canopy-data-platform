@@ -1,51 +1,29 @@
-# Canopy Data Platform
+# GeoLife Mobility Recognition
 
-## 프로젝트 목적
+## 목적
 
-Canopy는 친환경 이동 자체를 보상하는 것이 아니라, 일반적으로 예상되는 이동행동과 실제 이동행동의 차이를 비교해서 저탄소 방향의 Behaviour Shift가 발생했는지를 측정하는 프로젝트입니다.
+GeoLife GPS와 transportation label을 이용해 Canopy에서 실제 사용자의 이동수단을 판단할 Mobility Recognition Model을 만드는 작업입니다.
 
-## 전체 구조
+## 데이터
 
-KTDB — Expected Behaviour / Population Baseline
+Microsoft Research GeoLife
 
-GeoLife — Mobility Recognition Model 학습
+## 목표 Mode
 
-Emission Factors — 교통수단별 CO2 환산 기준
+`walk`, `bike`, `car`, `bus`, `rail`
 
-Transit Context — GPS만으로 구분이 어려운 bus/car 등의 판단 보조
+## 처리
 
-Realtime GPS — iOS에서 실제 사용자 GPS 수집 및 Streaming
+Raw GPS → Label 연결 → GPS Feature → Window Dataset → Mobility Recognition → Segment → Multi-modal Trip Reconstruction
 
-Integration — Expected Behaviour와 Actual Behaviour를 비교하고 CO2 Reduction 및 Reward 계산
+## 결과
 
-## 현재 진행 상태
+작업하면서 실제 분석·학습 결과로 갱신합니다.
 
-KTDB v1 완료
+## 현재 한계
 
-- Raw trips: 356,899
-- Valid features: 331,189
-- Commute trips: 86,561
-- Test Accuracy: 약 0.677
-- Macro F1: 약 0.411
-- Tag: `ktdb-v1.0.0`
+Raw ZIP 분석 후 확인된 내용만 기록합니다.
 
-GeoLife: 예정
+## 실행
 
-Emission Factors: 예정
-
-Transit Context: 필요 여부 검증 예정
-
-Realtime GPS: 예정
-
-Integration: 예정
-
-## Branch
-
-- `main`
-- `dev/ktdb-v1`
-
-나머지 dev Branch는 실제 작업을 시작할 때 생성합니다.
-
-## 개발 순서
-
-KTDB → GeoLife → Emission Factors → 필요 시 Transit Context → Realtime GPS → Canopy Integration
+구현 단계에서 필요한 명령을 추가합니다.
