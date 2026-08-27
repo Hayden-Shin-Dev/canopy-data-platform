@@ -53,11 +53,14 @@ def iter_labeled_points(
         positions[point.user_id] = position
 
         active = []
-        for interval in user_intervals[position:]:
+        candidate_index = position
+        while candidate_index < len(user_intervals):
+            interval = user_intervals[candidate_index]
             if interval.start_time > point.timestamp:
                 break
             if point.timestamp <= interval.end_time:
                 active.append(interval)
+            candidate_index += 1
         if len(active) == 1:
             yield LabeledPoint(point=point, mode_raw=active[0].mode_raw, match_status="matched")
         elif active:
