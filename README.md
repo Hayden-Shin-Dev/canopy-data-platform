@@ -18,11 +18,21 @@ Raw GPS → Label 연결 → GPS Feature → Window Dataset → Mobility Recogni
 
 ## 결과
 
-작업하면서 실제 분석·학습 결과로 갱신합니다.
+현재는 원본 구조와 label 연결 품질을 확인한 단계입니다.
+
+- trajectory: 18,670개, 182명
+- GPS point: 24,876,978개(좌표 오류 1개 포함)
+- label: 14,718개 row, 69명
+- matched point: 5,372,735개
+- ambiguous point: 67,880개
+- unmatched point: 19,436,362개
 
 ## 현재 한계
 
-Raw ZIP 분석 후 확인된 내용만 기록합니다.
+- 원본 label에는 5개 target 외 mode도 존재합니다.
+- 겹치는 label interval은 임의로 선택하지 않고 ambiguous로 남깁니다.
+- 긴 sampling gap과 좌표 오류가 있어 전처리 규칙 검증이 필요합니다.
+- 아직 Window Dataset과 Model은 만들지 않았습니다.
 
 ## 실행
 
