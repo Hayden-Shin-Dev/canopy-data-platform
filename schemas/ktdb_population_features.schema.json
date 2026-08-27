@@ -36,7 +36,7 @@
     "survey_date": {"type": "string", "pattern": "^2021-[0-9]{2}-[0-9]{2}$"},
     "weekday": {"type": "string"},
     "departure_hour": {"type": "integer", "minimum": 0, "maximum": 23},
-    "departure_minute_bin": {"type": "integer", "minimum": 0, "maximum": 3},
+    "departure_minute_bin": {"type": "integer", "minimum": 0, "maximum": 45},
     "time_band": {"type": "string"},
     "origin_admin_dong": {"type": "string"},
     "origin_sido": {"type": "string"},

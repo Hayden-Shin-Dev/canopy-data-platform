@@ -181,8 +181,8 @@ def build_population_dataset(
     }
     summary["all_dataset"] = summarize_csv(all_path) if valid_rows else {"row_count": 0}
     summary["commute_dataset"] = summarize_csv(commute_path) if commute_rows else {"row_count": 0}
-    write_summary(summary, summary_path)
     summary["outputs"].append(str(summary_path))
+    write_summary(summary, summary_path)
     return summary
 
 

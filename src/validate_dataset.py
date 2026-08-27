@@ -16,6 +16,27 @@ DEFAULT_SCHEMA = PROJECT_ROOT / "schemas" / "ktdb_population_features.schema.jso
 DEFAULT_DATASET = PROCESSED_DIR / "population_baseline" / "ktdb" / "01_population_model_training_all.csv"
 ALLOWED_MODES = {"walk", "bike", "car", "bus", "rail"}
 ALLOWED_SPLITS = {"train", "validation", "test"}
+TEXT_COLUMNS = (
+    "trip_id",
+    "person_group_id",
+    "actual_mode_sequence",
+    "main_mode_raw_code",
+    "survey_date",
+    "weekday",
+    "time_band",
+    "origin_admin_dong",
+    "origin_sido",
+    "origin_sigungu",
+    "destination_admin_dong",
+    "destination_sido",
+    "destination_sigungu",
+    "od_scope",
+    "distance_band",
+    "purpose",
+    "commute_direction",
+    "actual_mode",
+    "split",
+)
 
 
 def validate_feature_frame(frame: pd.DataFrame, schema_path: str | Path = DEFAULT_SCHEMA) -> dict[str, object]:
@@ -47,6 +68,8 @@ def validate_feature_frame(frame: pd.DataFrame, schema_path: str | Path = DEFAUL
     errors: list[str] = []
     for index, row in frame.iterrows():
         payload = row.where(row.notna(), None).to_dict()
+        if payload.get("od_straight_distance_km") == "":
+            payload["od_straight_distance_km"] = None
         for error in validator.iter_errors(payload):
             errors.append(f"row={index}: {error.message}")
             if len(errors) >= 10:
@@ -64,7 +87,14 @@ def main() -> int:
     parser.add_argument("--schema", type=Path, default=DEFAULT_SCHEMA)
     args = parser.parse_args()
     result = validate_feature_frame(
-        pd.read_csv(args.dataset, encoding="utf-8-sig"), args.schema
+        pd.read_csv(
+            args.dataset,
+            encoding="utf-8-sig",
+            dtype={column: "string" for column in TEXT_COLUMNS},
+            keep_default_na=False,
+            na_filter=False,
+        ),
+        args.schema,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0

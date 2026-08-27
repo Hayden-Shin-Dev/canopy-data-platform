@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.pytest-tmp/
 .venv/
 
 # Local source data (large and redistributed separately)
@@ -13,9 +14,12 @@ data/raw/**
 # Reproducible generated artifacts
 data/interim/*
 !data/interim/**/README.md
-data/processed/*.csv
-data/processed/**/*.csv
+data/processed/**
+!data/processed/**/
+!data/processed/**/README.md
 models/**/*.cbm
+models/**/*.pkl
+models/**/*.joblib
 reports/**/runs/*
 !reports/**/runs/**/README.md
 
