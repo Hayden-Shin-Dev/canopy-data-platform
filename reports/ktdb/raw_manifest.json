@@ -1,0 +1,35 @@
+{
+  "source": "ktdb",
+  "download_date": null,
+  "generated_at_utc": "2026-08-27T15:38:20.211673+00:00",
+  "files": [
+    {
+      "name": "①개인특성.csv",
+      "path": "data/raw/ktdb/①개인특성.csv",
+      "size_bytes": 33552765,
+      "sha256": "9b073ab373e12ce0293b4eb44a102d73867e94c4b3722fcd821b0fee6d708ed0",
+      "observed_mtime_utc": "2026-08-27T14:26:49.004670+00:00"
+    },
+    {
+      "name": "②이동특성.csv",
+      "path": "data/raw/ktdb/②이동특성.csv",
+      "size_bytes": 200358691,
+      "sha256": "51a6a712758e2aa866e9aa15b6921e4489a204e1553973eeb0560bd06e567612",
+      "observed_mtime_utc": "2026-08-27T14:26:49.712202+00:00"
+    },
+    {
+      "name": "Code book.xlsx",
+      "path": "data/raw/ktdb/Code book.xlsx",
+      "size_bytes": 56381,
+      "sha256": "05120ff9f62c2df6d83af3428539558e2f60b3526ac81f446d0a254fdc2fed56",
+      "observed_mtime_utc": "2026-08-27T14:26:48.847218+00:00"
+    },
+    {
+      "name": "행정동코드_20210726(말소코드포함).xlsx",
+      "path": "data/raw/ktdb/행정동코드_20210726(말소코드포함).xlsx",
+      "size_bytes": 2211601,
+      "sha256": "63c731f7230f8b51686ddbe45202fe9e179e7aa543570b187ff3746a1d610b16",
+      "observed_mtime_utc": "2026-08-27T14:26:49.743947+00:00"
+    }
+  ]
+}
