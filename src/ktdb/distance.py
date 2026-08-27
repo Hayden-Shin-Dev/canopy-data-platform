@@ -7,6 +7,7 @@ from collections.abc import Mapping
 import pandas as pd
 
 from src.common.geo import haversine_distance_km
+from src.config import DISTANCE_BANDS
 
 
 CENTROID_COLUMNS = ("admin_dong", "latitude", "longitude")
@@ -62,4 +63,37 @@ def add_od_distance(
             continue
         distances.append(haversine_distance_km(*(float(value) for value in values)))
     result["od_straight_distance_km"] = pd.array(distances, dtype="Float64")
+    return result
+
+
+def derive_distance_band(
+    distance_km: object,
+    *,
+    bands: tuple[tuple[str, float, float | None], ...] = DISTANCE_BANDS,
+) -> str | pd.NA:
+    """직선거리 하나를 설정된 경계의 label로 변환한다."""
+
+    if pd.isna(distance_km):
+        return pd.NA
+    value = float(distance_km)
+    if value < 0:
+        raise ValueError("거리는 음수가 될 수 없습니다")
+    for label, lower, upper in bands:
+        if value >= lower and (upper is None or value < upper):
+            return label
+    raise ValueError("distance band 경계가 거리 값을 포함하지 않습니다")
+
+
+def add_distance_band(
+    frame: pd.DataFrame,
+    *,
+    distance_column: str = "od_straight_distance_km",
+    bands: tuple[tuple[str, float, float | None], ...] = DISTANCE_BANDS,
+) -> pd.DataFrame:
+    """거리 컬럼이 있을 때만 band를 추가하고 결측은 그대로 둔다."""
+
+    if distance_column not in frame.columns:
+        raise ValueError(f"거리 컬럼이 없습니다: {distance_column}")
+    result = frame.copy()
+    result["distance_band"] = result[distance_column].map(lambda value: derive_distance_band(value, bands=bands))
     return result
