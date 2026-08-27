@@ -29,7 +29,8 @@ def test_predict_expected_behaviour_returns_five_probabilities(tmp_path) -> None
     artifact = tmp_path / "model.pkl"
     train_expected_behaviour(frame, artifact, config=TrainingConfig(iterations=5, depth=2))
 
-    predictions = predict_expected_behaviour(frame.iloc[:2], artifact)
+    inference_frame = frame.iloc[:2].drop(columns=["actual_mode", "split"])
+    predictions = predict_expected_behaviour(inference_frame, artifact)
 
     assert len(predictions) == 2
     assert all(f"{mode}_probability" in predictions for mode in ("walk", "bike", "car", "bus", "rail"))
