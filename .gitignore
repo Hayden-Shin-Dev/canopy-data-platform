@@ -14,8 +14,9 @@ data/raw/**
 # Reproducible generated artifacts
 data/interim/*
 !data/interim/**/README.md
-data/processed/*.csv
-data/processed/**/*.csv
+data/processed/**
+!data/processed/**/
+!data/processed/**/README.md
 models/**/*.cbm
 models/**/*.pkl
 models/**/*.joblib
