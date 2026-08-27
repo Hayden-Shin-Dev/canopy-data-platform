@@ -79,6 +79,7 @@ def train_expected_behaviour(
         from sklearn.ensemble import HistGradientBoostingClassifier
         from sklearn.pipeline import Pipeline
         from sklearn.preprocessing import OrdinalEncoder
+        from sklearn.impute import SimpleImputer
         import joblib
 
         preprocessor = ColumnTransformer(
@@ -88,7 +89,11 @@ def train_expected_behaviour(
                     OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1),
                     list(train.categorical_features),
                 ),
-                ("numeric", "passthrough", list(train.numeric_features)),
+                (
+                    "numeric",
+                    SimpleImputer(strategy="constant", fill_value=0.0, keep_empty_features=True),
+                    list(train.numeric_features),
+                ),
             ]
         )
         model = Pipeline(
