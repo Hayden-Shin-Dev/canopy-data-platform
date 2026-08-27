@@ -78,6 +78,22 @@ class GeoLifeRawParserTests(unittest.TestCase):
             with self.assertRaises(GeoLifeFormatError):
                 next(iter_trajectory_points(root))
 
+    def test_non_strict_mode_reports_and_skips_invalid_row(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            trajectory_path = root / "Data" / "000" / "Trajectory" / "bad.plt"
+            trajectory_path.parent.mkdir(parents=True)
+            trajectory_path.write_text(
+                TRAJECTORY.replace("39.984702", "95.984702"),
+                encoding="utf-8",
+            )
+            errors: list[str] = []
+            points = list(iter_trajectory_points(root, strict=False, on_error=errors.append))
+
+        self.assertEqual(len(points), 1)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("좌표 범위를 벗어났습니다", str(errors[0]))
+
 
 if __name__ == "__main__":
     unittest.main()
