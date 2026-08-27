@@ -18,6 +18,7 @@ from src.config import (
 )
 from src.ktdb.admin_area import load_admin_lookup
 from src.ktdb.codebook import load_codebook
+from src.ktdb.distance import add_distance_band, add_od_distance
 from src.ktdb.loader import iter_trip_chunks, load_person_table
 from src.ktdb.lookup import build_population_lookup
 from src.ktdb.modes import build_mode_mapping
@@ -80,6 +81,7 @@ def build_population_dataset(
     output_dir: Path = OUTPUT_DIR,
     chunksize: int = 50_000,
     lookup_min_samples: int = 30,
+    centroid_path: Path | None = None,
 ) -> dict[str, object]:
     """전체 원본을 순회해 all/commute 학습 CSV를 만든다."""
 
@@ -104,6 +106,13 @@ def build_population_dataset(
     codebook = load_codebook(raw_dir / KTDB_RAW_FILES["codebook"])
     admin_lookup = load_admin_lookup(raw_dir / KTDB_RAW_FILES["admin_area"])
     persons = load_person_table(person_path)
+    centroids = None
+    if centroid_path is not None:
+        if centroid_path.suffix.lower() in {".xlsx", ".xls"}:
+            centroids = pd.read_excel(centroid_path)
+        else:
+            centroids = pd.read_csv(centroid_path, encoding="utf-8-sig")
+        logger.info("centroid file loaded: %s", centroid_path)
     build_mode_mapping(codebook).to_csv(mapping_path, index=False, encoding="utf-8-sig")
 
     raw_rows = 0
@@ -117,6 +126,9 @@ def build_population_dataset(
     for number, chunk in enumerate(iter_trip_chunks(trip_path, chunksize=chunksize), start=1):
         raw_rows += len(chunk)
         features = build_feature_frame(chunk, persons, codebook, admin_lookup)
+        if centroids is not None and not features.empty:
+            features = add_od_distance(features, centroids)
+            features = add_distance_band(features)
         excluded_rows += len(chunk) - len(features)
         if features.empty:
             continue
@@ -157,6 +169,7 @@ def build_population_dataset(
         "split_distribution": dict(split_counts),
         "random_seed": RANDOM_SEED,
         "lookup_min_samples": lookup_min_samples,
+        "centroid_path": str(centroid_path) if centroid_path else None,
         "distance_status": "blocked: no coordinate source in current raw files",
         "outputs": [
             str(all_path),
@@ -179,6 +192,7 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
     parser.add_argument("--chunksize", type=int, default=50_000)
     parser.add_argument("--lookup-min-samples", type=int, default=30)
+    parser.add_argument("--centroid-file", type=Path, default=None)
     args = parser.parse_args()
     configure_logging()
     summary = build_population_dataset(
@@ -186,6 +200,7 @@ def main() -> int:
         output_dir=args.output_dir,
         chunksize=args.chunksize,
         lookup_min_samples=args.lookup_min_samples,
+        centroid_path=args.centroid_file,
     )
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0
