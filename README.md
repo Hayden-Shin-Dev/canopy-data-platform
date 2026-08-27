@@ -1,33 +1,47 @@
-# Canopy Population Mobility Pipeline
+# Canopy Data Platform
 
-KTDB 2021년 개인통행실태조사 원본에서 Canopy의 Population Baseline과
-Expected Behaviour Model용 데이터를 재현 가능하게 만드는 Python 3.11 프로젝트입니다.
+## 프로젝트 목적
 
-원본 CSV는 `data/raw/ktdb/`에 그대로 두고, 아래 명령으로 중간·최종 산출물을 다시 만듭니다.
+Canopy는 친환경 이동 자체를 보상하는 것이 아니라, 일반적으로 예상되는 이동행동과 실제 이동행동의 차이를 비교해서 저탄소 방향의 Behaviour Shift가 발생했는지를 측정하는 프로젝트입니다.
 
-## 실행
+## 전체 구조
 
-```powershell
-python -m pytest -q
-python -m src.build_population_dataset
-python -m src.validate_dataset
-python -m src.train_expected_behaviour
-```
+KTDB — Expected Behaviour / Population Baseline
 
-기본 산출물은 `data/processed/population_baseline/ktdb/`에 생성됩니다.
-원본에는 좌표가 없어 `od_straight_distance_km`와 `distance_band`는 현재 결측으로 남습니다.
-대표좌표 CSV/XLSX가 준비되면 `--centroid-file` 옵션으로 같은 빌드에 연결할 수 있습니다.
+GeoLife — Mobility Recognition Model 학습
 
-모델 학습은 CatBoost가 설치된 환경에서 CatBoost를 사용하고, 미설치 환경에서는 sklearn fallback을 사용합니다.
-식별자와 원시 응답 코드는 모델 입력에서 제외합니다.
+Emission Factors — 교통수단별 CO2 환산 기준
 
-## 디렉터리
+Transit Context — GPS만으로 구분이 어려운 bus/car 등의 판단 보조
 
-```text
-data/raw/        로컬 원본 데이터(버전 관리 제외)
-data/processed/  전처리 산출물(코드로 재생성)
-src/             데이터 빌드·학습·예측 코드
-models/          학습 모델(코드로 재생성)
-reports/         요약 및 평가 결과
-tests/           핵심 변환 규칙 테스트
-```
+Realtime GPS — iOS에서 실제 사용자 GPS 수집 및 Streaming
+
+Integration — Expected Behaviour와 Actual Behaviour를 비교하고 CO2 Reduction 및 Reward 계산
+
+## 현재 진행 상태
+
+KTDB v1 완료
+
+- Raw trips: 356,899
+- Valid features: 331,189
+- Commute trips: 86,561
+- Test Accuracy: 약 0.677
+- Macro F1: 약 0.411
+- Tag: `ktdb-v1.0.0`
+
+GeoLife: 예정  
+Emission Factors: 예정  
+Transit Context: 필요 여부 검증 예정  
+Realtime GPS: 예정  
+Integration: 예정
+
+## Branch
+
+`main`  
+`dev/ktdb-v1`
+
+나머지 dev Branch는 실제 작업을 시작할 때 생성합니다.
+
+## 개발 순서
+
+KTDB → GeoLife → Emission Factors → 필요 시 Transit Context → Realtime GPS → Canopy Integration
