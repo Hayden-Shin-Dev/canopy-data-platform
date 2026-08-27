@@ -6,7 +6,7 @@ import zipfile
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path, PurePosixPath
-from typing import BinaryIO, Iterator
+from typing import BinaryIO, Callable, Iterator
 
 
 TRAJECTORY_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -70,12 +70,26 @@ def _parse_trajectory_row(raw_line: bytes, member_name: str, line_number: int) -
     return latitude, longitude, altitude_ft, timestamp
 
 
-def _iter_trajectory_stream(stream: BinaryIO, member_name: str, user_id: str) -> Iterator[TrajectoryPoint]:
+def _iter_trajectory_stream(
+    stream: BinaryIO,
+    member_name: str,
+    user_id: str,
+    *,
+    strict: bool,
+    on_error: Callable[[GeoLifeFormatError], None] | None,
+) -> Iterator[TrajectoryPoint]:
     for _ in range(HEADER_LINE_COUNT):
         stream.readline()
     trajectory_id = PurePosixPath(member_name).stem
     for line_number, raw_line in enumerate(stream, start=HEADER_LINE_COUNT + 1):
-        parsed = _parse_trajectory_row(raw_line, member_name, line_number)
+        try:
+            parsed = _parse_trajectory_row(raw_line, member_name, line_number)
+        except GeoLifeFormatError as error:
+            if strict:
+                raise
+            if on_error is not None:
+                on_error(error)
+            continue
         if parsed is None:
             continue
         latitude, longitude, altitude_ft, timestamp = parsed
@@ -114,7 +128,12 @@ def _iter_label_stream(stream: BinaryIO, member_name: str, user_id: str) -> Iter
         )
 
 
-def iter_trajectory_points(source: str | Path) -> Iterator[TrajectoryPoint]:
+def iter_trajectory_points(
+    source: str | Path,
+    *,
+    strict: bool = True,
+    on_error: Callable[[GeoLifeFormatError], None] | None = None,
+) -> Iterator[TrajectoryPoint]:
     """ZIP 또는 압축 해제된 GeoLife 디렉터리에서 trajectory point를 순서대로 읽는다."""
     source_path = Path(source)
     if _is_zip(source_path):
@@ -125,7 +144,13 @@ def iter_trajectory_points(source: str | Path) -> Iterator[TrajectoryPoint]:
             )
             for member in members:
                 with archive.open(member) as stream:
-                    yield from _iter_trajectory_stream(stream, member.filename, _user_id(member.filename))
+                    yield from _iter_trajectory_stream(
+                        stream,
+                        member.filename,
+                        _user_id(member.filename),
+                        strict=strict,
+                        on_error=on_error,
+                    )
         return
 
     for path in sorted(source_path.glob("Data/*/Trajectory/*.plt")):
@@ -134,6 +159,8 @@ def iter_trajectory_points(source: str | Path) -> Iterator[TrajectoryPoint]:
                 stream,
                 path.as_posix(),
                 path.parent.parent.name,
+                strict=strict,
+                on_error=on_error,
             )
 
 
