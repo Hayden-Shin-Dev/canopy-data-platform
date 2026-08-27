@@ -29,16 +29,20 @@ KTDB v1 완료
 - Macro F1: 약 0.411
 - Tag: `ktdb-v1.0.0`
 
-GeoLife: 예정  
-Emission Factors: 예정  
-Transit Context: 필요 여부 검증 예정  
-Realtime GPS: 예정  
+GeoLife: 예정
+
+Emission Factors: 예정
+
+Transit Context: 필요 여부 검증 예정
+
+Realtime GPS: 예정
+
 Integration: 예정
 
 ## Branch
 
-`main`  
-`dev/ktdb-v1`
+- `main`
+- `dev/ktdb-v1`
 
 나머지 dev Branch는 실제 작업을 시작할 때 생성합니다.
 
