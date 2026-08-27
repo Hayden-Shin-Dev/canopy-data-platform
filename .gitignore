@@ -16,6 +16,8 @@ data/interim/*
 data/processed/*.csv
 data/processed/**/*.csv
 models/**/*.cbm
+models/**/*.pkl
+models/**/*.joblib
 reports/**/runs/*
 !reports/**/runs/**/README.md
 
