@@ -39,3 +39,13 @@ TIME_BANDS: tuple[tuple[str, int, int], ...] = (
 # 같은 사람의 통행이 서로 다른 split에 섞이지 않도록 그룹 기준을 고정한다.
 RANDOM_SEED = 2021
 SPLIT_RATIOS = {"train": 0.70, "validation": 0.15, "test": 0.15}
+
+# 실제 도로거리가 아니라 행정동 중심점 직선거리 기준의 구간 경계임.
+DISTANCE_BANDS: tuple[tuple[str, float, float | None], ...] = (
+    ("under_1km", 0.0, 1.0),
+    ("1_to_3km", 1.0, 3.0),
+    ("3_to_5km", 3.0, 5.0),
+    ("5_to_10km", 5.0, 10.0),
+    ("10_to_20km", 10.0, 20.0),
+    ("20km_or_more", 20.0, None),
+)
