@@ -9,8 +9,13 @@ data/raw/*
 !data/raw/README.md
 
 # Reproducible generated artifacts
+data/interim/*
+!data/interim/**/README.md
 data/processed/*.csv
-models/*.cbm
+data/processed/**/*.csv
+models/**/*.cbm
+reports/**/runs/*
+!reports/**/runs/**/README.md
 
 # Local logs and editor files
 *.log
