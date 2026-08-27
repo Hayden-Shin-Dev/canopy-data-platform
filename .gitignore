@@ -7,6 +7,8 @@ __pycache__/
 # Local source data (large and redistributed separately)
 data/raw/*
 !data/raw/README.md
+!data/raw/**/
+!data/raw/**/README.md
 
 # Reproducible generated artifacts
 data/interim/*
