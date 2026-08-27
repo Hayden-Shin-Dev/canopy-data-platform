@@ -48,11 +48,7 @@ def prepare_model_data(frame: pd.DataFrame) -> ModelData:
     if invalid_target:
         raise ValueError(f"지원하지 않는 target class가 있습니다: {invalid_target}")
 
-    features = frame[list(MODEL_FEATURES)].copy()
-    for column in NUMERIC_FEATURES:
-        features[column] = pd.to_numeric(features[column], errors="coerce")
-    for column in CATEGORICAL_FEATURES:
-        features[column] = features[column].astype("string").fillna("<missing>").astype(str)
+    features = _prepare_features(frame)
     target = frame[TARGET_COLUMN].astype("string")
     return ModelData(
         features=features,
@@ -60,6 +56,26 @@ def prepare_model_data(frame: pd.DataFrame) -> ModelData:
         categorical_features=CATEGORICAL_FEATURES,
         numeric_features=NUMERIC_FEATURES,
     )
+
+
+def _prepare_features(frame: pd.DataFrame) -> pd.DataFrame:
+    """학습과 예측에서 공유하는 feature dtype 정리."""
+
+    features = frame[list(MODEL_FEATURES)].copy()
+    for column in NUMERIC_FEATURES:
+        features[column] = pd.to_numeric(features[column], errors="coerce")
+    for column in CATEGORICAL_FEATURES:
+        features[column] = features[column].astype("string").fillna("<missing>").astype(str)
+    return features
+
+
+def prepare_prediction_features(frame: pd.DataFrame) -> tuple[pd.DataFrame, tuple[str, ...], tuple[str, ...]]:
+    """target와 split 없이 들어온 새 관측치를 모델 입력으로 변환한다."""
+
+    missing = sorted(set(MODEL_FEATURES) - set(frame.columns))
+    if missing:
+        raise ValueError(f"예측 입력에 필요한 feature 컬럼이 없습니다: {missing}")
+    return _prepare_features(frame), CATEGORICAL_FEATURES, NUMERIC_FEATURES
 
 
 def split_model_data(frame: pd.DataFrame) -> dict[str, ModelData]:

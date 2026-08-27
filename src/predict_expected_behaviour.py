@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 
 from src.config import MODELS_DIR
-from src.ktdb.model_data import prepare_model_data
+from src.ktdb.model_data import prepare_prediction_features
 from src.ktdb.lookup import MODE_CLASSES
 
 
@@ -41,8 +41,8 @@ def predict_expected_behaviour(
     """입력 rows에 대해 mode별 확률과 최상위 예측을 반환한다."""
 
     model, _backend = _load_model(model_path)
-    data = prepare_model_data(frame)
-    probabilities = model.predict_proba(data.features)
+    features, _categorical, _numeric = prepare_prediction_features(frame)
+    probabilities = model.predict_proba(features)
     classes = [str(value) for value in getattr(model, "classes_", MODE_CLASSES)]
     result = pd.DataFrame(probabilities, columns=[f"{label}_probability" for label in classes])
     for mode in MODE_CLASSES:
