@@ -35,3 +35,7 @@ TIME_BANDS: tuple[tuple[str, int, int], ...] = (
     ("evening_peak", 17, 20),
     ("night", 20, 24),
 )
+
+# 같은 사람의 통행이 서로 다른 split에 섞이지 않도록 그룹 기준을 고정한다.
+RANDOM_SEED = 2021
+SPLIT_RATIOS = {"train": 0.70, "validation": 0.15, "test": 0.15}
