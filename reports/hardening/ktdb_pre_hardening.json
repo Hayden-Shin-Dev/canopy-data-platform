@@ -1,0 +1,34 @@
+{
+  "snapshot": "pre-hardening",
+  "branch": "dev/ktdb-v1",
+  "commit": "5cfe1d04f269e4ec3d0c2589e0624667be64a5a0",
+  "dataset": "data/processed/population_baseline/ktdb/01_population_model_training_all.csv",
+  "row_count": 331189,
+  "column_count": 22,
+  "mode_distribution": {
+    "bike": 4679,
+    "bus": 33068,
+    "car": 172593,
+    "rail": 22382,
+    "walk": 98467
+  },
+  "nan_count": 667908,
+  "inf_count": 0,
+  "duplicate_row_count": 0,
+  "user_count": 109872,
+  "window_count": null,
+  "split_count": {
+    "train": 232489,
+    "validation": 49396,
+    "test": 49304
+  },
+  "baseline_metrics": {
+    "test_accuracy": 0.677,
+    "test_macro_f1": 0.411
+  },
+  "feature_anomaly_count": {
+    "od_straight_distance_km_missing": 331189,
+    "distance_band_missing": 331189
+  },
+  "commute_row_count": 86561
+}

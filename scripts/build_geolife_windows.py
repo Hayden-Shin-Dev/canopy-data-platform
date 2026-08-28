@@ -9,6 +9,7 @@ from collections import Counter
 from pathlib import Path
 
 from src.geolife.config import DEFAULT_GAP_THRESHOLD_SECONDS, DEFAULT_MIN_POINTS, DEFAULT_STOP_THRESHOLD_MPS
+from src.geolife.gps_quality import GpsQualityPolicy, GpsQualityStats, iter_quality_points
 from src.geolife.label_match import iter_labeled_points
 from src.geolife.labeled_windows import iter_labeled_time_windows
 from src.geolife.raw import iter_label_intervals, iter_trajectory_points
@@ -43,15 +44,25 @@ def build_window_dataset(
     window_seconds: int = 60,
     min_points: int = DEFAULT_MIN_POINTS,
     min_label_coverage: float = 0.5,
+    apply_gps_quality: bool = True,
+    min_mode_purity: float | None = None,
 ) -> dict[str, object]:
     if not 0 < min_label_coverage <= 1:
         raise ValueError("min_label_coverage는 0보다 크고 1 이하여야 합니다")
+    if min_mode_purity is not None and not 0 <= min_mode_purity <= 1:
+        raise ValueError("min_mode_purity는 0 이상 1 이하여야 합니다")
     labels = list(iter_label_intervals(zip_path))
     parse_errors = []
-    points = iter_trajectory_points(
+    raw_points = iter_trajectory_points(
         zip_path,
         strict=False,
         on_error=parse_errors.append,
+    )
+    quality_stats = GpsQualityStats()
+    points = (
+        iter_quality_points(raw_points, stats=quality_stats)
+        if apply_gps_quality
+        else raw_points
     )
     windows = iter_labeled_time_windows(
         iter_labeled_points(points, labels),
@@ -73,9 +84,15 @@ def build_window_dataset(
         "matched_point_count",
         "ambiguous_point_count",
         "excluded_point_count",
+        "dominant_mode_point_count",
+        "canonical_mode_purity",
+        "distinct_mode_count",
+        "is_transition_window",
         *FEATURE_COLUMNS,
     ]
     selected_window_count = 0
+    transition_window_count = 0
+    purity_rejected_count = 0
     with output_path.open("w", encoding="utf-8-sig", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=columns)
         writer.writeheader()
@@ -83,6 +100,11 @@ def build_window_dataset(
             label_summary = summarize_window_labels(window.points)
             window_status_counts[label_summary.status] += 1
             if label_summary.status != "labeled" or label_summary.coverage < min_label_coverage:
+                continue
+            if label_summary.is_transition_window:
+                transition_window_count += 1
+            if min_mode_purity is not None and label_summary.canonical_mode_purity < min_mode_purity:
+                purity_rejected_count += 1
                 continue
             features = compute_window_features(
                 [item.point for item in window.points],
@@ -99,6 +121,10 @@ def build_window_dataset(
                 "matched_point_count": label_summary.matched_point_count,
                 "ambiguous_point_count": label_summary.ambiguous_point_count,
                 "excluded_point_count": label_summary.excluded_point_count,
+                "dominant_mode_point_count": label_summary.dominant_mode_point_count,
+                "canonical_mode_purity": label_summary.canonical_mode_purity,
+                "distinct_mode_count": label_summary.distinct_mode_count,
+                "is_transition_window": label_summary.is_transition_window,
                 **features,
             }
             writer.writerow(row)
@@ -111,11 +137,26 @@ def build_window_dataset(
         "window_seconds": window_seconds,
         "min_points": min_points,
         "min_label_coverage": min_label_coverage,
+        "min_mode_purity": min_mode_purity,
         "window_status_counts": dict(sorted(window_status_counts.items())),
         "selected_window_count": selected_window_count,
         "selected_mode_counts": dict(sorted(selected_mode_counts.items())),
+        "transition_window_count": transition_window_count,
+        "purity_rejected_count": purity_rejected_count,
         "trajectory_parse_error_count": len(parse_errors),
         "trajectory_parse_error_examples": [str(error) for error in parse_errors[:5]],
+        "gps_quality": {
+            "enabled": apply_gps_quality,
+            "policy": GpsQualityPolicy().__dict__ if apply_gps_quality else None,
+            "stats": (
+                {
+                    **quality_stats.__dict__,
+                    "segment_break_count": quality_stats.segment_break_count,
+                }
+                if apply_gps_quality
+                else None
+            ),
+        },
     }
     summary_path = output_path.with_suffix(".summary.json")
     summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -129,6 +170,8 @@ def main() -> None:
     parser.add_argument("--window-seconds", type=int, default=60)
     parser.add_argument("--min-points", type=int, default=DEFAULT_MIN_POINTS)
     parser.add_argument("--min-label-coverage", type=float, default=0.5)
+    parser.add_argument("--skip-gps-quality", action="store_true")
+    parser.add_argument("--min-mode-purity", type=float)
     args = parser.parse_args()
     result = build_window_dataset(
         args.zip_path,
@@ -136,6 +179,8 @@ def main() -> None:
         window_seconds=args.window_seconds,
         min_points=args.min_points,
         min_label_coverage=args.min_label_coverage,
+        apply_gps_quality=not args.skip_gps_quality,
+        min_mode_purity=args.min_mode_purity,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
 

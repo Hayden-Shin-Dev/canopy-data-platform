@@ -29,6 +29,10 @@ METADATA_COLUMNS = {
     "matched_point_count",
     "ambiguous_point_count",
     "excluded_point_count",
+    "dominant_mode_point_count",
+    "canonical_mode_purity",
+    "distinct_mode_count",
+    "is_transition_window",
 }
 EXPECTED_CLASSES = ("walk", "bike", "car", "bus", "rail")
 
@@ -50,7 +54,14 @@ def train_baseline(
     if model_type not in ("random_forest", "extra_trees"):
         raise ValueError("model_type은 random_forest 또는 extra_trees여야 합니다")
     frame = pd.read_csv(dataset_csv, encoding="utf-8-sig", dtype={"user_id": "string"})
-    required = METADATA_COLUMNS | {"split"}
+    required = {
+        "user_id",
+        "trajectory_id",
+        "window_start",
+        "window_end",
+        TARGET_COLUMN,
+        "split",
+    }
     missing = sorted(required - set(frame.columns))
     if missing:
         raise ValueError(f"학습 CSV에 필요한 column이 없습니다: {missing}")

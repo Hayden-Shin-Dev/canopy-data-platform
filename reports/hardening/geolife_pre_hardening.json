@@ -1,0 +1,40 @@
+{
+  "snapshot": "pre-hardening",
+  "branch": "dev/geolife-v1",
+  "commit": "5d3d88b31e6930bc91959875c45d81f4bb9631fd",
+  "dataset": "data/processed/mobility_recognition/geolife_windows_120s_split.csv",
+  "row_count": 119260,
+  "column_count": 26,
+  "mode_distribution": {
+    "bike": 16707,
+    "bus": 27643,
+    "car": 23124,
+    "rail": 16061,
+    "walk": 35725
+  },
+  "nan_count": 0,
+  "inf_count": 0,
+  "duplicate_row_count": 0,
+  "user_count": 63,
+  "window_count": 119260,
+  "split_count": {
+    "train": 102025,
+    "validation": 13803,
+    "test": 3432
+  },
+  "baseline_metrics": {
+    "validation_accuracy": 0.7203,
+    "validation_macro_f1": 0.6898,
+    "test_accuracy": 0.6681,
+    "test_macro_f1": 0.4715,
+    "test_bus_f1": 0.2087,
+    "test_rail_f1": 0.0149
+  },
+  "feature_anomaly_count": {
+    "valid_step_count_zero": 24,
+    "displacement_gt_distance": 14,
+    "straightness_gt_1": 3,
+    "straightness_lt_0": 0,
+    "gap_step_count_positive": 0
+  }
+}

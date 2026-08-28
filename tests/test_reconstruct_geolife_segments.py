@@ -42,6 +42,21 @@ class ReconstructGeoLifeSegmentsTests(unittest.TestCase):
         self.assertEqual(result["trajectory_count"], 1)
         self.assertEqual(result["segment_count"], 1)
         self.assertEqual(segments["window_count"].tolist(), [4])
+        self.assertEqual(
+            set(
+                [
+                    "start_window_index",
+                    "end_window_index",
+                    "segment_start_time",
+                    "segment_end_time",
+                    "duration_sec",
+                    "mean_mode_probability",
+                    "distance_m",
+                ]
+            ).issubset(segments.columns),
+            True,
+        )
+        self.assertEqual(segments["distance_m"].tolist(), [6.0])
 
 
 if __name__ == "__main__":

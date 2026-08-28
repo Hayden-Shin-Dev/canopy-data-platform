@@ -48,6 +48,8 @@ class GeoLifeWindowBuildTests(unittest.TestCase):
         self.assertEqual(rows[0]["canonical_mode"], "bus")
         self.assertEqual(summary["selected_window_count"], 1)
         self.assertEqual(saved_summary["selected_mode_counts"], {"bus": 1})
+        self.assertTrue(saved_summary["gps_quality"]["enabled"])
+        self.assertEqual(saved_summary["gps_quality"]["stats"]["segment_break_count"], 0)
 
     def test_rejects_invalid_coverage(self) -> None:
         with self.assertRaises(ValueError):
