@@ -47,8 +47,8 @@ py -3.13 -m scripts.assign_geolife_splits `
 
 py -3.13 -m scripts.train_geolife_baseline `
     "$OutputRoot/geolife_windows_120s_split.csv" `
-    "$ModelRoot/geolife_120s_purity_090.joblib" `
-    "$OutputRoot/geolife_120s_purity_090_metrics.json" `
+    "$ModelRoot/geolife_hardened_120s_purity_090.joblib" `
+    "$OutputRoot/geolife_hardened_120s_purity_090_metrics.json" `
     --class-weight none `
     --model-type random_forest `
     --n-estimators 100 `
@@ -56,6 +56,6 @@ py -3.13 -m scripts.train_geolife_baseline `
 
 py -3.13 -m scripts.evaluate_geolife_model `
     "$OutputRoot/geolife_windows_120s_split.csv" `
-    "$ModelRoot/geolife_120s_purity_090.joblib" `
+    "$ModelRoot/geolife_hardened_120s_purity_090.joblib" `
     --split test `
-    --output "$OutputRoot/geolife_final_test_metrics.json"
+    --output "$OutputRoot/geolife_hardened_final_test_metrics.json"
