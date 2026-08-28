@@ -127,7 +127,14 @@ def build_window_dataset(
         "gps_quality": {
             "enabled": apply_gps_quality,
             "policy": GpsQualityPolicy().__dict__ if apply_gps_quality else None,
-            "stats": quality_stats.__dict__ if apply_gps_quality else None,
+            "stats": (
+                {
+                    **quality_stats.__dict__,
+                    "segment_break_count": quality_stats.segment_break_count,
+                }
+                if apply_gps_quality
+                else None
+            ),
         },
     }
     summary_path = output_path.with_suffix(".summary.json")
