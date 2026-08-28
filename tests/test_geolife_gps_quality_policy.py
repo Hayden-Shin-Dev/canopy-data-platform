@@ -37,6 +37,15 @@ class GeoLifeGpsQualityPolicyTests(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(stats.dropped_duplicate, 1)
 
+    def test_drops_nonpositive_time_point_with_new_position(self) -> None:
+        points = [_point(0, seconds=0), _point(1, seconds=0, latitude=37.1)]
+        stats = GpsQualityStats()
+
+        result = list(iter_quality_points(points, stats=stats))
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(stats.dropped_nonpositive_dt, 1)
+
 
 if __name__ == "__main__":
     unittest.main()
