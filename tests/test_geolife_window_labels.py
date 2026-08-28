@@ -20,11 +20,16 @@ class GeoLifeWindowLabelTests(unittest.TestCase):
         self.assertEqual(result.canonical_mode, "bus")
         self.assertEqual(result.mode_counts, {"bus": 2, "walk": 1})
         self.assertAlmostEqual(result.coverage, 1.0)
+        self.assertEqual(result.dominant_mode_point_count, 2)
+        self.assertAlmostEqual(result.canonical_mode_purity, 2 / 3)
+        self.assertEqual(result.distinct_mode_count, 2)
+        self.assertTrue(result.is_transition_window)
 
     def test_tie_is_ambiguous(self) -> None:
         result = summarize_window_labels([labeled("bus"), labeled("walk")])
         self.assertEqual(result.status, "ambiguous")
         self.assertIsNone(result.canonical_mode)
+        self.assertTrue(result.is_transition_window)
 
     def test_unmatched_and_excluded_points_are_preserved(self) -> None:
         result = summarize_window_labels(
