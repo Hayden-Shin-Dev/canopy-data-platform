@@ -25,6 +25,9 @@ Raw GPS → Label 연결 → GPS Feature → Window Dataset → Mobility Recogni
 - label: 14,718개 row, 69명
 - matched point: 5,372,735개
 - ambiguous point: 67,880개
+- 60초 학습 Window: 213,549개
+- baseline Test Accuracy: 0.6459
+- baseline Test Macro F1: 0.4566
 - unmatched point: 19,436,362개
 
 ## 현재 한계
@@ -32,7 +35,8 @@ Raw GPS → Label 연결 → GPS Feature → Window Dataset → Mobility Recogni
 - 원본 label에는 5개 target 외 mode도 존재합니다.
 - 겹치는 label interval은 임의로 선택하지 않고 ambiguous로 남깁니다.
 - 긴 sampling gap과 좌표 오류가 있어 전처리 규칙 검증이 필요합니다.
-- 아직 Window Dataset과 Model은 만들지 않았습니다.
+- baseline은 생성했지만 rail/bus Test F1이 각각 0.0183/0.2315로 낮습니다.
+- 추가 품질 개선과 segment 검증이 필요합니다.
 
 ## 실행
 
