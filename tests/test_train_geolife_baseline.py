@@ -28,6 +28,10 @@ class GeoLifeBaselineTrainingTests(unittest.TestCase):
                         "matched_point_count": 2,
                         "ambiguous_point_count": 0,
                         "excluded_point_count": 0,
+                        "dominant_mode_point_count": 2,
+                        "canonical_mode_purity": 1.0,
+                        "distinct_mode_count": 1,
+                        "is_transition_window": False,
                         "distance_m": float(index + 1),
                         "mean_speed_mps": float(index + 1),
                     }
@@ -45,6 +49,8 @@ class GeoLifeBaselineTrainingTests(unittest.TestCase):
         self.assertTrue(model_created)
         self.assertEqual(result["classes"], sorted(modes))
         self.assertEqual(result["class_weight"], "balanced_subsample")
+        self.assertNotIn("canonical_mode_purity", result["feature_columns"])
+        self.assertNotIn("is_transition_window", result["feature_columns"])
         self.assertEqual(saved["metrics"]["test"]["row_count"], 5)
 
     def test_rejects_empty_estimator_count(self) -> None:
