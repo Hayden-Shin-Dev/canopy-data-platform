@@ -1,0 +1,19 @@
+{
+  "reference_csv": "data\\processed\\emission_factors\\emission_factors_2026.csv",
+  "row_count": 40,
+  "mode_counts": {
+    "car": 30,
+    "bus": 4,
+    "rail": 4,
+    "walk": 1,
+    "bike": 1
+  },
+  "duplicate_key_count": 0,
+  "invalid_modes": [],
+  "invalid_units": [],
+  "negative_factor_count": 0,
+  "policy_zero_rows": 2,
+  "source_row_count": 38,
+  "source_rows_missing_from_workbook": [],
+  "passed": true
+}
