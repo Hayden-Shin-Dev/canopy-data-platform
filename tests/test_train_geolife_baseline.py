@@ -55,6 +55,10 @@ class GeoLifeBaselineTrainingTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             train_baseline("missing.csv", "model.joblib", "metrics.json", class_weight="unknown")
 
+    def test_rejects_unknown_model_type(self) -> None:
+        with self.assertRaises(ValueError):
+            train_baseline("missing.csv", "model.joblib", "metrics.json", model_type="unknown")
+
 
 if __name__ == "__main__":
     unittest.main()
