@@ -8,12 +8,32 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.geolife.split import assign_group_splits
+from src.geolife.split import apply_group_split_map, assign_group_splits
 
 
-def assign_splits(input_csv: str | Path, output_csv: str | Path, *, seed: int = 2021) -> dict[str, object]:
+def assign_splits(
+    input_csv: str | Path,
+    output_csv: str | Path,
+    *,
+    seed: int = 2021,
+    reference_split_csv: str | Path | None = None,
+) -> dict[str, object]:
     frame = pd.read_csv(input_csv, encoding="utf-8-sig", dtype={"user_id": "string"})
-    result = assign_group_splits(frame, seed=seed)
+    if reference_split_csv is None:
+        result = assign_group_splits(frame, seed=seed)
+    else:
+        reference = pd.read_csv(reference_split_csv, encoding="utf-8-sig", dtype={"user_id": "string"})
+        required = {"user_id", "split"}
+        missing = sorted(required - set(reference.columns))
+        if missing:
+            raise ValueError(f"reference split CSV에 필요한 column이 없습니다: {missing}")
+        split_map = (
+            reference[["user_id", "split"]]
+            .drop_duplicates()
+            .set_index("user_id")["split"]
+            .to_dict()
+        )
+        result = apply_group_split_map(frame, split_map)
     output_path = Path(output_csv)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     result.to_csv(output_path, index=False, encoding="utf-8-sig")
@@ -46,8 +66,20 @@ def main() -> None:
     parser.add_argument("input_csv")
     parser.add_argument("output_csv")
     parser.add_argument("--seed", type=int, default=2021)
+    parser.add_argument("--reference-split-csv", help="기존 user split을 재사용할 CSV 경로")
     args = parser.parse_args()
-    print(json.dumps(assign_splits(args.input_csv, args.output_csv, seed=args.seed), ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            assign_splits(
+                args.input_csv,
+                args.output_csv,
+                seed=args.seed,
+                reference_split_csv=args.reference_split_csv,
+            ),
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":
