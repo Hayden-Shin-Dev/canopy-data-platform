@@ -4,7 +4,7 @@ import unittest
 
 import pandas as pd
 
-from src.geolife.split import assign_group_splits
+from src.geolife.split import apply_group_split_map, assign_group_splits
 
 
 class GeoLifeSplitTests(unittest.TestCase):
@@ -34,6 +34,16 @@ class GeoLifeSplitTests(unittest.TestCase):
     def test_requires_three_groups(self) -> None:
         with self.assertRaises(ValueError):
             assign_group_splits(self.frame[self.frame["user_id"] < "002"])
+
+    def test_applies_reference_group_split_map(self) -> None:
+        frame = pd.DataFrame({"user_id": ["010", "020", "010"]})
+        result = apply_group_split_map(frame, {"010": "validation", "020": "test"})
+        self.assertEqual(result["split"].tolist(), ["validation", "test", "validation"])
+
+    def test_rejects_group_missing_from_reference_map(self) -> None:
+        frame = pd.DataFrame({"user_id": ["010", "030"]})
+        with self.assertRaises(ValueError):
+            apply_group_split_map(frame, {"010": "train"})
 
 
 if __name__ == "__main__":
