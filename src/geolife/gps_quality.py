@@ -29,7 +29,7 @@ class GpsQualityStats:
     points_out: int = 0
     dropped_invalid_value: int = 0
     dropped_duplicate: int = 0
-    segment_break_nonpositive_dt: int = 0
+    dropped_nonpositive_dt: int = 0
     segment_break_long_gap: int = 0
     segment_break_speed: int = 0
     segment_break_altitude: int = 0
@@ -37,8 +37,7 @@ class GpsQualityStats:
     @property
     def segment_break_count(self) -> int:
         return (
-            self.segment_break_nonpositive_dt
-            + self.segment_break_long_gap
+            self.segment_break_long_gap
             + self.segment_break_speed
             + self.segment_break_altitude
         )
@@ -92,11 +91,7 @@ def iter_quality_points(
             if policy.drop_duplicate_points and delta_seconds == 0 and same_position:
                 quality_stats.dropped_duplicate += 1
                 continue
-            quality_stats.segment_break_nonpositive_dt += 1
-            segment_index += 1
-            previous = point
-            quality_stats.points_out += 1
-            yield _with_segment_id(point, segment_index)
+            quality_stats.dropped_nonpositive_dt += 1
             continue
         if delta_seconds > policy.max_gap_seconds:
             quality_stats.segment_break_long_gap += 1
