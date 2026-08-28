@@ -1,0 +1,25 @@
+{
+  "dataset_name": "KTDB Population Baseline",
+  "version": "1.1.0",
+  "source": "KTDB 개인통행실태조사 2021",
+  "build_script": "scripts/rebuild_ktdb.ps1",
+  "raw_rows": 356899,
+  "valid_rows": 331189,
+  "commute_rows": 86561,
+  "excluded_rows": 25710,
+  "mode_rows": {"walk": 98467, "car": 172593, "rail": 22382, "bus": 33068, "bike": 4679},
+  "split_rows": {"train": 232489, "validation": 49396, "test": 49304},
+  "person_group_count": 109872,
+  "distance": {
+    "status": "blocked",
+    "reason": "현재 KTDB 원본에 신뢰할 수 있는 행정동 좌표가 없어 추정하지 않음",
+    "od_straight_distance_km_non_null": 0,
+    "distance_band_non_null": 0
+  },
+  "quality": {"nan_count": 667908, "inf_count": 0, "duplicate_trip_id_count": 0, "unsupported_mode_count": 0},
+  "lookup": {"min_samples": 100, "all_rows": 331189, "commute_rows": 86561},
+  "limitations": [
+    "행정동 centroid source가 확인되기 전까지 거리 feature는 결측으로 유지한다.",
+    "결측률은 원본 행정구역 코드의 부재를 포함하며 임의 보정하지 않는다."
+  ]
+}

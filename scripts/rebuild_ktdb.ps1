@@ -12,10 +12,11 @@ if ($CleanOutput -and (Test-Path -LiteralPath $OutputDir)) {
     Remove-Item -LiteralPath $OutputDir -Recurse -Force
 }
 
-python -m src.build_population_dataset `
+py -3.13 -m src.build_population_dataset `
     --raw-dir $RawDir `
     --output-dir $OutputDir `
-    --chunksize $Chunksize
+    --chunksize $Chunksize `
+    --lookup-min-samples 100
 
-python -m src.validate_dataset `
+py -3.13 -m src.validate_dataset `
     --dataset (Join-Path $OutputDir "01_population_model_training_all.csv")
