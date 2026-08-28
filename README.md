@@ -29,7 +29,12 @@ KTDB v1 완료
 - Macro F1: 약 0.411
 - Tag: `ktdb-v1.0.0`
 
-GeoLife: 예정
+GeoLife v1 완료
+
+- 120초 Window 최종 후보
+- Test Accuracy: 약 0.668
+- Test Macro F1: 약 0.471
+- Tag: `geolife-v1.0.0`
 
 Emission Factors: 예정
 
