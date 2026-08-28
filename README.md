@@ -27,14 +27,14 @@ KTDB v1 완료
 - Commute trips: 86,561
 - Test Accuracy: 약 0.677
 - Macro F1: 약 0.411
-- Tag: `ktdb-v1.0.0`
+- Tag: `ktdb-v1.0.0`, `ktdb-v1.1.0`
 
 GeoLife v1 완료
 
-- 120초 Window 최종 후보
-- Test Accuracy: 약 0.668
-- Test Macro F1: 약 0.471
-- Tag: `geolife-v1.0.0`
+- 120초 Window + GPS quality + purity filtering
+- Test Accuracy: 0.6942
+- Test Macro F1: 0.5330
+- Tag: `geolife-v1.0.0`, `geolife-v1.1.0`
 
 Emission Factors: 예정
 
@@ -48,6 +48,7 @@ Integration: 예정
 
 - `main`
 - `dev/ktdb-v1`
+- `dev/geolife-v1`
 
 나머지 dev Branch는 실제 작업을 시작할 때 생성합니다.
 
