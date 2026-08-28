@@ -2,42 +2,43 @@
 
 ## 목적
 
-GeoLife GPS와 transportation label을 이용해 Canopy에서 실제 사용자의 이동수단을 판단할 Mobility Recognition Model을 만드는 작업입니다.
+GeoLife GPS와 transportation label을 이용해 Canopy의 실제 이동수단을 Window 단위로 분류하고, 연속 예측을 Multi-modal Trip Segment로 재구성합니다.
 
-## 데이터
+## Raw Data
 
-Microsoft Research GeoLife
+Microsoft Research GeoLife Trajectories 1.3
 
-## 목표 Mode
+## Target Mode
 
 `walk`, `bike`, `car`, `bus`, `rail`
 
-## 처리
+## 처리 과정
 
-Raw GPS → Label 연결 → GPS Feature → Window Dataset → Mobility Recognition → Segment → Multi-modal Trip Reconstruction
+Raw GPS
+→ Label Mapping
+→ GPS Feature
+→ Window Dataset
+→ Mobility Recognition
+→ Segment Reconstruction
 
-## 결과
+## 현재 결과
 
-현재는 원본 구조와 label 연결 품질을 확인한 단계입니다.
-
-- trajectory: 18,670개, 182명
-- GPS point: 24,876,978개(좌표 오류 1개 포함)
-- label: 14,718개 row, 69명
-- matched point: 5,372,735개
-- ambiguous point: 67,880개
-- 60초 학습 Window: 213,549개
-- baseline Test Accuracy: 0.6459
-- baseline Test Macro F1: 0.4566
-- unmatched point: 19,436,362개
+- 60초 Window: 213,549개
+- 최종 후보: 120초 Window + 무가중치 RandomForest
+- Validation Accuracy / Macro F1: 0.7203 / 0.6898
+- 최종 Test Accuracy / Macro F1: 0.6681 / 0.4715
+- Test rail F1: 0.0149, bus F1: 0.2087
 
 ## 현재 한계
 
-- 원본 label에는 5개 target 외 mode도 존재합니다.
-- 겹치는 label interval은 임의로 선택하지 않고 ambiguous로 남깁니다.
-- 긴 sampling gap과 좌표 오류가 있어 전처리 규칙 검증이 필요합니다.
-- baseline은 생성했지만 rail/bus Test F1이 각각 0.0183/0.2315로 낮습니다.
-- 추가 품질 개선과 segment 검증이 필요합니다.
+- GPS-only Feature에서 rail은 주로 walk로, bus는 car로 혼동됩니다.
+- car·bus·rail 구분에는 Transit Context 보강이 필요할 수 있습니다.
+- 원본 ZIP과 생성 CSV, Model artifact는 Git에서 제외합니다.
 
 ## 실행
 
-구현 단계에서 필요한 명령을 추가합니다.
+```powershell
+./scripts/rebuild_geolife.ps1 -RawZip "C:/path/Geolife Trajectories 1.3.zip"
+```
+
+주요 분석과 평가 결과는 `reports/geolife_*.md`에 기록되어 있습니다.
