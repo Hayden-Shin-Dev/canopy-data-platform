@@ -1,40 +1,61 @@
-# Canopy Emission Factors
+# Canopy Data Platform
 
-## 목적
+## 프로젝트 목적
 
-Canopy의 canonical mode별 operational travel emission factor를 공식 source에서 추출하고, subtype·차량 fuel/size 정보가 있을 때 가장 구체적인 factor를 선택한다.
+Canopy는 친환경 이동 자체를 보상하는 것이 아니라, 일반적으로 예상되는 이동행동과 실제 이동행동의 차이를 비교해서 저탄소 방향의 Behaviour Shift가 발생했는지를 측정하는 프로젝트입니다.
 
-## Source
+## 전체 구조
 
-UK Government `Greenhouse gas reporting: conversion factors 2026` flat-format workbook. 실제 구조는 `Factors by Category` sheet의 6번째 header와 10개 column을 기준으로 parser가 읽는다. 원본에 없는 값은 만들지 않는다.
+KTDB — Expected Behaviour / Population Baseline
 
-## Canonical mode
+GeoLife — Mobility Recognition Model 학습
 
-`walk`, `bike`, `car`, `bus`, `rail`
+Emission Factors — 교통수단별 CO2 환산 기준
 
-walk와 conventional bicycle은 Canopy v1 operational boundary에서 0 gCO2e/person.km 정책값을 사용한다. e-bike는 포함하지 않는다.
+Transit Context — GPS만으로 구분이 어려운 bus/car 등의 판단 보조
 
-## Mapping과 fallback
+Realtime GPS — iOS에서 실제 사용자 GPS 수집 및 Streaming
 
-- car: petrol, diesel, hybrid, plug-in hybrid, battery electric, CNG, LPG, unknown × small/medium/large/average
-- bus: local bus, London bus, average local bus, coach
-- rail: national rail, international rail, light rail and tram, underground
-- fallback: exact → average/unknown 공식 row → unresolved error
+Integration — Expected Behaviour와 Actual Behaviour를 비교하고 CO2 Reduction 및 Reward 계산
 
-car factor는 `gCO2e/vehicle.km`, bus·rail은 `gCO2e/passenger.km`로 정규화하며 원본 `kg CO2e` 값과 source row ID를 함께 보존한다. POC 차량 occupancy assumption은 1이다.
+## 현재 진행 상태
 
-## 산출물
+KTDB v1 완료
 
-- `data/processed/emission_factors/emission_factors_2026.csv`
-- `reports/emission_factors/source_audit.json`
-- `reports/emission_factors/validation.json`
-- `reports/emission_factors/sample_factor_resolution.json`
+- Raw trips: 356,899
+- Valid features: 331,189
+- Commute trips: 86,561
+- Test Accuracy: 약 0.677
+- Macro F1: 약 0.411
+- Tag: `ktdb-v1.0.0`, `ktdb-v1.1.0`
 
-## 실행
+GeoLife v1 완료
 
-```powershell
-./scripts/rebuild_emission_factors.ps1 -SourceWorkbook "C:/path/ghg-conversion-factors-2026-flat-format-revised.xlsx"
-py -3.13 -m pytest -q
-```
+- 120초 Window + GPS quality + purity filtering
+- Test Accuracy: 0.6942
+- Test Macro F1: 0.5330
+- Tag: `geolife-v1.0.0`, `geolife-v1.1.0`
 
-Transit Context에서 subtype을 제공하면 `FactorResolver.resolve_emission_factor`에 전달한다. 이 branch에서는 버스·철도 API나 실제 한국 배출계수를 추가하지 않는다.
+Emission Factors v1 완료
+
+- GOV.UK 2026 source audit 및 5개 canonical mode reference
+- Tag: `emission-factors-v1.0.0`
+
+Transit Context: 필요 여부 검증 예정
+
+Realtime GPS: 예정
+
+Integration: 예정
+
+## Branch
+
+- `main`
+- `dev/ktdb-v1`
+- `dev/geolife-v1`
+- `dev/emission-factors-v1`
+
+나머지 dev Branch는 실제 작업을 시작할 때 생성합니다.
+
+## 개발 순서
+
+KTDB → GeoLife → Emission Factors → 필요 시 Transit Context → Realtime GPS → Canopy Integration
