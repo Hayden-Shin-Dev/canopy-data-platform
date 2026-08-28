@@ -9,6 +9,7 @@ from collections import Counter
 from pathlib import Path
 
 from src.geolife.config import DEFAULT_GAP_THRESHOLD_SECONDS, DEFAULT_MIN_POINTS, DEFAULT_STOP_THRESHOLD_MPS
+from src.geolife.gps_quality import GpsQualityPolicy, GpsQualityStats, iter_quality_points
 from src.geolife.label_match import iter_labeled_points
 from src.geolife.labeled_windows import iter_labeled_time_windows
 from src.geolife.raw import iter_label_intervals, iter_trajectory_points
@@ -43,15 +44,22 @@ def build_window_dataset(
     window_seconds: int = 60,
     min_points: int = DEFAULT_MIN_POINTS,
     min_label_coverage: float = 0.5,
+    apply_gps_quality: bool = True,
 ) -> dict[str, object]:
     if not 0 < min_label_coverage <= 1:
         raise ValueError("min_label_coverage는 0보다 크고 1 이하여야 합니다")
     labels = list(iter_label_intervals(zip_path))
     parse_errors = []
-    points = iter_trajectory_points(
+    raw_points = iter_trajectory_points(
         zip_path,
         strict=False,
         on_error=parse_errors.append,
+    )
+    quality_stats = GpsQualityStats()
+    points = (
+        iter_quality_points(raw_points, stats=quality_stats)
+        if apply_gps_quality
+        else raw_points
     )
     windows = iter_labeled_time_windows(
         iter_labeled_points(points, labels),
@@ -116,6 +124,11 @@ def build_window_dataset(
         "selected_mode_counts": dict(sorted(selected_mode_counts.items())),
         "trajectory_parse_error_count": len(parse_errors),
         "trajectory_parse_error_examples": [str(error) for error in parse_errors[:5]],
+        "gps_quality": {
+            "enabled": apply_gps_quality,
+            "policy": GpsQualityPolicy().__dict__ if apply_gps_quality else None,
+            "stats": quality_stats.__dict__ if apply_gps_quality else None,
+        },
     }
     summary_path = output_path.with_suffix(".summary.json")
     summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -129,6 +142,7 @@ def main() -> None:
     parser.add_argument("--window-seconds", type=int, default=60)
     parser.add_argument("--min-points", type=int, default=DEFAULT_MIN_POINTS)
     parser.add_argument("--min-label-coverage", type=float, default=0.5)
+    parser.add_argument("--skip-gps-quality", action="store_true")
     args = parser.parse_args()
     result = build_window_dataset(
         args.zip_path,
@@ -136,6 +150,7 @@ def main() -> None:
         window_seconds=args.window_seconds,
         min_points=args.min_points,
         min_label_coverage=args.min_label_coverage,
+        apply_gps_quality=not args.skip_gps_quality,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
