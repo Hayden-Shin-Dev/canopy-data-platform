@@ -8,7 +8,7 @@ from pathlib import Path
 
 import joblib
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
 from sklearn.metrics import (
     accuracy_score,
     classification_report,
@@ -41,11 +41,14 @@ def train_baseline(
     n_estimators: int = 100,
     random_seed: int = 2021,
     class_weight: str | None = "balanced_subsample",
+    model_type: str = "random_forest",
 ) -> dict[str, object]:
     if n_estimators < 1:
         raise ValueError("n_estimators는 양수여야 합니다")
     if class_weight not in (None, "balanced", "balanced_subsample"):
         raise ValueError("class_weight는 None, balanced, balanced_subsample 중 하나여야 합니다")
+    if model_type not in ("random_forest", "extra_trees"):
+        raise ValueError("model_type은 random_forest 또는 extra_trees여야 합니다")
     frame = pd.read_csv(dataset_csv, encoding="utf-8-sig", dtype={"user_id": "string"})
     required = METADATA_COLUMNS | {"split"}
     missing = sorted(required - set(frame.columns))
@@ -66,7 +69,8 @@ def train_baseline(
     if missing_classes:
         raise ValueError(f"train split에 없는 target class가 있습니다: {missing_classes}")
 
-    model = RandomForestClassifier(
+    classifier = RandomForestClassifier if model_type == "random_forest" else ExtraTreesClassifier
+    model = classifier(
         n_estimators=n_estimators,
         random_state=random_seed,
         n_jobs=-1,
@@ -94,7 +98,7 @@ def train_baseline(
         }
 
     result = {
-        "model": "RandomForestClassifier",
+        "model": type(model).__name__,
         "n_estimators": n_estimators,
         "random_seed": random_seed,
         "class_weight": class_weight,
@@ -127,6 +131,7 @@ def main() -> None:
     parser.add_argument("--n-estimators", type=int, default=100)
     parser.add_argument("--random-seed", type=int, default=2021)
     parser.add_argument("--class-weight", choices=("none", "balanced", "balanced_subsample"), default="balanced_subsample")
+    parser.add_argument("--model-type", choices=("random_forest", "extra_trees"), default="random_forest")
     args = parser.parse_args()
     result = train_baseline(
         args.dataset_csv,
@@ -135,6 +140,7 @@ def main() -> None:
         n_estimators=args.n_estimators,
         random_seed=args.random_seed,
         class_weight=None if args.class_weight == "none" else args.class_weight,
+        model_type=args.model_type,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
