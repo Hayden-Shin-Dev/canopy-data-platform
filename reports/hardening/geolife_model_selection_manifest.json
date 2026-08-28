@@ -14,5 +14,6 @@
   "validation": {"row_count": 6647, "accuracy": 0.6968557244, "macro_f1": 0.6146326316, "weighted_f1": 0.7091720805},
   "independent_test": {"row_count": 11725, "accuracy": 0.6942430704, "macro_f1": 0.5330154554, "weighted_f1": 0.6820454073},
   "build_script": "scripts/rebuild_geolife.ps1",
+  "build_commit": "e1e36b5",
   "selection_rule": "Validation Macro F1 only; Test was evaluated once after selection"
 }

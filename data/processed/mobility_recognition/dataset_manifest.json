@@ -4,6 +4,7 @@
   "source": "GeoLife Trajectories 1.3",
   "source_archive": "Geolife Trajectories 1.3.zip",
   "build_script": "scripts/rebuild_geolife.ps1",
+  "build_commit": "e1e36b5",
   "window_seconds": 120,
   "purity_threshold": 0.9,
   "dataset_csv": "data/processed/mobility_recognition/geolife_120s_purity_090.csv",
