@@ -44,11 +44,16 @@ class GeoLifeBaselineTrainingTests(unittest.TestCase):
 
         self.assertTrue(model_created)
         self.assertEqual(result["classes"], sorted(modes))
+        self.assertEqual(result["class_weight"], "balanced_subsample")
         self.assertEqual(saved["metrics"]["test"]["row_count"], 5)
 
     def test_rejects_empty_estimator_count(self) -> None:
         with self.assertRaises(ValueError):
             train_baseline("missing.csv", "model.joblib", "metrics.json", n_estimators=0)
+
+    def test_rejects_unknown_class_weight(self) -> None:
+        with self.assertRaises(ValueError):
+            train_baseline("missing.csv", "model.joblib", "metrics.json", class_weight="unknown")
 
 
 if __name__ == "__main__":
