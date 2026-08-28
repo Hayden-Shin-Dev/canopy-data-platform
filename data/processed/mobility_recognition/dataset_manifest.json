@@ -1,0 +1,46 @@
+{
+  "dataset_name": "Canopy GeoLife mobility windows",
+  "version": "1.1.0",
+  "source": "GeoLife Trajectories 1.3",
+  "source_archive": "Geolife Trajectories 1.3.zip",
+  "build_script": "scripts/rebuild_geolife.ps1",
+  "window_seconds": 120,
+  "purity_threshold": 0.9,
+  "dataset_csv": "data/processed/mobility_recognition/geolife_120s_purity_090.csv",
+  "sha256": "c1d9fa1a9e3217af33c1b34f4769f2d52dbed6e97c267f9cc59b54608951dcaf",
+  "row_count": 113718,
+  "columns": [
+    "user_id", "trajectory_id", "window_start", "window_end", "canonical_mode",
+    "label_coverage", "matched_point_count", "ambiguous_point_count", "excluded_point_count",
+    "dominant_mode_point_count", "canonical_mode_purity", "distinct_mode_count", "is_transition_window",
+    "point_count", "observed_duration_sec", "distance_m", "displacement_m", "straightness_ratio",
+    "mean_speed_mps", "max_speed_mps", "speed_std_mps", "mean_abs_acceleration_mps2",
+    "acceleration_std_mps2", "stop_ratio", "mean_heading_change_deg", "altitude_range_m",
+    "avg_sampling_interval_sec", "valid_step_count", "gap_step_count", "split"
+  ],
+  "units": {
+    "distance_m": "m",
+    "observed_duration_sec": "s",
+    "mean_speed_mps": "m/s",
+    "max_speed_mps": "m/s",
+    "altitude_range_m": "m"
+  },
+  "mode_mapping": "src/geolife/mode_mapping.py",
+  "gps_quality_policy": "src/geolife/gps_quality.py",
+  "split_policy": "user_group_split seed=2021",
+  "split_rows": {"train": 95346, "validation": 6647, "test": 11725},
+  "mode_rows": {"bike": 16132, "bus": 26349, "car": 22483, "rail": 15515, "walk": 33239},
+  "quality": {
+    "nan_count": 0,
+    "inf_count": 0,
+    "duplicate_row_count": 0,
+    "valid_step_count_zero": 0,
+    "displacement_gt_distance": 0,
+    "straightness_gt_1": 0
+  },
+  "limitations": [
+    "GPS-only features do not reliably separate rail, bus, and car.",
+    "Transit context is not included in this version.",
+    "The dataset contains no road-network route distance."
+  ]
+}
