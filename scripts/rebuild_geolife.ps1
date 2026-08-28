@@ -7,6 +7,18 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+py -3.13 -m scripts.build_geolife_windows `
+    $RawZip `
+    "$OutputRoot/geolife_windows_30s.csv" `
+    --window-seconds 30 `
+    --min-points 2 `
+    --min-label-coverage 0.5
+
+py -3.13 -m scripts.assign_geolife_splits `
+    "$OutputRoot/geolife_windows_30s.csv" `
+    "$OutputRoot/geolife_windows_30s_split.csv" `
+    --seed 2021
+
 # 60초 split을 기준으로 Window 길이 비교와 최종 120초 모델을 재현한다.
 py -3.13 -m scripts.build_geolife_windows `
     $RawZip `
