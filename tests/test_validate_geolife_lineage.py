@@ -23,7 +23,7 @@ def test_lineage_connects_raw_labels_and_processed_windows() -> None:
         pd.DataFrame(
             {
                 "user_id": ["001"],
-                "trajectory_id": ["1"],
+                "trajectory_id": ["1#q1"],
                 "window_start": ["2021-01-01 00:00:00"],
                 "window_end": ["2021-01-01 00:01:00"],
                 "canonical_mode": ["walk"],
