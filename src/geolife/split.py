@@ -52,3 +52,22 @@ def assign_group_splits(
     result["split"] = result[group_column].astype(str).map(split_by_group)
     return result
 
+
+def apply_group_split_map(
+    frame: pd.DataFrame,
+    split_by_group: Mapping[str, str],
+    *,
+    group_column: str = "user_id",
+) -> pd.DataFrame:
+    """기존 user→split 매핑을 다른 Window Dataset에도 적용한다."""
+    if group_column not in frame.columns:
+        raise ValueError(f"group column이 없습니다: {group_column}")
+    if set(split_by_group.values()) - {"train", "validation", "test"}:
+        raise ValueError("split 값은 train, validation, test 중 하나여야 합니다")
+    groups = frame[group_column].astype(str)
+    missing = sorted(set(groups) - set(split_by_group))
+    if missing:
+        raise ValueError(f"split 매핑에 없는 group이 있습니다: {missing}")
+    result = frame.copy()
+    result["split"] = groups.map({str(key): value for key, value in split_by_group.items()})
+    return result
