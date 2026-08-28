@@ -22,6 +22,10 @@ class WindowLabelSummary:
     ambiguous_point_count: int
     excluded_point_count: int
     mode_counts: dict[str, int]
+    dominant_mode_point_count: int
+    canonical_mode_purity: float
+    distinct_mode_count: int
+    is_transition_window: bool
 
     @property
     def coverage(self) -> float:
@@ -46,7 +50,14 @@ def summarize_window_labels(points: Sequence[LabeledPoint]) -> WindowLabelSummar
         else:
             mode_counts[canonical_mode] += 1
 
-    matched_point_count = sum(mode_counts.values()) + excluded_point_count
+    canonical_labeled_count = sum(mode_counts.values())
+    dominant_mode_point_count = max(mode_counts.values(), default=0)
+    canonical_mode_purity = (
+        dominant_mode_point_count / canonical_labeled_count if canonical_labeled_count else 0.0
+    )
+    distinct_mode_count = len(mode_counts)
+    is_transition_window = distinct_mode_count >= 2
+    matched_point_count = canonical_labeled_count + excluded_point_count
     if not mode_counts:
         status: WindowLabelStatus = "unlabeled"
         canonical_mode = None
@@ -68,5 +79,9 @@ def summarize_window_labels(points: Sequence[LabeledPoint]) -> WindowLabelSummar
         ambiguous_point_count=ambiguous_point_count,
         excluded_point_count=excluded_point_count,
         mode_counts=dict(sorted(mode_counts.items())),
+        dominant_mode_point_count=dominant_mode_point_count,
+        canonical_mode_purity=canonical_mode_purity,
+        distinct_mode_count=distinct_mode_count,
+        is_transition_window=is_transition_window,
     )
 
