@@ -1,0 +1,54 @@
+{
+  "source_year": 2026,
+  "source_name": "UK Government GHG Conversion Factors for Company Reporting",
+  "workbook_sheet": "Factors by Category",
+  "source_header_row": 5,
+  "ghg_unit": "kg CO2e",
+  "car": {
+    "level_1": "Passenger vehicles",
+    "level_2": "Cars (by size)",
+    "uom": "km",
+    "fuel": {
+      "Petrol": "petrol",
+      "Diesel": "diesel",
+      "Hybrid": "hybrid",
+      "Plug-in Hybrid Electric Vehicle": "plug_in_hybrid",
+      "Battery Electric Vehicle": "battery_electric",
+      "CNG": "cng",
+      "LPG": "lpg",
+      "Unknown": "unknown"
+    },
+    "size": {
+      "Small car": "small",
+      "Medium car": "medium",
+      "Large car": "large",
+      "Average car": "average"
+    }
+  },
+  "bus": {
+    "level_1": "Business travel- land",
+    "level_2": "Bus",
+    "uom": "passenger.km",
+    "subtype": {
+      "Local bus (not London)": "local_bus",
+      "Local London bus": "london_bus",
+      "Average local bus": "average_local_bus",
+      "Coach": "coach"
+    }
+  },
+  "rail": {
+    "level_1": "Business travel- land",
+    "level_2": "Rail",
+    "uom": "passenger.km",
+    "subtype": {
+      "National rail": "national_rail",
+      "International rail": "international_rail",
+      "Light rail and tram": "light_rail",
+      "London Underground": "underground"
+    }
+  },
+  "policy_modes": {
+    "walk": {"factor_value": 0.0, "normalized_unit": "gCO2e/person.km", "subtype": "conventional_walk"},
+    "bike": {"factor_value": 0.0, "normalized_unit": "gCO2e/person.km", "subtype": "conventional_bicycle"}
+  }
+}

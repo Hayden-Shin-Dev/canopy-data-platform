@@ -1,0 +1,156 @@
+{
+  "source_workbook": "C:\\Users\\user\\Downloads\\ghg-conversion-factors-2026-flat-format-revised.xlsx",
+  "cases": [
+    {
+      "mode": "walk",
+      "distance_km": 2.0,
+      "resolved_factor": {
+        "factor_value": 0.0,
+        "unit": "gCO2e/person.km",
+        "canonical_mode": "walk",
+        "resolved_subtype": "conventional_walk",
+        "source": "Canopy POC policy",
+        "source_year": 2026,
+        "source_category": "Canopy POC policy",
+        "source_row_identifier": "canopy-policy-walk-zero",
+        "fallback_used": false,
+        "fallback_reason": null
+      },
+      "co2e_g": 0.0
+    },
+    {
+      "mode": "bike",
+      "distance_km": 5.0,
+      "resolved_factor": {
+        "factor_value": 0.0,
+        "unit": "gCO2e/person.km",
+        "canonical_mode": "bike",
+        "resolved_subtype": "conventional_bicycle",
+        "source": "Canopy POC policy",
+        "source_year": 2026,
+        "source_category": "Canopy POC policy",
+        "source_row_identifier": "canopy-policy-bike-zero",
+        "fallback_used": false,
+        "fallback_reason": null
+      },
+      "co2e_g": 0.0
+    },
+    {
+      "mode": "car",
+      "distance_km": 10.0,
+      "resolved_factor": {
+        "factor_value": 174.10999999999999,
+        "unit": "gCO2e/vehicle.km",
+        "canonical_mode": "car",
+        "resolved_subtype": "petrol_medium",
+        "source": "UK Government GHG Conversion Factors for Company Reporting",
+        "source_year": 2026,
+        "source_category": "Passenger vehicles | Cars (by size) | Medium car",
+        "source_row_identifier": "4_301_3054_4_1",
+        "fallback_used": false,
+        "fallback_reason": null
+      },
+      "co2e_g": 1741.1
+    },
+    {
+      "mode": "car",
+      "distance_km": 10.0,
+      "resolved_factor": {
+        "factor_value": 165.91,
+        "unit": "gCO2e/vehicle.km",
+        "canonical_mode": "car",
+        "resolved_subtype": "unknown_average",
+        "source": "UK Government GHG Conversion Factors for Company Reporting",
+        "source_year": 2026,
+        "source_category": "Passenger vehicles | Cars (by size) | Average car",
+        "source_row_identifier": "4_301_3074_4_1",
+        "fallback_used": true,
+        "fallback_reason": "official average/unknown fallback"
+      },
+      "co2e_g": 1659.1
+    },
+    {
+      "mode": "bus",
+      "distance_km": 10.0,
+      "resolved_factor": {
+        "factor_value": 125.52,
+        "unit": "gCO2e/passenger.km",
+        "canonical_mode": "bus",
+        "resolved_subtype": "local_bus",
+        "source": "UK Government GHG Conversion Factors for Company Reporting",
+        "source_year": 2026,
+        "source_category": "Business travel- land | Bus | Local bus (not London)",
+        "source_row_identifier": "25_314_3143_11_1",
+        "fallback_used": false,
+        "fallback_reason": null
+      },
+      "co2e_g": 1255.2
+    },
+    {
+      "mode": "rail",
+      "distance_km": 10.0,
+      "resolved_factor": {
+        "factor_value": 15.49,
+        "unit": "gCO2e/passenger.km",
+        "canonical_mode": "rail",
+        "resolved_subtype": "underground",
+        "source": "UK Government GHG Conversion Factors for Company Reporting",
+        "source_year": 2026,
+        "source_category": "Business travel- land | Rail | London Underground",
+        "source_row_identifier": "25_315_3150_11_1",
+        "fallback_used": false,
+        "fallback_reason": null
+      },
+      "co2e_g": 154.9
+    },
+    {
+      "mode": "rail",
+      "distance_km": 10.0,
+      "resolved_factor": {
+        "factor_value": 30.919999999999998,
+        "unit": "gCO2e/passenger.km",
+        "canonical_mode": "rail",
+        "resolved_subtype": "national_rail",
+        "source": "UK Government GHG Conversion Factors for Company Reporting",
+        "source_year": 2026,
+        "source_category": "Business travel- land | Rail | National rail",
+        "source_row_identifier": "25_315_3147_11_1",
+        "fallback_used": true,
+        "fallback_reason": "national rail fallback"
+      },
+      "co2e_g": 309.2
+    }
+  ],
+  "multimodal_trip": {
+    "trip_total_co2e_g": 168.841,
+    "segments": [
+      {
+        "mode": "walk",
+        "subtype": "conventional_walk",
+        "distance_km": 0.8,
+        "factor": 0.0,
+        "unit": "gCO2e/person.km",
+        "co2e_g": 0.0,
+        "fallback_used": false
+      },
+      {
+        "mode": "rail",
+        "subtype": "underground",
+        "distance_km": 10.9,
+        "factor": 15.49,
+        "unit": "gCO2e/passenger.km",
+        "co2e_g": 168.841,
+        "fallback_used": false
+      },
+      {
+        "mode": "walk",
+        "subtype": "conventional_walk",
+        "distance_km": 0.7,
+        "factor": 0.0,
+        "unit": "gCO2e/person.km",
+        "co2e_g": 0.0,
+        "fallback_used": false
+      }
+    ]
+  }
+}
