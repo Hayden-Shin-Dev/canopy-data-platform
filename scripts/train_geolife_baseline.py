@@ -29,6 +29,10 @@ METADATA_COLUMNS = {
     "matched_point_count",
     "ambiguous_point_count",
     "excluded_point_count",
+    "dominant_mode_point_count",
+    "canonical_mode_purity",
+    "distinct_mode_count",
+    "is_transition_window",
 }
 EXPECTED_CLASSES = ("walk", "bike", "car", "bus", "rail")
 
