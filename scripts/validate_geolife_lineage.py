@@ -13,6 +13,11 @@ from src.geolife.mode_mapping import CANOPY_MODES, canonicalize_mode
 from src.geolife.raw import iter_label_intervals, iter_trajectory_points
 
 
+def _base_trajectory_id(value: str) -> str:
+    """품질 segment suffix(#qN)를 제외하고 Raw trajectory와 비교한다."""
+    return value.split("#q", 1)[0]
+
+
 def validate_lineage(raw_source: str | Path, processed_csv: str | Path) -> dict[str, object]:
     labels = list(iter_label_intervals(raw_source))
     raw_mode_counts = Counter()
@@ -36,7 +41,10 @@ def validate_lineage(raw_source: str | Path, processed_csv: str | Path) -> dict[
         raise ValueError(f"processed CSV required columns missing: {missing}")
     processed_mode_counts = frame["canonical_mode"].value_counts().to_dict()
     processed_users = set(frame["user_id"].dropna().astype(str))
-    processed_trajectories = set(zip(frame["user_id"].astype(str), frame["trajectory_id"].astype(str)))
+    processed_trajectories = {
+        (str(user), _base_trajectory_id(str(trajectory)))
+        for user, trajectory in zip(frame["user_id"], frame["trajectory_id"])
+    }
     invalid_modes = sorted(set(processed_mode_counts) - set(CANOPY_MODES))
     empty_modes = sorted(mode for mode in CANOPY_MODES if processed_mode_counts.get(mode, 0) == 0)
     trajectory_overlap = len(processed_trajectories & raw_trajectories)
