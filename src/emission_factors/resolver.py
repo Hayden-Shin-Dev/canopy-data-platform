@@ -49,8 +49,8 @@ class FactorResolver:
             attempts = [(subtype or f"conventional_{'walk' if mode == 'walk' else 'bicycle'}", None, None, "policy default")]
         elif mode == "car":
             attempts = [
-                (f"{fuel_type}_{vehicle_size}" if fuel_type and vehicle_size else None, fuel_type, vehicle_size, "exact fuel and size"),
-                (f"{fuel_type}_average" if fuel_type else None, fuel_type, "average", "exact fuel and average size"),
+                (f"{fuel_type}_{vehicle_size}" if fuel_type and fuel_type != "unknown" and vehicle_size else None, fuel_type, vehicle_size, "exact fuel and size"),
+                (f"{fuel_type}_average" if fuel_type and fuel_type != "unknown" else None, fuel_type, "average", "exact fuel and average size"),
                 (f"unknown_{vehicle_size}" if vehicle_size else None, "unknown", vehicle_size, "unknown fuel and requested size"),
                 ("unknown_average", "unknown", "average", "official average/unknown fallback"),
             ]
