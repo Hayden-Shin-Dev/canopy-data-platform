@@ -1,0 +1,180 @@
+{
+  "source": "C:\\Users\\user\\Downloads\\Geolife Trajectories 1.3.zip",
+  "total_points": 24876977,
+  "user_count": 182,
+  "trajectory_count": 18670,
+  "parse_error_count": 1,
+  "parse_error_examples": [
+    "좌표 범위를 벗어났습니다: Geolife Trajectories 1.3/Data/020/Trajectory/20110911000506.plt:6782"
+  ],
+  "thresholds": {
+    "max_speed_mps": 100.0,
+    "gap_threshold_seconds": 120.0,
+    "max_altitude_jump_m": 500.0
+  },
+  "step_counts": {
+    "total_step_count": 24858307,
+    "long_gap_count": 81670,
+    "altitude_anomaly_count": 1923,
+    "extreme_speed_count": 51719,
+    "zero_dt_count": 698900
+  },
+  "speed_examples": [
+    {
+      "user_id": "000",
+      "trajectory_id": "20081115010133",
+      "timestamp": "2008-11-15 04:00:13",
+      "distance_m": 1279.4541719547244,
+      "delta_seconds": 8.0,
+      "speed_mps": 159.93177149434055
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20090330005208",
+      "timestamp": "2009-03-30 10:10:30",
+      "distance_m": 653.098071943477,
+      "delta_seconds": 5.0,
+      "speed_mps": 130.6196143886954
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20090403011657",
+      "timestamp": "2009-04-03 11:10:00",
+      "distance_m": 1045.1136460673147,
+      "delta_seconds": 5.0,
+      "speed_mps": 209.02272921346292
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20090419005226",
+      "timestamp": "2009-04-19 02:34:41",
+      "distance_m": 745.7548129058906,
+      "delta_seconds": 5.0,
+      "speed_mps": 149.15096258117813
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20090504023301",
+      "timestamp": "2009-05-04 03:59:25",
+      "distance_m": 512.0517845787937,
+      "delta_seconds": 5.0,
+      "speed_mps": 102.41035691575874
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20090505032432",
+      "timestamp": "2009-05-05 08:42:11",
+      "distance_m": 917.7983910001617,
+      "delta_seconds": 5.0,
+      "speed_mps": 183.55967820003235
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20090530034445",
+      "timestamp": "2009-05-30 09:43:11",
+      "distance_m": 511.8041980408444,
+      "delta_seconds": 5.0,
+      "speed_mps": 102.36083960816889
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20090612220336",
+      "timestamp": "2009-06-13 03:09:36",
+      "distance_m": 1103.038485182548,
+      "delta_seconds": 10.0,
+      "speed_mps": 110.3038485182548
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20090616054128",
+      "timestamp": "2009-06-16 05:49:38",
+      "distance_m": 632.9316933152176,
+      "delta_seconds": 5.0,
+      "speed_mps": 126.5863386630435
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20090616054128",
+      "timestamp": "2009-06-17 06:15:26",
+      "distance_m": 723.0588116481831,
+      "delta_seconds": 5.0,
+      "speed_mps": 144.61176232963663
+    }
+  ],
+  "altitude_examples": [
+    {
+      "user_id": "000",
+      "trajectory_id": "20081023025304",
+      "timestamp": "2008-10-23 10:26:35",
+      "altitude_delta_m": 2258.568
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20081023025304",
+      "timestamp": "2008-10-23 10:28:45",
+      "altitude_delta_m": 2041.2456000000002
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20081029092138",
+      "timestamp": "2008-10-29 09:30:28",
+      "altitude_delta_m": 823.2648
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20081110013637",
+      "timestamp": "2008-11-10 03:31:07",
+      "altitude_delta_m": 947.3184
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20081110013637",
+      "timestamp": "2008-11-10 03:31:12",
+      "altitude_delta_m": 745.236
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20081112023003",
+      "timestamp": "2008-11-12 04:21:25",
+      "altitude_delta_m": 694.6392000000001
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20081112023003",
+      "timestamp": "2008-11-12 04:21:32",
+      "altitude_delta_m": 621.792
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20081113034608",
+      "timestamp": "2008-11-13 06:50:41",
+      "altitude_delta_m": 511.1496
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20081113034608",
+      "timestamp": "2008-11-13 06:51:44",
+      "altitude_delta_m": 577.596
+    },
+    {
+      "user_id": "000",
+      "trajectory_id": "20081113034608",
+      "timestamp": "2008-11-13 06:52:04",
+      "altitude_delta_m": 674.2176000000001
+    }
+  ],
+  "processed_quality": {
+    "processed_csv": "data/processed/mobility_recognition/geolife_windows_120s_split.csv",
+    "window_count": 119260,
+    "affected_user_count": 7,
+    "affected_trajectory_count": 27,
+    "nan_count": 0,
+    "inf_count": 0,
+    "duplicate_row_count": 0,
+    "feature_anomaly_count": {
+      "valid_step_count_zero": 24,
+      "displacement_gt_distance": 14,
+      "straightness_gt_1": 3
+    }
+  }
+}
