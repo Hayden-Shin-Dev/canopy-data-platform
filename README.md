@@ -42,3 +42,8 @@ run_canopy_app.bat
 ```
 
 `mock/*ground_truth.txt`는 평가 전용 파일이며 inference 입력으로 읽지 않습니다.
+로컬 replay의 Full Pipeline에는 기존 KTDB feature contract가 필요합니다. CLI와 UI의
+User Mode는 `data/processed/population_baseline/ktdb/01_population_model_training_all.csv`
+의 기존 첫 행을 입력으로 읽으며, 값을 새로 만들거나 ground truth로 보정하지 않습니다.
+이 값은 local end-to-end 실행을 위한 입력이며 사용자별 Expected Behaviour를 생성하는
+기능은 이번 범위에 포함하지 않습니다.

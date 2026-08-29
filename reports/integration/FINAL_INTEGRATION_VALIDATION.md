@@ -58,3 +58,5 @@ pytest -q
 ground truth의 기대 sequence는 `walk -> rail -> walk`이지만 실제 예측은 이를
 충족하지 않았습니다. 결과를 보정하지 않고 [mock_trip_evaluation.json](mock_trip_evaluation.json)에
 `rail_present: false`로 기록했습니다.
+Full Pipeline의 KTDB 입력은 기존 processed dataset 첫 행을 local replay용으로 읽었습니다.
+이는 새로운 feature 생성이나 ground-truth 보정이 아닙니다.
