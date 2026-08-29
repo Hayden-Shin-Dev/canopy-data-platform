@@ -1,5 +1,7 @@
 # Canopy 전체 시스템 Audit
 
+Before/After 수치는 [EVALUATION_COMPARISON.md](EVALUATION_COMPARISON.md)에 별도로 정리했다.
+
 검증 기준: `mock/canopy_iphone_mock_yeongdeungpo_to_microsoft.csv` 433개 이벤트와 기존 독립 Test 산출물. Ground Truth는 비교용으로만 읽었고 inference 입력에는 사용하지 않았다.
 
 ## 1. Architecture Audit
