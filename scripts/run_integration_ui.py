@@ -146,11 +146,11 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
 # Result 이후에는 실제 감축량을 Token으로 환산해 보상 화면까지 이어간다.
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "</style></head>",
-    "</style><style>.reward-card{text-align:center;padding:28px 18px}.token-burst{font-size:54px;animation:tokenPop .7s ease-out}.token-earned{font-size:30px;color:#177950;margin:8px 0}.token-balance{font-size:13px;color:#63756c}.reward-note{font-size:12px;color:#718078;margin:8px 0 18px}@keyframes tokenPop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}</style></head>",
+    "</style><style>.reward-card{text-align:center;padding:28px 18px}.token-burst{font-size:54px;animation:tokenPop .7s ease-out}.token-earned{font-size:30px;color:#177950;margin:8px 0}.token-balance{font-size:13px;color:#63756c}.reward-note{font-size:12px;color:#718078;margin:8px 0 18px}.text-button{border:0;background:none;color:#5c7469;font-size:13px;margin-top:10px;padding:8px 16px}@keyframes tokenPop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}</style></head>",
 )
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     '<section id="developer" class="screen developer">',
-    '<section id="reward" class="screen"><div class="sheet reward-card"><div class="eyebrow">CANOPY TOKEN</div><div class="token-burst" aria-hidden="true">✦</div><div class="token-earned" id="tokenEarned">+0 Token</div><div class="reward-note" id="rewardNote">이번 이동의 CO2 감축량을 기준으로 계산했습니다.</div><div class="token-balance">현재 보유 <strong id="tokenBalance">0</strong> Token</div><button class="cta" onclick="showScreen(\'home\')">홈으로</button></div></section><section id="developer" class="screen developer">',
+    '<section id="reward" class="screen"><div class="sheet reward-card"><div class="eyebrow">CANOPY TOKEN</div><div class="token-burst" aria-hidden="true">✦</div><div class="token-earned" id="tokenEarned">+0 Token</div><div class="reward-note" id="rewardNote">이번 이동의 CO2 감축량을 기준으로 계산했습니다.</div><div class="token-balance">현재 보유 <strong id="tokenBalance">0</strong> Token</div><button class="cta" onclick="showScreen(\'result\')">결과 확인</button><button class="text-button" onclick="showScreen(\'home\')">홈으로</button></div></section><section id="developer" class="screen developer">',
 )
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     '<div class="eyebrow">?ㅻ뒛??異쒓렐</div>',
