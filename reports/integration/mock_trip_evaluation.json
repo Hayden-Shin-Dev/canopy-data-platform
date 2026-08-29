@@ -35,109 +35,109 @@
       "window_start": "2026-08-28T23:00:00+00:00",
       "window_end": "2026-08-28T23:02:00+00:00",
       "predicted_mode": "walk",
-      "confidence": 0.57
+      "confidence": 0.798358362066305
     },
     {
       "window_start": "2026-08-28T23:02:00+00:00",
       "window_end": "2026-08-28T23:04:00+00:00",
       "predicted_mode": "walk",
-      "confidence": 0.72
+      "confidence": 0.8063319525355551
     },
     {
       "window_start": "2026-08-28T23:04:00+00:00",
       "window_end": "2026-08-28T23:06:00+00:00",
       "predicted_mode": "walk",
-      "confidence": 0.73
+      "confidence": 0.8568936802785214
     },
     {
       "window_start": "2026-08-28T23:06:00+00:00",
       "window_end": "2026-08-28T23:08:00+00:00",
       "predicted_mode": "walk",
-      "confidence": 0.79
+      "confidence": 0.8407496323212968
     },
     {
       "window_start": "2026-08-28T23:08:00+00:00",
       "window_end": "2026-08-28T23:10:00+00:00",
       "predicted_mode": "bike",
-      "confidence": 0.53
+      "confidence": 0.6859459929934136
     },
     {
       "window_start": "2026-08-28T23:10:00+00:00",
       "window_end": "2026-08-28T23:12:00+00:00",
       "predicted_mode": "bike",
-      "confidence": 0.56
+      "confidence": 0.6850202811745765
     },
     {
       "window_start": "2026-08-28T23:12:00+00:00",
       "window_end": "2026-08-28T23:14:00+00:00",
       "predicted_mode": "bike",
-      "confidence": 0.57
+      "confidence": 0.7316550469772815
     },
     {
       "window_start": "2026-08-28T23:14:00+00:00",
       "window_end": "2026-08-28T23:16:00+00:00",
       "predicted_mode": "bike",
-      "confidence": 0.58
+      "confidence": 0.7922847670550329
     },
     {
       "window_start": "2026-08-28T23:16:00+00:00",
       "window_end": "2026-08-28T23:18:00+00:00",
       "predicted_mode": "bike",
-      "confidence": 0.45
+      "confidence": 0.7027771211917125
     },
     {
       "window_start": "2026-08-28T23:18:00+00:00",
       "window_end": "2026-08-28T23:20:00+00:00",
       "predicted_mode": "bike",
-      "confidence": 0.45
+      "confidence": 0.6241072931882474
     },
     {
       "window_start": "2026-08-28T23:20:00+00:00",
       "window_end": "2026-08-28T23:22:00+00:00",
       "predicted_mode": "bike",
-      "confidence": 0.42
+      "confidence": 0.685247143308262
     },
     {
       "window_start": "2026-08-28T23:22:00+00:00",
       "window_end": "2026-08-28T23:24:00+00:00",
       "predicted_mode": "bike",
-      "confidence": 0.46
+      "confidence": 0.7363165674800083
     },
     {
       "window_start": "2026-08-28T23:24:00+00:00",
       "window_end": "2026-08-28T23:26:00+00:00",
       "predicted_mode": "bike",
-      "confidence": 0.41
+      "confidence": 0.658327248031572
     },
     {
       "window_start": "2026-08-28T23:26:00+00:00",
       "window_end": "2026-08-28T23:28:00+00:00",
       "predicted_mode": "bike",
-      "confidence": 0.43
+      "confidence": 0.7403311486365937
     },
     {
       "window_start": "2026-08-28T23:28:00+00:00",
       "window_end": "2026-08-28T23:30:00+00:00",
       "predicted_mode": "bike",
-      "confidence": 0.39
+      "confidence": 0.538549825056825
     },
     {
       "window_start": "2026-08-28T23:30:00+00:00",
       "window_end": "2026-08-28T23:32:00+00:00",
       "predicted_mode": "walk",
-      "confidence": 0.97
+      "confidence": 0.9116042212556815
     },
     {
       "window_start": "2026-08-28T23:32:00+00:00",
       "window_end": "2026-08-28T23:34:00+00:00",
       "predicted_mode": "walk",
-      "confidence": 0.94
+      "confidence": 0.9120407235669776
     },
     {
       "window_start": "2026-08-28T23:34:00+00:00",
       "window_end": "2026-08-28T23:36:00+00:00",
       "predicted_mode": "walk",
-      "confidence": 0.89
+      "confidence": 0.9118603968033292
     }
   ],
   "ktdb_baseline": {
@@ -174,11 +174,11 @@
     },
     "predicted_mode": "rail",
     "probabilities": {
-      "walk": 0.05435188578914848,
-      "bike": 0.0018196882049962666,
-      "car": 0.20735188066334695,
-      "bus": 0.11961303586897265,
-      "rail": 0.6168635094735357
+      "walk": 0.034403655196781735,
+      "bike": 0.0030599418791732677,
+      "car": 0.20948959812541987,
+      "bus": 0.1457704622566272,
+      "rail": 0.6072763425419979
     }
   },
   "production_pipeline": {
@@ -186,7 +186,6 @@
     "final_mode": "walk",
     "mode_sequence": [
       "walk",
-      "bike",
       "rail",
       "walk"
     ],
@@ -194,24 +193,26 @@
       {
         "mode": "walk",
         "start_time": "2026-08-28T23:00:00+00:00",
-        "end_time": "2026-08-28T23:07:55+00:00",
-        "duration_sec": 475.0,
-        "distance_km": 0.6335446088916523,
+        "end_time": "2026-08-28T23:11:55+00:00",
+        "duration_sec": 715.0,
+        "distance_km": 2.2715273579290214,
         "start_coordinate": [
           37.5248277,
           126.9109164
         ],
         "end_coordinate": [
-          37.5222971,
-          126.917159
+          37.5206331,
+          126.9258641
         ],
         "window_indices": [
           0,
           1,
           2,
-          3
+          3,
+          4,
+          5
         ],
-        "window_count": 4,
+        "window_count": 6,
         "transit_evidence": [
           {
             "nearby_bus_stop_count": 1,
@@ -239,7 +240,7 @@
             "subway_start_station_id": null,
             "subway_end_station_id": null,
             "subway_evidence_reason": "endpoint proximity only",
-            "train_context_score": 0.003,
+            "train_context_score": 0.00897269195950871,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -271,10 +272,10 @@
             "subway_start_station_id": null,
             "subway_end_station_id": null,
             "subway_evidence_reason": "endpoint proximity only",
-            "train_context_score": 0.0,
+            "train_context_score": 0.006448540464416854,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
-            "train_evidence_reason": "no strong train evidence",
+            "train_evidence_reason": "station proximity with rail probability",
             "context_status": "READY"
           },
           {
@@ -303,7 +304,7 @@
             "subway_start_station_id": null,
             "subway_end_station_id": null,
             "subway_evidence_reason": "endpoint proximity only",
-            "train_context_score": 0.003,
+            "train_context_score": 0.0051822241844865675,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -335,40 +336,12 @@
             "subway_start_station_id": null,
             "subway_end_station_id": null,
             "subway_evidence_reason": "endpoint proximity only",
-            "train_context_score": 0.0,
+            "train_context_score": 0.005789973642558773,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
-            "train_evidence_reason": "no strong train evidence",
+            "train_evidence_reason": "station proximity with rail probability",
             "context_status": "READY"
-          }
-        ],
-        "matched_subway_line": null,
-        "subtype": "conventional_walk",
-        "factor": 0.0,
-        "unit": "gCO2e/person.km",
-        "co2e_g": 0.0,
-        "fallback_used": false
-      },
-      {
-        "mode": "bike",
-        "start_time": "2026-08-28T23:07:55+00:00",
-        "end_time": "2026-08-28T23:11:55+00:00",
-        "duration_sec": 240.0,
-        "distance_km": 1.637982749037369,
-        "start_coordinate": [
-          37.5222971,
-          126.917159
-        ],
-        "end_coordinate": [
-          37.5206331,
-          126.9258641
-        ],
-        "window_indices": [
-          4,
-          5
-        ],
-        "window_count": 2,
-        "transit_evidence": [
+          },
           {
             "nearby_bus_stop_count": 3,
             "matched_bus_route_id": "115000006",
@@ -401,7 +374,7 @@
             "subway_start_station_id": "2527",
             "subway_end_station_id": "2527",
             "subway_evidence_reason": "trajectory station proximity",
-            "train_context_score": 0.015,
+            "train_context_score": 0.01778111320834257,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -439,15 +412,15 @@
             "subway_start_station_id": "2527",
             "subway_end_station_id": "2527",
             "subway_evidence_reason": "trajectory station proximity",
-            "train_context_score": 0.0,
+            "train_context_score": 0.0040818396170274425,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
-            "train_evidence_reason": "no strong train evidence",
+            "train_evidence_reason": "station proximity with rail probability",
             "context_status": "READY"
           }
         ],
         "matched_subway_line": "5",
-        "subtype": "conventional_bicycle",
+        "subtype": "conventional_walk",
         "factor": 0.0,
         "unit": "gCO2e/person.km",
         "co2e_g": 0.0,
@@ -514,7 +487,7 @@
             "subway_start_station_id": "2527",
             "subway_end_station_id": "2528",
             "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-            "train_context_score": 0.015,
+            "train_context_score": 0.008226338132479335,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -553,7 +526,7 @@
             "subway_start_station_id": "2528",
             "subway_end_station_id": "2528",
             "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-            "train_context_score": 0.009,
+            "train_context_score": 0.0142295495634908,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -593,7 +566,7 @@
             "subway_start_station_id": "2527",
             "subway_end_station_id": "2529",
             "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-            "train_context_score": 0.03,
+            "train_context_score": 0.01938339059675431,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -635,7 +608,7 @@
             "subway_start_station_id": "2527",
             "subway_end_station_id": "2530",
             "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-            "train_context_score": 0.021,
+            "train_context_score": 0.022626718092176108,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -677,7 +650,7 @@
             "subway_start_station_id": "2530",
             "subway_end_station_id": "2530",
             "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-            "train_context_score": 0.027,
+            "train_context_score": 0.013795983431758209,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -719,7 +692,7 @@
             "subway_start_station_id": "2527",
             "subway_end_station_id": "2531",
             "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-            "train_context_score": 0.027,
+            "train_context_score": 0.014488210402648414,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -764,7 +737,7 @@
             "subway_start_station_id": "2527",
             "subway_end_station_id": "243",
             "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-            "train_context_score": 0.027,
+            "train_context_score": 0.01846076787433537,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -809,7 +782,7 @@
             "subway_start_station_id": "243",
             "subway_end_station_id": "2533",
             "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-            "train_context_score": 0.018,
+            "train_context_score": 0.008775874570059983,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -855,7 +828,7 @@
             "subway_start_station_id": "2527",
             "subway_end_station_id": "2534",
             "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-            "train_context_score": 0.021,
+            "train_context_score": 0.02261835353697981,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -929,7 +902,7 @@
             "subway_start_station_id": "2534",
             "subway_end_station_id": "2534",
             "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-            "train_context_score": 0.003,
+            "train_context_score": 0.002660664131435937,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -974,10 +947,10 @@
             "subway_start_station_id": "2534",
             "subway_end_station_id": "2534",
             "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-            "train_context_score": 0.0,
+            "train_context_score": 0.002619309915727323,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
-            "train_evidence_reason": "no strong train evidence",
+            "train_evidence_reason": "station proximity with rail probability",
             "context_status": "READY"
           },
           {
@@ -1019,7 +992,7 @@
             "subway_start_station_id": "2527",
             "subway_end_station_id": "2534",
             "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-            "train_context_score": 0.003,
+            "train_context_score": 0.002681731958727283,
             "matched_train_start_station": null,
             "matched_train_end_station": null,
             "train_evidence_reason": "station proximity with rail probability",
@@ -1057,25 +1030,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.01,
-          "bus": 0.18,
-          "car": 0.23,
-          "rail": 0.01,
-          "walk": 0.57
+          "bike": 0.021978024590560776,
+          "bus": 0.11589837937504255,
+          "car": 0.03385626076972934,
+          "rail": 0.02990897319836237,
+          "walk": 0.798358362066305
         },
         "geolife_predicted_mode": "walk",
         "final_mode": "walk",
         "decision": {
           "ml_predicted_mode": "walk",
-          "ml_confidence": 0.57,
-          "walk_probability": 0.57,
-          "bike_probability": 0.01,
-          "car_probability": 0.23,
-          "bus_probability": 0.18,
-          "rail_probability": 0.01,
+          "ml_confidence": 0.798358362066305,
+          "walk_probability": 0.798358362066305,
+          "bike_probability": 0.021978024590560776,
+          "car_probability": 0.03385626076972934,
+          "bus_probability": 0.11589837937504255,
+          "rail_probability": 0.02990897319836237,
           "bus_context_score": 0.24002098709411562,
           "subway_context_score": 0.0,
-          "train_context_score": 0.003,
+          "train_context_score": 0.00897269195950871,
           "matched_bus_route_id": "100100508",
           "matched_bus_route_no": "6300",
           "matched_subway_line": null,
@@ -1087,7 +1060,7 @@
           "rail_subtype": null,
           "correction_applied": false,
           "decision_status": "unchanged",
-          "decision_confidence": 0.57,
+          "decision_confidence": 0.798358362066305,
           "correction_reason": "ML prediction retained"
         },
         "transit_context": {
@@ -1116,7 +1089,7 @@
           "subway_start_station_id": null,
           "subway_end_station_id": null,
           "subway_evidence_reason": "endpoint proximity only",
-          "train_context_score": 0.003,
+          "train_context_score": 0.00897269195950871,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -1145,25 +1118,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.01,
-          "bus": 0.25,
-          "car": 0.02,
-          "rail": 0.0,
-          "walk": 0.72
+          "bike": 0.02320601269957106,
+          "bus": 0.12068405605869023,
+          "car": 0.028282843824794065,
+          "rail": 0.021495134881389513,
+          "walk": 0.8063319525355551
         },
         "geolife_predicted_mode": "walk",
         "final_mode": "walk",
         "decision": {
           "ml_predicted_mode": "walk",
-          "ml_confidence": 0.72,
-          "walk_probability": 0.72,
-          "bike_probability": 0.01,
-          "car_probability": 0.02,
-          "bus_probability": 0.25,
-          "rail_probability": 0.0,
+          "ml_confidence": 0.8063319525355551,
+          "walk_probability": 0.8063319525355551,
+          "bike_probability": 0.02320601269957106,
+          "car_probability": 0.028282843824794065,
+          "bus_probability": 0.12068405605869023,
+          "rail_probability": 0.021495134881389513,
           "bus_context_score": 0.0,
           "subway_context_score": 0.0,
-          "train_context_score": 0.0,
+          "train_context_score": 0.006448540464416854,
           "matched_bus_route_id": null,
           "matched_bus_route_no": null,
           "matched_subway_line": null,
@@ -1175,7 +1148,7 @@
           "rail_subtype": null,
           "correction_applied": false,
           "decision_status": "unchanged",
-          "decision_confidence": 0.72,
+          "decision_confidence": 0.8063319525355551,
           "correction_reason": "ML prediction retained"
         },
         "transit_context": {
@@ -1204,10 +1177,10 @@
           "subway_start_station_id": null,
           "subway_end_station_id": null,
           "subway_evidence_reason": "endpoint proximity only",
-          "train_context_score": 0.0,
+          "train_context_score": 0.006448540464416854,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
-          "train_evidence_reason": "no strong train evidence",
+          "train_evidence_reason": "station proximity with rail probability",
           "context_status": "READY"
         }
       },
@@ -1233,25 +1206,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.0,
-          "bus": 0.26,
-          "car": 0.0,
-          "rail": 0.01,
-          "walk": 0.73
+          "bike": 0.017658988842521057,
+          "bus": 0.08677944318229308,
+          "car": 0.021393807081709182,
+          "rail": 0.017274080614955226,
+          "walk": 0.8568936802785214
         },
         "geolife_predicted_mode": "walk",
         "final_mode": "walk",
         "decision": {
           "ml_predicted_mode": "walk",
-          "ml_confidence": 0.73,
-          "walk_probability": 0.73,
-          "bike_probability": 0.0,
-          "car_probability": 0.0,
-          "bus_probability": 0.26,
-          "rail_probability": 0.01,
+          "ml_confidence": 0.8568936802785214,
+          "walk_probability": 0.8568936802785214,
+          "bike_probability": 0.017658988842521057,
+          "car_probability": 0.021393807081709182,
+          "bus_probability": 0.08677944318229308,
+          "rail_probability": 0.017274080614955226,
           "bus_context_score": 0.0,
           "subway_context_score": 0.0,
-          "train_context_score": 0.003,
+          "train_context_score": 0.0051822241844865675,
           "matched_bus_route_id": null,
           "matched_bus_route_no": null,
           "matched_subway_line": null,
@@ -1263,7 +1236,7 @@
           "rail_subtype": null,
           "correction_applied": false,
           "decision_status": "unchanged",
-          "decision_confidence": 0.73,
+          "decision_confidence": 0.8568936802785214,
           "correction_reason": "ML prediction retained"
         },
         "transit_context": {
@@ -1292,7 +1265,7 @@
           "subway_start_station_id": null,
           "subway_end_station_id": null,
           "subway_evidence_reason": "endpoint proximity only",
-          "train_context_score": 0.003,
+          "train_context_score": 0.0051822241844865675,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -1321,25 +1294,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.01,
-          "bus": 0.2,
-          "car": 0.0,
-          "rail": 0.0,
-          "walk": 0.79
+          "bike": 0.02012844772657139,
+          "bus": 0.097750266779061,
+          "car": 0.022071741031208132,
+          "rail": 0.019299912141862576,
+          "walk": 0.8407496323212968
         },
         "geolife_predicted_mode": "walk",
         "final_mode": "walk",
         "decision": {
           "ml_predicted_mode": "walk",
-          "ml_confidence": 0.79,
-          "walk_probability": 0.79,
-          "bike_probability": 0.01,
-          "car_probability": 0.0,
-          "bus_probability": 0.2,
-          "rail_probability": 0.0,
+          "ml_confidence": 0.8407496323212968,
+          "walk_probability": 0.8407496323212968,
+          "bike_probability": 0.02012844772657139,
+          "car_probability": 0.022071741031208132,
+          "bus_probability": 0.097750266779061,
+          "rail_probability": 0.019299912141862576,
           "bus_context_score": 0.13005821684461816,
           "subway_context_score": 0.0,
-          "train_context_score": 0.0,
+          "train_context_score": 0.005789973642558773,
           "matched_bus_route_id": "115000006",
           "matched_bus_route_no": "6019",
           "matched_subway_line": null,
@@ -1351,7 +1324,7 @@
           "rail_subtype": null,
           "correction_applied": false,
           "decision_status": "unchanged",
-          "decision_confidence": 0.79,
+          "decision_confidence": 0.8407496323212968,
           "correction_reason": "ML prediction retained"
         },
         "transit_context": {
@@ -1380,10 +1353,10 @@
           "subway_start_station_id": null,
           "subway_end_station_id": null,
           "subway_evidence_reason": "endpoint proximity only",
-          "train_context_score": 0.0,
+          "train_context_score": 0.005789973642558773,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
-          "train_evidence_reason": "no strong train evidence",
+          "train_evidence_reason": "station proximity with rail probability",
           "context_status": "READY"
         }
       },
@@ -1409,25 +1382,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.53,
-          "bus": 0.05,
-          "car": 0.33,
-          "rail": 0.05,
-          "walk": 0.04
+          "bike": 0.6859459929934136,
+          "bus": 0.11055007541662334,
+          "car": 0.12458419012741115,
+          "rail": 0.0592703773611419,
+          "walk": 0.019649364101410077
         },
         "geolife_predicted_mode": "bike",
-        "final_mode": "bike",
+        "final_mode": "walk",
         "decision": {
           "ml_predicted_mode": "bike",
-          "ml_confidence": 0.53,
-          "walk_probability": 0.04,
-          "bike_probability": 0.53,
-          "car_probability": 0.33,
-          "bus_probability": 0.05,
-          "rail_probability": 0.05,
+          "ml_confidence": 0.6859459929934136,
+          "walk_probability": 0.019649364101410077,
+          "bike_probability": 0.6859459929934136,
+          "car_probability": 0.12458419012741115,
+          "bus_probability": 0.11055007541662334,
+          "rail_probability": 0.0592703773611419,
           "bus_context_score": 0.2627286803265484,
           "subway_context_score": 0.45194934540670123,
-          "train_context_score": 0.015,
+          "train_context_score": 0.01778111320834257,
           "matched_bus_route_id": "115000006",
           "matched_bus_route_no": "6019",
           "matched_subway_line": "5",
@@ -1435,12 +1408,12 @@
           "subway_end_station_id": "2527",
           "matched_train_start_station": null,
           "matched_train_end_station": null,
-          "final_mode": "bike",
+          "final_mode": "walk",
           "rail_subtype": null,
-          "correction_applied": false,
-          "decision_status": "unchanged",
-          "decision_confidence": 0.53,
-          "correction_reason": "ML prediction retained"
+          "correction_applied": true,
+          "decision_status": "smoothed",
+          "decision_confidence": 0.6859459929934136,
+          "correction_reason": "continued ordered transit evidence across adjacent windows"
         },
         "transit_context": {
           "nearby_bus_stop_count": 3,
@@ -1474,7 +1447,7 @@
           "subway_start_station_id": "2527",
           "subway_end_station_id": "2527",
           "subway_evidence_reason": "trajectory station proximity",
-          "train_context_score": 0.015,
+          "train_context_score": 0.01778111320834257,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -1503,25 +1476,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.56,
-          "bus": 0.12,
-          "car": 0.24,
-          "rail": 0.0,
-          "walk": 0.08
+          "bike": 0.6850202811745765,
+          "bus": 0.08436155739975193,
+          "car": 0.17270699895978103,
+          "rail": 0.013606132056758142,
+          "walk": 0.044305030409132425
         },
         "geolife_predicted_mode": "bike",
-        "final_mode": "bike",
+        "final_mode": "walk",
         "decision": {
           "ml_predicted_mode": "bike",
-          "ml_confidence": 0.56,
-          "walk_probability": 0.08,
-          "bike_probability": 0.56,
-          "car_probability": 0.24,
-          "bus_probability": 0.12,
-          "rail_probability": 0.0,
+          "ml_confidence": 0.6850202811745765,
+          "walk_probability": 0.044305030409132425,
+          "bike_probability": 0.6850202811745765,
+          "car_probability": 0.17270699895978103,
+          "bus_probability": 0.08436155739975193,
+          "rail_probability": 0.013606132056758142,
           "bus_context_score": 0.42153219180815893,
           "subway_context_score": 0.47950303318935206,
-          "train_context_score": 0.0,
+          "train_context_score": 0.0040818396170274425,
           "matched_bus_route_id": "100100032",
           "matched_bus_route_no": "163",
           "matched_subway_line": "5",
@@ -1529,12 +1502,12 @@
           "subway_end_station_id": "2527",
           "matched_train_start_station": null,
           "matched_train_end_station": null,
-          "final_mode": "bike",
+          "final_mode": "walk",
           "rail_subtype": null,
-          "correction_applied": false,
-          "decision_status": "ambiguous",
-          "decision_confidence": 0.56,
-          "correction_reason": "bus and rail context scores are close"
+          "correction_applied": true,
+          "decision_status": "smoothed",
+          "decision_confidence": 0.6850202811745765,
+          "correction_reason": "continued ordered transit evidence across adjacent windows"
         },
         "transit_context": {
           "nearby_bus_stop_count": 5,
@@ -1568,10 +1541,10 @@
           "subway_start_station_id": "2527",
           "subway_end_station_id": "2527",
           "subway_evidence_reason": "trajectory station proximity",
-          "train_context_score": 0.0,
+          "train_context_score": 0.0040818396170274425,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
-          "train_evidence_reason": "no strong train evidence",
+          "train_evidence_reason": "station proximity with rail probability",
           "context_status": "READY"
         }
       },
@@ -1597,25 +1570,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.57,
-          "bus": 0.17,
-          "car": 0.17,
-          "rail": 0.05,
-          "walk": 0.04
+          "bike": 0.7316550469772815,
+          "bus": 0.10843217147641072,
+          "car": 0.1102842954592324,
+          "rail": 0.02742112710826445,
+          "walk": 0.022207358978810963
         },
         "geolife_predicted_mode": "bike",
         "final_mode": "rail",
         "decision": {
           "ml_predicted_mode": "bike",
-          "ml_confidence": 0.57,
-          "walk_probability": 0.04,
-          "bike_probability": 0.57,
-          "car_probability": 0.17,
-          "bus_probability": 0.17,
-          "rail_probability": 0.05,
+          "ml_confidence": 0.7316550469772815,
+          "walk_probability": 0.022207358978810963,
+          "bike_probability": 0.7316550469772815,
+          "car_probability": 0.1102842954592324,
+          "bus_probability": 0.10843217147641072,
+          "rail_probability": 0.02742112710826445,
           "bus_context_score": 0.4946487466280841,
           "subway_context_score": 0.662568861187713,
-          "train_context_score": 0.015,
+          "train_context_score": 0.008226338132479335,
           "matched_bus_route_id": "100100118",
           "matched_bus_route_no": "753",
           "matched_subway_line": "5",
@@ -1664,7 +1637,7 @@
           "subway_start_station_id": "2527",
           "subway_end_station_id": "2528",
           "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-          "train_context_score": 0.015,
+          "train_context_score": 0.008226338132479335,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -1693,25 +1666,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.58,
-          "bus": 0.01,
-          "car": 0.37,
-          "rail": 0.03,
-          "walk": 0.01
+          "bike": 0.7922847670550329,
+          "bus": 0.07510744350476736,
+          "car": 0.06804883466602708,
+          "rail": 0.04743183187830267,
+          "walk": 0.017127122895870112
         },
         "geolife_predicted_mode": "bike",
         "final_mode": "rail",
         "decision": {
           "ml_predicted_mode": "bike",
-          "ml_confidence": 0.58,
-          "walk_probability": 0.01,
-          "bike_probability": 0.58,
-          "car_probability": 0.37,
-          "bus_probability": 0.01,
-          "rail_probability": 0.03,
+          "ml_confidence": 0.7922847670550327,
+          "walk_probability": 0.01712712289587011,
+          "bike_probability": 0.7922847670550327,
+          "car_probability": 0.06804883466602707,
+          "bus_probability": 0.07510744350476735,
+          "rail_probability": 0.047431831878302654,
           "bus_context_score": 0.4259610071350355,
           "subway_context_score": 0.6943784508922307,
-          "train_context_score": 0.009,
+          "train_context_score": 0.0142295495634908,
           "matched_bus_route_id": "100100118",
           "matched_bus_route_no": "753",
           "matched_subway_line": "5",
@@ -1759,7 +1732,7 @@
           "subway_start_station_id": "2528",
           "subway_end_station_id": "2528",
           "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-          "train_context_score": 0.009,
+          "train_context_score": 0.0142295495634908,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -1788,25 +1761,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.45,
-          "bus": 0.04,
-          "car": 0.4,
-          "rail": 0.1,
-          "walk": 0.01
+          "bike": 0.7027771211917125,
+          "bus": 0.10228697643329297,
+          "car": 0.11391998875941106,
+          "rail": 0.06461130198918104,
+          "walk": 0.016404611626402457
         },
         "geolife_predicted_mode": "bike",
         "final_mode": "rail",
         "decision": {
           "ml_predicted_mode": "bike",
-          "ml_confidence": 0.45,
-          "walk_probability": 0.01,
-          "bike_probability": 0.45,
-          "car_probability": 0.4,
-          "bus_probability": 0.04,
-          "rail_probability": 0.1,
+          "ml_confidence": 0.7027771211917125,
+          "walk_probability": 0.016404611626402457,
+          "bike_probability": 0.7027771211917125,
+          "car_probability": 0.11391998875941106,
+          "bus_probability": 0.10228697643329297,
+          "rail_probability": 0.06461130198918104,
           "bus_context_score": 0.21191740924693087,
           "subway_context_score": 0.526115924708461,
-          "train_context_score": 0.03,
+          "train_context_score": 0.01938339059675431,
           "matched_bus_route_id": "100100447",
           "matched_bus_route_no": "7016",
           "matched_subway_line": "5",
@@ -1855,7 +1828,7 @@
           "subway_start_station_id": "2527",
           "subway_end_station_id": "2529",
           "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-          "train_context_score": 0.03,
+          "train_context_score": 0.01938339059675431,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -1884,25 +1857,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.45,
-          "bus": 0.11,
-          "car": 0.35,
-          "rail": 0.07,
-          "walk": 0.02
+          "bike": 0.6241072931882474,
+          "bus": 0.14742391052933074,
+          "car": 0.13043799253454416,
+          "rail": 0.07542239364058703,
+          "walk": 0.02260841010729061
         },
         "geolife_predicted_mode": "bike",
         "final_mode": "rail",
         "decision": {
           "ml_predicted_mode": "bike",
-          "ml_confidence": 0.45,
-          "walk_probability": 0.02,
-          "bike_probability": 0.45,
-          "car_probability": 0.35,
-          "bus_probability": 0.11,
-          "rail_probability": 0.07,
+          "ml_confidence": 0.6241072931882474,
+          "walk_probability": 0.02260841010729061,
+          "bike_probability": 0.6241072931882474,
+          "car_probability": 0.13043799253454416,
+          "bus_probability": 0.14742391052933074,
+          "rail_probability": 0.07542239364058703,
           "bus_context_score": 0.2646519412555129,
           "subway_context_score": 0.7952791219769005,
-          "train_context_score": 0.021,
+          "train_context_score": 0.022626718092176108,
           "matched_bus_route_id": "100100089",
           "matched_bus_route_no": "604",
           "matched_subway_line": "5",
@@ -1953,7 +1926,7 @@
           "subway_start_station_id": "2527",
           "subway_end_station_id": "2530",
           "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-          "train_context_score": 0.021,
+          "train_context_score": 0.022626718092176108,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -1982,25 +1955,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.42,
-          "bus": 0.22,
-          "car": 0.25,
-          "rail": 0.09,
-          "walk": 0.02
+          "bike": 0.685247143308262,
+          "bus": 0.14561348799331167,
+          "car": 0.09900981024948234,
+          "rail": 0.04598661143919403,
+          "walk": 0.02414294700975011
         },
         "geolife_predicted_mode": "bike",
         "final_mode": "rail",
         "decision": {
           "ml_predicted_mode": "bike",
-          "ml_confidence": 0.42,
-          "walk_probability": 0.02,
-          "bike_probability": 0.42,
-          "car_probability": 0.25,
-          "bus_probability": 0.22,
-          "rail_probability": 0.09,
+          "ml_confidence": 0.6852471433082619,
+          "walk_probability": 0.0241429470097501,
+          "bike_probability": 0.6852471433082619,
+          "car_probability": 0.09900981024948231,
+          "bus_probability": 0.14561348799331164,
+          "rail_probability": 0.045986611439194025,
           "bus_context_score": 0.28133353761560137,
           "subway_context_score": 0.7759881251571104,
-          "train_context_score": 0.027,
+          "train_context_score": 0.013795983431758209,
           "matched_bus_route_id": "100000024",
           "matched_bus_route_no": "새벽A160",
           "matched_subway_line": "5",
@@ -2051,7 +2024,7 @@
           "subway_start_station_id": "2530",
           "subway_end_station_id": "2530",
           "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-          "train_context_score": 0.027,
+          "train_context_score": 0.013795983431758209,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -2080,25 +2053,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.46,
-          "bus": 0.18,
-          "car": 0.24,
-          "rail": 0.09,
-          "walk": 0.03
+          "bike": 0.7363165674800083,
+          "bus": 0.10763866880576976,
+          "car": 0.08593614561515399,
+          "rail": 0.048294034675494715,
+          "walk": 0.02181458342357329
         },
         "geolife_predicted_mode": "bike",
         "final_mode": "rail",
         "decision": {
           "ml_predicted_mode": "bike",
-          "ml_confidence": 0.46,
-          "walk_probability": 0.03,
-          "bike_probability": 0.46,
-          "car_probability": 0.24,
-          "bus_probability": 0.18,
-          "rail_probability": 0.09,
+          "ml_confidence": 0.7363165674800083,
+          "walk_probability": 0.02181458342357329,
+          "bike_probability": 0.7363165674800083,
+          "car_probability": 0.08593614561515399,
+          "bus_probability": 0.10763866880576976,
+          "rail_probability": 0.048294034675494715,
           "bus_context_score": 0.33028311203445526,
           "subway_context_score": 0.7920361952695063,
-          "train_context_score": 0.027,
+          "train_context_score": 0.014488210402648414,
           "matched_bus_route_id": "100000024",
           "matched_bus_route_no": "새벽A160",
           "matched_subway_line": "5",
@@ -2149,7 +2122,7 @@
           "subway_start_station_id": "2527",
           "subway_end_station_id": "2531",
           "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-          "train_context_score": 0.027,
+          "train_context_score": 0.014488210402648414,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -2178,25 +2151,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.41,
-          "bus": 0.2,
-          "car": 0.3,
-          "rail": 0.09,
-          "walk": 0.0
+          "bike": 0.658327248031572,
+          "bus": 0.13348270103327078,
+          "car": 0.12923346910782468,
+          "rail": 0.06153589291445124,
+          "walk": 0.017420688912881073
         },
         "geolife_predicted_mode": "bike",
         "final_mode": "rail",
         "decision": {
           "ml_predicted_mode": "bike",
-          "ml_confidence": 0.41,
-          "walk_probability": 0.0,
-          "bike_probability": 0.41,
-          "car_probability": 0.3,
-          "bus_probability": 0.2,
-          "rail_probability": 0.09,
+          "ml_confidence": 0.6583272480315722,
+          "walk_probability": 0.017420688912881076,
+          "bike_probability": 0.6583272480315722,
+          "car_probability": 0.1292334691078247,
+          "bus_probability": 0.1334827010332708,
+          "rail_probability": 0.06153589291445125,
           "bus_context_score": 0.1565400052669101,
           "subway_context_score": 0.7932211732884373,
-          "train_context_score": 0.027,
+          "train_context_score": 0.01846076787433537,
           "matched_bus_route_id": "100000024",
           "matched_bus_route_no": "새벽A160",
           "matched_subway_line": "5",
@@ -2250,7 +2223,7 @@
           "subway_start_station_id": "2527",
           "subway_end_station_id": "243",
           "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-          "train_context_score": 0.027,
+          "train_context_score": 0.01846076787433537,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -2279,25 +2252,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.43,
-          "bus": 0.22,
-          "car": 0.24,
-          "rail": 0.06,
-          "walk": 0.05
+          "bike": 0.7403311486365937,
+          "bus": 0.12697013058242868,
+          "car": 0.07938785271634384,
+          "rail": 0.029252915233533277,
+          "walk": 0.0240579528311005
         },
         "geolife_predicted_mode": "bike",
         "final_mode": "rail",
         "decision": {
           "ml_predicted_mode": "bike",
-          "ml_confidence": 0.43,
-          "walk_probability": 0.05,
-          "bike_probability": 0.43,
-          "car_probability": 0.24,
-          "bus_probability": 0.22,
-          "rail_probability": 0.06,
+          "ml_confidence": 0.7403311486365937,
+          "walk_probability": 0.0240579528311005,
+          "bike_probability": 0.7403311486365937,
+          "car_probability": 0.07938785271634384,
+          "bus_probability": 0.12697013058242868,
+          "rail_probability": 0.029252915233533277,
           "bus_context_score": 0.29109330293768665,
           "subway_context_score": 0.7929550108556029,
-          "train_context_score": 0.018,
+          "train_context_score": 0.008775874570059983,
           "matched_bus_route_id": "100100585",
           "matched_bus_route_no": "N37",
           "matched_subway_line": "5",
@@ -2351,7 +2324,7 @@
           "subway_start_station_id": "243",
           "subway_end_station_id": "2533",
           "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-          "train_context_score": 0.018,
+          "train_context_score": 0.008775874570059983,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -2380,25 +2353,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.39,
-          "bus": 0.14,
-          "car": 0.39,
-          "rail": 0.07,
-          "walk": 0.01
+          "bike": 0.538549825056825,
+          "bus": 0.1768769297637073,
+          "car": 0.19251963138457195,
+          "rail": 0.0753945117899327,
+          "walk": 0.016659102004963025
         },
         "geolife_predicted_mode": "bike",
         "final_mode": "rail",
         "decision": {
           "ml_predicted_mode": "bike",
-          "ml_confidence": 0.39,
-          "walk_probability": 0.01,
-          "bike_probability": 0.39,
-          "car_probability": 0.39,
-          "bus_probability": 0.14,
-          "rail_probability": 0.07,
+          "ml_confidence": 0.538549825056825,
+          "walk_probability": 0.016659102004963025,
+          "bike_probability": 0.538549825056825,
+          "car_probability": 0.19251963138457195,
+          "bus_probability": 0.1768769297637073,
+          "rail_probability": 0.0753945117899327,
           "bus_context_score": 0.18810606196954982,
           "subway_context_score": 0.7448340090708738,
-          "train_context_score": 0.021,
+          "train_context_score": 0.02261835353697981,
           "matched_bus_route_id": "100100001",
           "matched_bus_route_no": "01A",
           "matched_subway_line": "5",
@@ -2453,7 +2426,7 @@
           "subway_start_station_id": "2527",
           "subway_end_station_id": "2534",
           "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-          "train_context_score": 0.021,
+          "train_context_score": 0.02261835353697981,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -2482,25 +2455,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.02,
-          "bus": 0.0,
-          "car": 0.0,
-          "rail": 0.01,
-          "walk": 0.97
+          "bike": 0.010092684423215486,
+          "bus": 0.05149842886422404,
+          "car": 0.017935785018759157,
+          "rail": 0.00886888043811979,
+          "walk": 0.9116042212556815
         },
         "geolife_predicted_mode": "walk",
         "final_mode": "walk",
         "decision": {
           "ml_predicted_mode": "walk",
-          "ml_confidence": 0.97,
-          "walk_probability": 0.97,
-          "bike_probability": 0.02,
-          "car_probability": 0.0,
-          "bus_probability": 0.0,
-          "rail_probability": 0.01,
+          "ml_confidence": 0.9116042212556815,
+          "walk_probability": 0.9116042212556815,
+          "bike_probability": 0.010092684423215486,
+          "car_probability": 0.017935785018759157,
+          "bus_probability": 0.05149842886422404,
+          "rail_probability": 0.00886888043811979,
           "bus_context_score": 0.41645442658161863,
           "subway_context_score": 0.7195200350392597,
-          "train_context_score": 0.003,
+          "train_context_score": 0.002660664131435937,
           "matched_bus_route_id": "100100499",
           "matched_bus_route_no": "7212",
           "matched_subway_line": "5",
@@ -2554,7 +2527,7 @@
           "subway_start_station_id": "2534",
           "subway_end_station_id": "2534",
           "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-          "train_context_score": 0.003,
+          "train_context_score": 0.002660664131435937,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -2583,25 +2556,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.02,
-          "bus": 0.01,
-          "car": 0.03,
-          "rail": 0.0,
-          "walk": 0.94
+          "bike": 0.01004899236371872,
+          "bus": 0.05006115058542684,
+          "car": 0.019118100431452414,
+          "rail": 0.008731033052424411,
+          "walk": 0.9120407235669776
         },
         "geolife_predicted_mode": "walk",
         "final_mode": "walk",
         "decision": {
           "ml_predicted_mode": "walk",
-          "ml_confidence": 0.94,
-          "walk_probability": 0.94,
-          "bike_probability": 0.02,
-          "car_probability": 0.03,
-          "bus_probability": 0.01,
-          "rail_probability": 0.0,
+          "ml_confidence": 0.9120407235669776,
+          "walk_probability": 0.9120407235669776,
+          "bike_probability": 0.01004899236371872,
+          "car_probability": 0.019118100431452414,
+          "bus_probability": 0.05006115058542684,
+          "rail_probability": 0.008731033052424411,
           "bus_context_score": 0.403297208263689,
           "subway_context_score": 0.6329859891795935,
-          "train_context_score": 0.0,
+          "train_context_score": 0.002619309915727323,
           "matched_bus_route_id": "100100499",
           "matched_bus_route_no": "7212",
           "matched_subway_line": "5",
@@ -2655,10 +2628,10 @@
           "subway_start_station_id": "2534",
           "subway_end_station_id": "2534",
           "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-          "train_context_score": 0.0,
+          "train_context_score": 0.002619309915727323,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
-          "train_evidence_reason": "no strong train evidence",
+          "train_evidence_reason": "station proximity with rail probability",
           "context_status": "READY"
         }
       },
@@ -2684,25 +2657,25 @@
           "gap_step_count": 0
         },
         "probabilities": {
-          "bike": 0.02,
-          "bus": 0.02,
-          "car": 0.06,
-          "rail": 0.01,
-          "walk": 0.89
+          "bike": 0.008889167979564029,
+          "bus": 0.05277704609736138,
+          "car": 0.01753428259065437,
+          "rail": 0.008939106529090943,
+          "walk": 0.9118603968033292
         },
         "geolife_predicted_mode": "walk",
         "final_mode": "walk",
         "decision": {
           "ml_predicted_mode": "walk",
-          "ml_confidence": 0.89,
-          "walk_probability": 0.89,
-          "bike_probability": 0.02,
-          "car_probability": 0.06,
-          "bus_probability": 0.02,
-          "rail_probability": 0.01,
+          "ml_confidence": 0.9118603968033293,
+          "walk_probability": 0.9118603968033293,
+          "bike_probability": 0.00888916797956403,
+          "car_probability": 0.017534282590654374,
+          "bus_probability": 0.052777046097361384,
+          "rail_probability": 0.008939106529090945,
           "bus_context_score": 0.3708677186434314,
           "subway_context_score": 0.5495260644968099,
-          "train_context_score": 0.003,
+          "train_context_score": 0.002681731958727283,
           "matched_bus_route_id": "117000002",
           "matched_bus_route_no": "N51",
           "matched_subway_line": "5",
@@ -2756,7 +2729,7 @@
           "subway_start_station_id": "2527",
           "subway_end_station_id": "2534",
           "subway_evidence_reason": "same line, station sequence and trajectory proximity",
-          "train_context_score": 0.003,
+          "train_context_score": 0.002681731958727283,
           "matched_train_start_station": null,
           "matched_train_end_station": null,
           "train_evidence_reason": "station proximity with rail probability",
@@ -2765,9 +2738,9 @@
       }
     ],
     "distance_km": 10.179588320609643,
-    "expected_co2e_g": 667.9549579558366,
+    "expected_co2e_g": 695.5770047207156,
     "actual_co2e_g": 232.35856645256726,
-    "reduction_co2e_g": 435.5963915032693
+    "reduction_co2e_g": 463.21843826814836
   },
   "comparison": {
     "initial_walk": true,

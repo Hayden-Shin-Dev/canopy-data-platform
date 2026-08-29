@@ -1,5 +1,17 @@
 # Integration validation
 
+## Latest model and replay validation
+
+The latest reproducible run uses CatBoost for GeoLife and the validation-selected HistGradientBoosting candidate for KTDB. Candidate metrics and calibration scores are recorded in `GEOLIFE_MODEL_EXPERIMENTS.md` and `KTDB_MODEL_EXPERIMENTS.md`.
+
+- GeoLife test: Accuracy 0.7183, Macro F1 0.5616
+- KTDB test: Accuracy 0.6852, Macro F1 0.4193, multiclass Brier 0.4340
+- Mock raw GeoLife sequence: `walk -> bike -> walk`
+- Mock final sequence after evidence-aware smoothing: `walk -> rail -> walk`
+- Mock replay: 433 accepted, 0 rejected
+
+Production readiness remains **NOT READY** until labelled Transit precision/recall and long-duration real iPhone GPS validation are available. The JSON validation status is not a claim that those external checks passed.
+
 검증일: 2026-08-29
 
 현재 상태: **INTEGRATION VALIDATED / NOT READY FOR PRODUCTION**
