@@ -1,0 +1,28 @@
+{
+  "version": "1.0",
+  "coordinate_system": "WGS84 (EPSG:4326)",
+  "radii_m": {
+    "bus_stop": 150,
+    "subway_station": 250,
+    "korail_station": 500
+  },
+  "weights": {
+    "bus_proximity": 0.25,
+    "bus_route": 0.30,
+    "bus_sequence": 0.25,
+    "bus_live": 0.20,
+    "subway_proximity": 0.35,
+    "subway_line": 0.25,
+    "subway_timetable": 0.20,
+    "subway_sequence": 0.20,
+    "korail_proximity": 0.50,
+    "korail_ml_probability": 0.30,
+    "korail_movement": 0.20
+  },
+  "resolver": {
+    "strong_context_score": 0.70,
+    "minimum_context_score": 0.35,
+    "minimum_ml_confidence": 0.55,
+    "ambiguity_margin": 0.10
+  }
+}
