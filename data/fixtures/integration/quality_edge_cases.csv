@@ -1,0 +1,5 @@
+schema_version,trip_id,device_id,sequence,timestamp,latitude,longitude,horizontal_accuracy_m,altitude_m,vertical_accuracy_m,speed_mps,course_deg,source,is_simulated
+1.0,fixture-quality-edge,fixture-device,0,2026-08-29T17:00:00Z,37.566500,126.978000,8,30,5,2,90,quality_edge_fixture,true
+1.0,fixture-quality-edge,fixture-device,2,2026-08-29T17:03:00Z,37.566800,126.978300,8,30,5,2,90,quality_edge_fixture,true
+1.0,fixture-quality-edge,fixture-device,2,2026-08-29T17:03:00Z,37.566800,126.978300,8,30,5,2,90,quality_edge_fixture,true
+1.0,fixture-quality-edge,fixture-device,1,2026-08-29T17:04:00Z,37.567000,126.978500,8,30,5,2,90,quality_edge_fixture,true
