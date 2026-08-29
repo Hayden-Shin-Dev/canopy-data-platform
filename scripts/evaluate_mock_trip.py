@@ -12,12 +12,10 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-import pandas as pd
-
 from src.integration.geolife_adapter import infer_windows
+from src.integration.ktdb_context import build_expected_features
 from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
 from src.integration.replay import ReplayEngine, read_replay_csv
-from src.ktdb.schema import MODEL_FEATURES
 
 
 DEFAULT_CSV = ROOT / "mock/canopy_iphone_mock_yeongdeungpo_to_microsoft.csv"
@@ -55,8 +53,8 @@ def evaluate(csv_path: str | Path = DEFAULT_CSV, ground_truth_path: str | Path =
     )
     actual_window_modes = [window.predicted_mode for window in windows if window.status == "READY" and window.predicted_mode]
     actual_sequence = _compress_modes([str(mode) for mode in actual_window_modes])
-    sample = pd.read_csv(ROOT / "data/processed/population_baseline/ktdb/01_population_model_training_all.csv", nrows=1, encoding="utf-8-sig").iloc[0]
-    expected_features = {name: sample[name] for name in MODEL_FEATURES}
+    scenario = build_expected_features(replay.session.events)
+    expected_features = scenario.features
     pipeline = run_full_pipeline(
         replay.session.events,
         expected_features,
@@ -65,6 +63,7 @@ def evaluate(csv_path: str | Path = DEFAULT_CSV, ground_truth_path: str | Path =
         ktdb_model_path=ROOT / "models/expected_behaviour/ktdb_population_baseline.pkl",
         factors_csv=ROOT / "data/processed/emission_factors/emission_factors_2026.csv",
     )
+    resolved_sequence = _compress_modes([str(mode) for mode in pipeline.get("actual_behaviour", {}).get("mode_sequence", [])])
     expected_set = list(expected_modes)
     return {
         "status": "PASS" if replay.session.rejected_count == 0 else "FAIL",
@@ -76,13 +75,24 @@ def evaluate(csv_path: str | Path = DEFAULT_CSV, ground_truth_path: str | Path =
             {"window_start": window.window_start.isoformat(), "window_end": window.window_end.isoformat(), "predicted_mode": window.predicted_mode, "confidence": window.confidence}
             for window in windows
         ],
-        "production_pipeline": {"status": pipeline.get("status"), "final_mode": pipeline.get("actual_behaviour", {}).get("final_mode"), "distance_km": pipeline.get("distance_km")},
+        "ktdb_baseline": {"features": scenario.features, "provenance": scenario.provenance, "predicted_mode": pipeline.get("expected_behaviour", {}).get("predicted_mode"), "probabilities": pipeline.get("expected_behaviour", {}).get("probabilities", {})},
+        "production_pipeline": {
+            "status": pipeline.get("status"),
+            "final_mode": pipeline.get("actual_behaviour", {}).get("final_mode"),
+            "mode_sequence": resolved_sequence,
+            "segments": pipeline.get("actual_behaviour", {}).get("segments", []),
+            "window_results": pipeline.get("window_results", []),
+            "distance_km": pipeline.get("distance_km"),
+            "expected_co2e_g": pipeline.get("co2", {}).get("expected_co2e_g"),
+            "actual_co2e_g": pipeline.get("co2", {}).get("actual_co2e_g"),
+            "reduction_co2e_g": pipeline.get("co2", {}).get("reduction_co2e_g"),
+        },
         "comparison": {
-            "initial_walk": bool(actual_sequence and actual_sequence[0] == "walk"),
-            "rail_present": "rail" in actual_sequence,
-            "final_walk": bool(actual_sequence and actual_sequence[-1] == "walk"),
-            "walk_to_rail": "walk" in actual_sequence and "rail" in actual_sequence,
-            "rail_to_walk": "rail" in actual_sequence and actual_sequence[-1] == "walk",
+            "initial_walk": bool(resolved_sequence and resolved_sequence[0] == "walk"),
+            "rail_present": "rail" in resolved_sequence,
+            "final_walk": bool(resolved_sequence and resolved_sequence[-1] == "walk"),
+            "walk_to_rail": "walk" in resolved_sequence and "rail" in resolved_sequence,
+            "rail_to_walk": "rail" in resolved_sequence and resolved_sequence[-1] == "walk",
             "note": "Comparison is evaluation-only; no ground-truth correction is applied.",
         },
         "label_leakage": {"status": "PASS", "forbidden_fields_in_replay": False, "ground_truth_read_path": str(Path(ground_truth_path))},

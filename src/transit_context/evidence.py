@@ -117,6 +117,8 @@ def subway_context(
     stations: pd.DataFrame | None,
     ml_rail_probability: float = 0.0,
     timetable_compatible: bool | None = None,
+    trajectory: Sequence[tuple[float, float]] = (),
+    station_history: Sequence[tuple[str, str]] = (),
     settings: TransitSettings | None = None,
 ) -> dict[str, object]:
     settings = settings or load_settings()
@@ -126,6 +128,12 @@ def subway_context(
         "subway_line_score": 0.0,
         "subway_sequence_score": None,
         "subway_timetable_score": 0.0,
+        "subway_corridor_proximity_score": 0.0,
+        "subway_observed_station_count": 0,
+        "subway_current_observed_station_count": 0,
+        "subway_observed_station_ids": [],
+        "subway_current_observed_station_ids": [],
+        "subway_current_observed_lines": [],
         "matched_subway_line": None,
         "subway_start_station_id": None,
         "subway_end_station_id": None,
@@ -136,26 +144,66 @@ def subway_context(
     radius = settings.radii_m["subway_station"]
     start = _station_candidates(station_index, start_latitude, start_longitude, radius)
     end = _station_candidates(station_index, end_latitude, end_longitude, radius)
-    if start.empty or end.empty:
-        return empty
-    start_row, end_row = start.iloc[0], end.iloc[0]
-    start_lines = set(stations[stations["station_id"] == start_row["station_id"]]["line"].astype(str))
-    end_lines = set(stations[stations["station_id"] == end_row["station_id"]]["line"].astype(str))
+    start_row = start.iloc[0] if not start.empty else None
+    end_row = end.iloc[0] if not end.empty else None
+    start_lines = set(stations[stations["station_id"] == start_row["station_id"]]["line"].astype(str)) if start_row is not None else set()
+    end_lines = set(stations[stations["station_id"] == end_row["station_id"]]["line"].astype(str)) if end_row is not None else set()
     common = sorted(start_lines & end_lines)
-    line_score = 1.0 if common else 0.0
-    proximity = _bounded(1 - (float(start_row["distance_m"]) + float(end_row["distance_m"])) / (2 * radius))
+    corridor_radius = radius * 2.0
+    observed: list[tuple[str, str, float]] = []
+    for latitude, longitude in trajectory:
+        nearest = station_index.nearest(latitude, longitude)
+        distance = float(nearest["distance_m"])
+        if distance <= corridor_radius:
+            observed.append((str(nearest["station_id"]), str(nearest["line"]), distance))
+    observed_ids: list[str] = []
+    observed_lines: dict[str, list[str]] = {}
+    for station_id, line, _distance in observed:
+        if not observed_ids or observed_ids[-1] != station_id:
+            observed_ids.append(station_id)
+        observed_lines.setdefault(line, [])
+        if station_id not in observed_lines[line]:
+            observed_lines[line].append(station_id)
+    line_from_trajectory = max(observed_lines, key=lambda line: len(observed_lines[line]), default=None)
+    current_ids = list(observed_ids)
+    current_lines = sorted(observed_lines)
+    combined_lines: dict[str, list[str]] = {}
+    for station_id, line in station_history:
+        combined_lines.setdefault(str(line), [])
+        if str(station_id) not in combined_lines[str(line)]:
+            combined_lines[str(line)].append(str(station_id))
+    for line, station_ids in observed_lines.items():
+        combined_lines.setdefault(line, [])
+        for station_id in station_ids:
+            if station_id not in combined_lines[line]:
+                combined_lines[line].append(station_id)
+    history_line = max(combined_lines, key=lambda line: len(combined_lines[line]), default=None)
+    matched_line = common[0] if common else history_line or line_from_trajectory
+    line_score = 1.0 if matched_line is not None else 0.0
+    endpoint_proximity = _bounded(1 - (float(start_row["distance_m"]) + float(end_row["distance_m"])) / (2 * radius)) if start_row is not None and end_row is not None else 0.0
+    corridor_proximity = _bounded(1 - min((distance for _, _, distance in observed), default=corridor_radius) / corridor_radius)
+    proximity = max(endpoint_proximity, corridor_proximity)
+    line_station_ids = combined_lines.get(str(matched_line), []) if matched_line is not None else []
+    sequence = _bounded((len(line_station_ids) - 1) / 2.0) if len(line_station_ids) >= 2 else 0.0
     timetable_score = 1.0 if timetable_compatible is True else 0.0
-    score = _weighted({"subway_proximity": proximity, "subway_line": line_score, "subway_timetable": timetable_score, "subway_sequence": 0.0}, settings.weights)
+    score = _weighted({"subway_proximity": proximity, "subway_line": line_score, "subway_timetable": timetable_score, "subway_sequence": sequence}, settings.weights)
     return {
         **empty,
         "subway_context_score": score,
         "subway_proximity_score": proximity,
         "subway_line_score": line_score,
+        "subway_corridor_proximity_score": corridor_proximity,
+        "subway_observed_station_count": len(line_station_ids),
+        "subway_current_observed_station_count": len(observed_lines.get(str(matched_line), [])) if matched_line is not None else len(current_ids),
+        "subway_observed_station_ids": line_station_ids,
+        "subway_current_observed_station_ids": observed_lines.get(str(matched_line), current_ids) if matched_line is not None else current_ids,
+        "subway_current_observed_lines": current_lines,
+        "subway_sequence_score": sequence,
         "subway_timetable_score": timetable_score,
-        "matched_subway_line": common[0] if common else None,
-        "subway_start_station_id": str(start_row["station_id"]),
-        "subway_end_station_id": str(end_row["station_id"]),
-        "subway_evidence_reason": "same line and endpoint proximity" if common else "endpoint proximity only",
+        "matched_subway_line": matched_line,
+        "subway_start_station_id": str(start_row["station_id"]) if start_row is not None else (line_station_ids[0] if line_station_ids else None),
+        "subway_end_station_id": str(end_row["station_id"]) if end_row is not None else (line_station_ids[-1] if line_station_ids else None),
+        "subway_evidence_reason": "same line, station sequence and trajectory proximity" if len(line_station_ids) >= 2 else "trajectory station proximity" if line_station_ids else "endpoint proximity only",
     }
 
 

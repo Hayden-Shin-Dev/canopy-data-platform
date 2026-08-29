@@ -15,10 +15,14 @@ from src.transit_context.resolver import resolve_mode
 from src.transit_context.spatial import GeoPointIndex
 
 from .distance import trajectory_distance_km
-from .emissions import calculate_actual_emission, calculate_expected_emission, load_factor_resolver
+from src.emission_factors.calculator import calculate_multimodal_trip
+from src.transit_context.settings import load_settings
+
+from .emissions import calculate_expected_emission, load_factor_resolver
 from .expected_behaviour import ExpectedBehaviourResult, predict_expected
 from .geolife_adapter import WindowInference, infer_windows
 from .gps_contract import GpsEvent
+from .segments import smooth_window_modes
 
 
 @dataclass(frozen=True)
@@ -74,7 +78,13 @@ def _observed_bus_stops(events: Sequence[GpsEvent], references: TransitRuntimeRe
     return observed
 
 
-def build_transit_context(events: Sequence[GpsEvent], probabilities: dict[str, float], references: TransitRuntimeReferences) -> dict[str, object]:
+def build_transit_context(
+    events: Sequence[GpsEvent],
+    probabilities: dict[str, float],
+    references: TransitRuntimeReferences,
+    *,
+    station_history: Sequence[tuple[str, str]] = (),
+) -> dict[str, object]:
     if len(events) < 2:
         return {"bus_context_score": 0.0, "subway_context_score": 0.0, "train_context_score": 0.0, "context_status": "INSUFFICIENT_GPS"}
     start, end = events[0], events[-1]
@@ -96,6 +106,8 @@ def build_transit_context(events: Sequence[GpsEvent], probabilities: dict[str, f
         station_index=references.subway_index,
         stations=references.subway_stations,
         ml_rail_probability=probabilities.get("rail", 0.0),
+        trajectory=[(event.latitude, event.longitude) for event in events],
+        station_history=station_history,
     )
     korail = korail_context(
         start_latitude=start.latitude,
@@ -126,23 +138,121 @@ def run_full_pipeline(
     ready = [window for window in windows if window.status == "READY"]
     if not ready:
         return {"status": "COLLECTING", "windows": [window.__dict__ for window in windows]}
-    latest = ready[-1]
-    ml_probabilities = latest.probabilities
-    transit = build_transit_context(events, ml_probabilities, references)
-    decision = resolve_mode(ml_probabilities, context=transit)
+    station_history: list[tuple[str, str]] = []
+    window_records: list[dict[str, object]] = []
+    for index, window in enumerate(ready):
+        window_events = [
+            event for event in events
+            if window.window_start <= event.timestamp < window.window_end
+            or (index == len(ready) - 1 and event.timestamp >= window.window_end)
+        ]
+        transit = build_transit_context(window_events, window.probabilities, references, station_history=station_history)
+        decision = resolve_mode(window.probabilities, context=transit)
+        window_records.append({
+            "index": index,
+            "window": window,
+            "events": window_events,
+            "transit_context": transit,
+            "decision": decision,
+        })
+        current_ids = transit.get("subway_current_observed_station_ids", [])
+        current_line = transit.get("matched_subway_line")
+        if current_line is not None:
+            for station_id in current_ids:
+                item = (str(station_id), str(current_line))
+                if item not in station_history:
+                    station_history.append(item)
+    settings = load_settings()
+    smoothed_modes = smooth_window_modes(
+        window_records,
+        minimum_context_score=settings.resolver["minimum_context_score"],
+        minimum_ml_confidence=settings.resolver["minimum_ml_confidence"],
+    )
+    for record, mode in zip(window_records, smoothed_modes):
+        decision = dict(record["decision"])
+        if mode != decision["final_mode"]:
+            decision["final_mode"] = mode
+            decision["correction_applied"] = True
+            decision["decision_status"] = "smoothed"
+            decision["correction_reason"] = "continued ordered transit evidence across adjacent windows"
+            decision["rail_subtype"] = "subway" if mode == "rail" else None
+        record["decision"] = decision
+    latest_record = window_records[-1]
+    latest = latest_record["window"]
+    transit = latest_record["transit_context"]
+    decision = latest_record["decision"]
     expected: ExpectedBehaviourResult = predict_expected(expected_features, model_path=ktdb_model_path)
     resolver = load_factor_resolver(factors_csv)
     distance_km = trajectory_distance_km(events)
-    actual = calculate_actual_emission(decision["final_mode"], distance_km, resolver=resolver)
+    segments: list[dict[str, object]] = []
+    start = 0
+    for segment_index, mode in enumerate(smoothed_modes):
+        if segment_index < len(smoothed_modes) - 1 and mode == smoothed_modes[segment_index + 1]:
+            continue
+        segment_start = start
+        segment_end = segment_index
+        segment_windows = window_records[segment_start:segment_end + 1]
+        segment_events = [event for record in segment_windows for event in record["events"]]
+        if segment_start > 0 and segment_events:
+            previous_events = window_records[segment_start - 1]["events"]
+            if previous_events:
+                segment_events.insert(0, previous_events[-1])
+        deduped_events = list(dict.fromkeys(segment_events))
+        if deduped_events:
+            segment_distance = trajectory_distance_km(deduped_events)
+            segment_start_time = deduped_events[0].timestamp
+            segment_end_time = deduped_events[-1].timestamp
+            start_coordinate = [deduped_events[0].latitude, deduped_events[0].longitude]
+            end_coordinate = [deduped_events[-1].latitude, deduped_events[-1].longitude]
+        else:
+            segment_distance = 0.0
+            segment_start_time = segment_windows[0]["window"].window_start
+            segment_end_time = segment_windows[-1]["window"].window_end
+            start_coordinate = None
+            end_coordinate = None
+        factor = resolver.resolve_emission_factor(mode)
+        segments.append({
+            "mode": mode,
+            "start_time": segment_start_time.isoformat(),
+            "end_time": segment_end_time.isoformat(),
+            "duration_sec": max(0.0, (segment_end_time - segment_start_time).total_seconds()),
+            "distance_km": segment_distance,
+            "start_coordinate": start_coordinate,
+            "end_coordinate": end_coordinate,
+            "window_indices": [int(record["index"]) for record in segment_windows],
+            "window_count": len(segment_windows),
+            "transit_evidence": [record["transit_context"] for record in segment_windows],
+            "matched_subway_line": next((record["transit_context"].get("matched_subway_line") for record in reversed(segment_windows) if record["transit_context"].get("matched_subway_line")), None),
+            "resolved_factor": factor,
+        })
+        start = segment_index + 1
+    actual = calculate_multimodal_trip(segments)
     expected_emission = calculate_expected_emission(expected.probabilities, distance_km, resolver=resolver)
-    reduction = float(expected_emission["expected_co2e_g"]) - float(actual["co2e_g"])
+    reduction = float(expected_emission["expected_co2e_g"]) - float(actual["trip_total_co2e_g"])
+    for item, emission in zip(segments, actual["segments"]):
+        item.update({key: emission[key] for key in ("subtype", "factor", "unit", "co2e_g", "fallback_used")})
+        item.pop("resolved_factor", None)
+    window_results = []
+    for record, mode in zip(window_records, smoothed_modes):
+        window = record["window"]
+        window_results.append({
+            "window_start": window.window_start.isoformat(),
+            "window_end": window.window_end.isoformat(),
+            "features": window.features,
+            "probabilities": window.probabilities,
+            "geolife_predicted_mode": window.predicted_mode,
+            "final_mode": mode,
+            "decision": record["decision"],
+            "transit_context": record["transit_context"],
+        })
     return {
         "status": "PASS",
         "distance_km": distance_km,
         "accepted_event_count": len(events),
-        "window": {**latest.features, "status": latest.status, "probabilities": latest.probabilities, "predicted_mode": latest.predicted_mode, "confidence": latest.confidence},
+        "window": {**latest.features, "status": latest.status, "probabilities": latest.probabilities, "predicted_mode": latest.predicted_mode, "confidence": latest.confidence, "final_mode": decision["final_mode"]},
+        "window_results": window_results,
         "transit_context": transit,
-        "actual_behaviour": {**decision, "emission": actual},
+        "actual_behaviour": {**decision, "mode_sequence": smoothed_modes, "segments": segments, "emission": actual},
         "expected_behaviour": {"probabilities": expected.probabilities, "predicted_mode": expected.predicted_mode, "emission": expected_emission},
-        "co2": {"expected_co2e_g": expected_emission["expected_co2e_g"], "actual_co2e_g": actual["co2e_g"], "reduction_co2e_g": reduction, "increase": reduction < 0},
+        "co2": {"expected_co2e_g": expected_emission["expected_co2e_g"], "actual_co2e_g": actual["trip_total_co2e_g"], "reduction_co2e_g": reduction, "increase": reduction < 0},
     }

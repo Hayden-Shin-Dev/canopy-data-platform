@@ -17,7 +17,35 @@
         "bike",
         "walk"
       ],
+      "production_mode_sequence": [
+        "walk",
+        "bike",
+        "rail",
+        "walk"
+      ],
       "production_final_mode": "walk",
+      "ktdb_baseline_predicted_mode": "rail",
+      "ktdb_baseline_features": {
+        "weekday": "Sat",
+        "departure_hour": 8,
+        "departure_minute_bin": 0,
+        "time_band": "morning_peak",
+        "origin_admin_dong": "1156053500",
+        "origin_x": 947659.0,
+        "origin_y": 1947092.0,
+        "origin_sido": "서울특별시",
+        "origin_sigungu": "영등포구",
+        "destination_admin_dong": "1111053000",
+        "destination_x": 953230.0,
+        "destination_y": 1952854.0,
+        "destination_sido": "서울특별시",
+        "destination_sigungu": "종로구",
+        "od_scope": "same_sido",
+        "od_straight_distance_km": 8.016554952240018,
+        "distance_band": "5-10km",
+        "purpose": "출근",
+        "commute_direction": "to_work"
+      },
       "evaluation_report": "reports/integration/mock_trip_evaluation.json"
     },
     "ktdb_model": {

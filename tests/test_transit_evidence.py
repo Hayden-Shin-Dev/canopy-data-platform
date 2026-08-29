@@ -23,3 +23,36 @@ def test_subway_same_line_produces_line_evidence() -> None:
     result = subway_context(start_latitude=37.5, start_longitude=127, end_latitude=37.5005, end_longitude=127, station_index=GeoPointIndex.from_frame(stations), stations=stations, timetable_compatible=True)
     assert result["subway_line_score"] == 1.0
     assert result["matched_subway_line"] == "1"
+
+
+def test_subway_trajectory_records_ordered_station_evidence() -> None:
+    stations = pd.DataFrame({"station_id": ["1", "2", "3"], "line": ["1", "1", "1"], "latitude": [37.5, 37.5005, 37.501], "longitude": [127, 127, 127], "station_name": ["A", "B", "C"]})
+    result = subway_context(
+        start_latitude=37.499,
+        start_longitude=127,
+        end_latitude=37.502,
+        end_longitude=127,
+        station_index=GeoPointIndex.from_frame(stations),
+        stations=stations,
+        trajectory=[(37.5, 127), (37.5005, 127), (37.501, 127)],
+    )
+    assert result["subway_observed_station_count"] == 3
+    assert result["subway_sequence_score"] == 1.0
+    assert result["matched_subway_line"] == "1"
+
+
+def test_subway_station_history_preserves_sequence_across_windows() -> None:
+    stations = pd.DataFrame({"station_id": ["1", "2", "3"], "line": ["1", "1", "1"], "latitude": [37.5, 37.5005, 37.501], "longitude": [127, 127, 127], "station_name": ["A", "B", "C"]})
+    result = subway_context(
+        start_latitude=37.5004,
+        start_longitude=127,
+        end_latitude=37.5006,
+        end_longitude=127,
+        station_index=GeoPointIndex.from_frame(stations),
+        stations=stations,
+        trajectory=[(37.5005, 127)],
+        station_history=[("1", "1")],
+    )
+    assert result["subway_observed_station_count"] == 2
+    assert result["subway_current_observed_station_count"] == 1
+    assert result["subway_sequence_score"] == 0.5

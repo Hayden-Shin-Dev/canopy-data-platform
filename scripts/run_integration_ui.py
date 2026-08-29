@@ -18,6 +18,8 @@ if str(ROOT) not in sys.path:
 
 from src.integration.geolife_adapter import infer_windows
 from src.integration.distance import trajectory_distance_km
+from src.integration.gps_contract import validate_gps_event
+from src.integration.ktdb_context import build_expected_features
 from src.predict_expected_behaviour import predict_expected_behaviour
 from src.integration.emissions import calculate_expected_emission, load_factor_resolver
 from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
@@ -99,6 +101,49 @@ async function init(){const r=await api('/api/route'),b=await api('/api/baseline
 </script></body></html>"""
 
 
+# Result 화면은 backend segment 배열을 그대로 노출한다.
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "</style></head>",
+    "</style><style>.segments{display:grid;gap:6px;margin:12px 0}.segment{display:flex;justify-content:space-between;align-items:center;background:#f0f5f2;border-radius:10px;padding:8px 10px;font-size:11px}.segment strong{display:block;font-size:13px}.segment small{color:#718078}</style></head>",
+).replace(
+    '<div class="compare"><div class="compare-row"><span>비슷한 조건의 이동 · Expected CO2</span>',
+    '<div class="segments" id="resultSegments"></div><div class="compare"><div class="compare-row"><span>비슷한 조건의 이동 · Expected CO2</span>',
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function updateFromStatus(s){",
+    "function renderSegments(segments){const el=document.getElementById('resultSegments');if(!el)return;const names={walk:'도보',bike:'자전거',car:'자동차',bus:'버스',rail:'철도'};el.innerHTML=(segments||[]).map(x=>'<div class=segment><strong>'+(x.mode==='rail'&&x.matched_subway_line?x.matched_subway_line+'호선':names[x.mode]||x.mode)+'</strong><span><b>'+Number(x.distance_km||0).toFixed(2)+' km</b><small> · '+Number(x.co2e_g||0).toFixed(1)+' g</small></span></div>').join('')}\nfunction updateFromStatus(s){",
+).replace(
+    "document.getElementById('resultMode').textContent=p.actual_behaviour?.final_mode||'-';",
+    "document.getElementById('resultMode').textContent=(p.actual_behaviour?.mode_sequence||[]).filter((x,i,a)=>i===0||x!==a[i-1]).join(' → ')||p.actual_behaviour?.final_mode||'-';renderSegments(p.actual_behaviour?.segments||[]);",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "if(latest){document.getElementById('activeMode').textContent=modeText(latest.predicted_mode,p.transit_context);document.getElementById('activeStatus').textContent=modeText(latest.predicted_mode,p.transit_context);",
+    "if(latest){const resolvedLatest=[...(p.window_results||[])].reverse().find(w=>w.window_start===latest.window_start);const activeMode=resolvedLatest?.final_mode||latest.predicted_mode;const activeTransit=resolvedLatest?.transit_context||p.transit_context;document.getElementById('activeMode').textContent=modeText(activeMode,activeTransit);document.getElementById('activeStatus').textContent=modeText(activeMode,activeTransit);",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function modeText(mode,transit){if(transit&&transit.matched_subway_line)return",
+    "function modeText(mode,transit){if(mode==='rail'&&transit&&transit.matched_subway_line)return",
+)
+
+# 이동수단 전환은 실제 추론 결과를 그대로 받아 간단한 SVG로 표현한다.
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "</style></head>",
+    "</style><style>.mode-visual{height:34px;display:flex;align-items:center;justify-content:center;margin:-4px 0 2px;overflow:hidden;color:#177950;transition:color .2s ease}.mode-visual[data-mode=\\\"bike\\\"]{color:#2875b8}.mode-visual[data-mode=\\\"car\\\"]{color:#7452a8}.mode-visual[data-mode=\\\"bus\\\"]{color:#b06435}.mode-visual[data-mode=\\\"rail\\\"]{color:#c04f5a}.mode-visual svg{width:96px;height:30px;animation:modeFloat 1.6s ease-in-out infinite}.mode-visual .mode-track{stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-dasharray:5 5;animation:trackMove .8s linear infinite}.mode-visual .mode-body{fill:currentColor;opacity:.9}.mode-visual .mode-wheel{fill:#fff;stroke:currentColor;stroke-width:2}.mode-visual .mode-window{fill:#fff;opacity:.85}@keyframes modeFloat{0%,100%{transform:translateY(1px)}50%{transform:translateY(-2px)}}@keyframes trackMove{to{stroke-dashoffset:-10}}</style></head>",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<div id="activeStatus" class="status">',
+    '<div id="activeStatus" class="status"><div id="modeVisual" class="mode-visual" data-mode="unknown" aria-hidden="true"></div>',
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function modeText(mode,transit){",
+    "function renderModeVisual(mode){const el=document.getElementById('modeVisual');if(!el)return;const safe=['walk','bike','car','bus','rail'].includes(mode)?mode:'unknown';el.dataset.mode=safe;el.innerHTML='<svg viewBox=\\\"0 0 100 38\\\" role=\\\"img\\\" aria-label=\\\"'+safe+' mode\\\"><path class=\\\"mode-track\\\" d=\\\"M5 34h90\\\"/><circle class=\\\"mode-body\\\" cx=\\\"50\\\" cy=\\\"19\\\" r=\\\"6\\\"/></svg>'}function modeText(mode,transit){",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "document.getElementById('activeStatus').textContent=modeText(activeMode,activeTransit);",
+    "renderModeVisual(activeMode);document.getElementById('activeStatus').textContent=modeText(activeMode,activeTransit);",
+)
+
+
 class Runtime:
     def __init__(self) -> None:
         self.lock = Lock()
@@ -111,6 +156,8 @@ class Runtime:
         self.pipeline: dict[str, Any] = {}
         self.expected_features: dict[str, object] | None = None
         self.window_predictions: list[dict[str, Any]] = []
+        self._last_window_bucket = -1
+        self._live_inference_enabled = False
         self.view_mode = "user"
 
     def start(self, fixture: str, speed: str, expected_features: dict[str, object] | None = None, view_mode: str = "user") -> None:
@@ -132,6 +179,8 @@ class Runtime:
                 else (_default_expected_features() if path == DEFAULT_MOCK else None)
             )
             self.window_predictions = []
+            self._last_window_bucket = -1
+            self._live_inference_enabled = speed != "instant"
             self.thread = Thread(target=self._run, args=(rows,), daemon=True)
             self.thread.start()
 
@@ -202,8 +251,39 @@ class Runtime:
         item = {"index": update.index, "accepted": update.decision.accepted, "reasons": list(update.decision.reasons), "warnings": list(update.decision.warnings)}
         if event is not None:
             item.update(event.as_dict())
+        inference_events = None
         with self.lock:
             self.events.append(item)
+            if self._live_inference_enabled and event is not None and update.decision.accepted and self.engine is not None:
+                session = self.engine.ingestor.sessions.get(event.trip_id)
+                if session and len(session.events) >= 2:
+                    elapsed_bucket = int((event.timestamp - session.events[0].timestamp).total_seconds() // 120)
+                    if elapsed_bucket > self._last_window_bucket:
+                        self._last_window_bucket = elapsed_bucket
+                        inference_events = list(session.events)
+        if inference_events is not None:
+            try:
+                windows = infer_windows(
+                    inference_events,
+                    model_path=ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib",
+                    window_seconds=120,
+                )
+                payload = [
+                    {
+                        "window_start": window.window_start.isoformat(),
+                        "window_end": window.window_end.isoformat(),
+                        "status": window.status,
+                        "predicted_mode": window.predicted_mode,
+                        "confidence": window.confidence,
+                        "probabilities": window.probabilities,
+                        "features": window.features,
+                    }
+                    for window in windows
+                ]
+                with self.lock:
+                    self.window_predictions = payload
+            except Exception:
+                pass
 
     def snapshot(self) -> dict[str, Any]:
         with self.lock:
@@ -236,10 +316,12 @@ def _fixture_path(name: str) -> Path:
 
 
 def _default_expected_features() -> dict[str, object] | None:
-    if not DEFAULT_KTDB_SAMPLE.is_file():
+    if not DEFAULT_MOCK.is_file():
         return None
-    sample = pd.read_csv(DEFAULT_KTDB_SAMPLE, nrows=1, encoding="utf-8-sig").iloc[0]
-    return {name: sample[name] for name in MODEL_FEATURES}
+    rows = read_replay_csv(DEFAULT_MOCK)
+    events = [validate_gps_event(row).event for row in rows]
+    valid_events = [event for event in events if event is not None]
+    return build_expected_features(valid_events).features
 
 
 def _baseline_payload() -> dict[str, object]:
@@ -250,13 +332,18 @@ def _baseline_payload() -> dict[str, object]:
     model = ROOT / "models/expected_behaviour/ktdb_population_baseline.pkl"
     if not model.is_file():
         return {"status": "WAITING", "reason": "existing KTDB model artifact is unavailable"}
-    sample = pd.read_csv(DEFAULT_KTDB_SAMPLE, nrows=1, encoding="utf-8-sig")
-    prediction = predict_expected_behaviour(sample, model_path=model).iloc[0]
+    rows = read_replay_csv(DEFAULT_MOCK)
+    events = [validate_gps_event(row).event for row in rows]
+    valid_events = [event for event in events if event is not None]
+    scenario = build_expected_features(valid_events)
+    prediction = predict_expected_behaviour(pd.DataFrame([scenario.features]), model_path=model).iloc[0]
     return {
         "status": "READY",
         "predicted_mode": str(prediction["predicted_mode"]),
         "probabilities": {mode: float(prediction[f"{mode}_probability"]) for mode in ("walk", "bike", "car", "bus", "rail")},
         "source": "existing KTDB population baseline model",
+        "features": scenario.features,
+        "provenance": scenario.provenance,
     }
 
 
