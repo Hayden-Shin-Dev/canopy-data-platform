@@ -14,7 +14,7 @@ def _journeys():
             "trip_id": "a",
             "scenario_category": "walk",
             "labels": ["walk", "walk"],
-            "raw_modes": ["walk", "bike"],
+            "raw_modes": ["walk", "walk"],
             "final_modes": ["walk", "rail"],
         },
         {
@@ -31,7 +31,7 @@ def test_transition_and_correctness_counts():
     journeys = _journeys()
     matrix = raw_final_transition_matrix(journeys)
     assert matrix["walk"]["walk"] == 3
-    assert matrix["walk"]["rail"] == 1
+    assert matrix["walk"]["rail"] == 2
     counts = correctness_transitions(journeys)
     assert counts["KEPT_CORRECT"] == 3
     assert counts["BROKEN_BY_FINAL"] == 1
