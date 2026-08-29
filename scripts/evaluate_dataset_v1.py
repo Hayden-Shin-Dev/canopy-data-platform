@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 from datetime import datetime
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -37,6 +38,15 @@ from src.integration.replay import read_replay_csv
 
 
 MODES = ("walk", "bike", "car", "bus", "rail")
+
+
+def _present(value: Any) -> str | None:
+    """Normalize pandas NaN manifest cells to an absent value."""
+
+    if value is None or (isinstance(value, float) and pd.isna(value)):
+        return None
+    text = str(value).strip()
+    return text or None
 
 
 def _parse_time(value: str) -> datetime:
@@ -216,8 +226,8 @@ def _evaluate_trip(
         "trip_id": row["trip_id"],
         "status": "PASS",
         "scenario_category": truth.get("scenario_category"),
-        "noise_profile": row.get("noise_profile"),
-        "hard_case_type": row.get("hard_case_type"),
+        "noise_profile": _present(row.get("noise_profile")),
+        "hard_case_type": _present(row.get("hard_case_type")),
         "ground_truth": expected_trip,
         "raw_prediction": raw_trip,
         "final_prediction": final_trip,
@@ -278,7 +288,17 @@ def _write_report(run_dir: Path, summary: dict[str, Any], metrics: dict[str, Any
     (run_dir / "CANOPY_DATASET_V1_EVALUATION.md").write_text("\n".join(rows) + "\n", encoding="utf-8")
 
 
-def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_baseline_commit: str, evaluation_commit: str, limit: int | None = None, resume: bool = False, verify_hashes: bool = True, derive_ktdb_features: bool = False) -> dict[str, Any]:
+def _artifact_sha256(path: Path) -> str | None:
+    if not path.is_file():
+        return None
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_baseline_commit: str, evaluation_commit: str, limit: int | None = None, resume: bool = False, verify_hashes: bool = True, derive_ktdb_features: bool = False, branch: str = "eval/seoul-synthetic-v1") -> dict[str, Any]:
     dataset = discover_dataset(dataset_root)
     frozen_validation = validate_frozen_dataset(dataset, verify_hashes=verify_hashes)
     if frozen_validation["status"] != "PASS":
@@ -303,6 +323,22 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
     factors_csv = ROOT / "data/processed/emission_factors/emission_factors_2026.csv"
     fallback_expected = _default_expected_features() or {}
     start_time = time.monotonic()
+    version_freeze = {
+        "branch": branch,
+        "canopy_baseline_commit": canopy_baseline_commit,
+        "evaluation_commit": evaluation_commit,
+        "working_tree_status_before_evaluation": "clean_except_local_frozen_dataset",
+        "geolife_model": str(geolife_model),
+        "geolife_model_sha256": _artifact_sha256(geolife_model),
+        "ktdb_model": str(ktdb_model),
+        "ktdb_model_sha256": _artifact_sha256(ktdb_model),
+        "transit_resolver": "src/transit_context/resolver.py",
+        "transit_settings": "config/transit_context.json",
+        "transit_settings_sha256": _artifact_sha256(ROOT / "config/transit_context.json"),
+        "window_seconds": 120,
+        "smoothing": "src/integration/segments.py::smooth_window_modes",
+    }
+    (output / "version_freeze.json").write_text(json.dumps(version_freeze, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     mode_true: list[str] = []
     mode_raw: list[str] = []
     mode_final: list[str] = []
@@ -318,6 +354,23 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
                     traces_file.write(json.dumps(trace, ensure_ascii=False, default=str) + "\n")
                 traces_file.flush()
             completed[trip_id] = result
+            (output / "checkpoint.json").write_text(
+                json.dumps(
+                    {
+                        "dataset_version": "dataset_v1",
+                        "canopy_baseline_commit": canopy_baseline_commit,
+                        "evaluation_commit": evaluation_commit,
+                        "completed_trip_ids": sorted(completed),
+                        "completed_count": len(completed),
+                        "total_requested": len(rows),
+                        "updated_at": datetime.now().astimezone().isoformat(),
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
             if result.get("status") == "PASS":
                 mode_true.extend(result.get("labels", []))
                 mode_raw.extend(result.get("raw_modes", []))
@@ -329,7 +382,7 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
     successful = [item for item in completed.values() if item.get("status") == "PASS"]
     failed = [item for item in completed.values() if item.get("status") == "FAIL"]
     multimodal = [item for item in successful if "|" in str(item.get("ground_truth", ""))]
-    hard_rows = [item for item in successful if item.get("hard_case_type")]
+    hard_rows = [item for item in successful if _present(item.get("hard_case_type"))]
     noise_rows = {profile: [item for item in successful if item.get("noise_profile") == profile] for profile in ("clean", "normal", "noisy")}
     metrics = {
         "raw": raw_metrics,
@@ -346,6 +399,7 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
         "dataset_validation": frozen_validation,
         "canopy_baseline_commit": canopy_baseline_commit,
         "evaluation_commit": evaluation_commit,
+        "branch": branch,
         "total_journeys": len(rows),
         "successfully_evaluated": len(successful),
         "failed": len(failed),
@@ -380,12 +434,13 @@ def main() -> int:
     parser.add_argument("--run-dir", default=str(ROOT / "reports/evaluation/dataset_v1/baseline_run_001"))
     parser.add_argument("--canopy-baseline-commit", required=True)
     parser.add_argument("--evaluation-commit", required=True)
+    parser.add_argument("--branch", default="eval/seoul-synthetic-v1")
     parser.add_argument("--limit", type=int)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--skip-hash-verification", action="store_true")
     parser.add_argument("--derive-ktdb-features", action="store_true", help="derive route-specific KTDB features for each journey; slower and not needed for mode metrics")
     args = parser.parse_args()
-    summary = run_evaluation(args.dataset_root, args.run_dir, canopy_baseline_commit=args.canopy_baseline_commit, evaluation_commit=args.evaluation_commit, limit=args.limit, resume=args.resume, verify_hashes=not args.skip_hash_verification, derive_ktdb_features=args.derive_ktdb_features)
+    summary = run_evaluation(args.dataset_root, args.run_dir, canopy_baseline_commit=args.canopy_baseline_commit, evaluation_commit=args.evaluation_commit, limit=args.limit, resume=args.resume, verify_hashes=not args.skip_hash_verification, derive_ktdb_features=args.derive_ktdb_features, branch=args.branch)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0
 
