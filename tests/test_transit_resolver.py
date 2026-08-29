@@ -23,3 +23,12 @@ def test_strong_train_evidence_marks_train_subtype() -> None:
     result = resolve_mode({"walk": 0.05, "bike": 0.05, "car": 0.1, "bus": 0.1, "rail": 0.7}, context={"train_context_score": 0.9})
     assert result["final_mode"] == "rail"
     assert result["rail_subtype"] == "train"
+
+
+def test_rail_prediction_needs_structured_evidence() -> None:
+    result = resolve_mode(
+        {"walk": 0.05, "bike": 0.02, "car": 0.20, "bus": 0.13, "rail": 0.60},
+        context={"subway_context_score": 0.55, "subway_line_score": 1.0, "subway_sequence_score": 0.0, "subway_observed_station_count": 1},
+    )
+    assert result["final_mode"] == "car"
+    assert result["decision_status"] == "insufficient_context"

@@ -50,7 +50,17 @@ def resolve_mode(
     decision_status = "unchanged"
     rail_subtype = None
 
-    if structured_subway and probs["rail"] < probs[ml_mode] + margin:
+    rail_has_structured_evidence = structured_subway or train_score >= strong
+    if ml_mode == "rail" and not rail_has_structured_evidence:
+        # Station proximity alone is not enough to turn a high-speed car/bus
+        # window into rail. Keep rail only when ordered subway evidence or a
+        # strong KORAIL context is present.
+        non_rail_modes = {mode: value for mode, value in probs.items() if mode != "rail"}
+        final_mode = max(non_rail_modes, key=non_rail_modes.get)
+        correction_applied = final_mode != ml_mode
+        decision_status = "insufficient_context"
+        correction_reason = "rail prediction requires structured transit evidence"
+    elif structured_subway and probs["rail"] < probs[ml_mode] + margin:
         final_mode = "rail"
         correction_applied = final_mode != ml_mode
         decision_status = "corrected" if correction_applied else "confirmed"
