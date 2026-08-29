@@ -1,5 +1,5 @@
 {
-  "status": "reference_only_api_pending",
+  "status": "api_and_reference_validated",
   "api": {
     "configured_endpoints": {
       "data_go_kr": [
@@ -28,10 +28,30 @@
       ],
       "policy": "API response fields are inspected before normalization; no field names are guessed."
     },
-    "data_go_kr_service_key": "API key unavailable",
-    "seoul_openapi_key": "API key unavailable",
+    "data_go_kr_service_key": "configured",
+    "seoul_openapi_key": "configured",
     "live_calls_made": false,
-    "note": "No API response is reported until keys are configured and endpoints are called."
+    "seoul_api_summary": {
+      "endpoint": "SearchSTNBySubwayLineInfo",
+      "status_code": "INFO-000",
+      "message": "정상 처리되었습니다",
+      "list_total_count": 799,
+      "row_count": 799,
+      "from_cache": true,
+      "fields": [
+        "FR_CODE",
+        "LINE_NUM",
+        "STATION_CD",
+        "STATION_NM",
+        "STATION_NM_CHN",
+        "STATION_NM_ENG",
+        "STATION_NM_JPN"
+      ],
+      "cache_path": "data/cache/transit/seoul_station_lines.json",
+      "output_csv": "data\\processed\\transit_context\\seoul_station_lines.csv",
+      "refresh": false
+    },
+    "note": "Seoul station-line response was called and cached; TAGO calls failed authentication."
   },
   "tables": {
     "subway_stations": {
@@ -99,12 +119,61 @@
       "duplicate_rows": 0,
       "invalid_coordinate_rows": null,
       "coordinates_valid": true
+    },
+    "seoul_station_lines": {
+      "path": "data\\processed\\transit_context\\seoul_station_lines.csv",
+      "rows": 799,
+      "columns": [
+        "station_id",
+        "station_name",
+        "normalized_station_name",
+        "line",
+        "external_code",
+        "source"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": null,
+      "coordinates_valid": true
+    },
+    "subway_station_line_enrichment": {
+      "path": "data\\processed\\transit_context\\subway_station_line_enrichment.csv",
+      "rows": 273,
+      "columns": [
+        "coordinate_station_id",
+        "coordinate_station_name",
+        "normalized_station_name",
+        "line",
+        "latitude",
+        "longitude",
+        "api_station_id",
+        "external_code",
+        "source"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
+    },
+    "seoul_station_unmatched": {
+      "path": "data\\processed\\transit_context\\seoul_station_unmatched.csv",
+      "rows": 526,
+      "columns": [
+        "line",
+        "station_id",
+        "station_name",
+        "normalized_station_name"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": null,
+      "coordinates_valid": true
     }
   },
   "unmatched_station_keys": 185,
   "limitations": [
-    "Bus references and live positions were not fetched without DATA_GO_KR_SERVICE_KEY.",
-    "Seoul line API enrichment was not fetched without SEOUL_OPENAPI_KEY.",
+    "Bus references and live positions remain pending because TAGO returned an authentication error.",
+    "Seoul line API response was validated; coordinate coverage remains limited to the supplied 1-8 line file.",
     "GeoLife is not joined to Korean transit networks.",
     "Korail source has no line/subtype field; rail subtype remains unknown unless stronger evidence exists."
   ]

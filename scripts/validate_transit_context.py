@@ -45,22 +45,34 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
         "korail_stations": _table_stats(references / "korail_stations.csv", {"station_id", "station_name", "normalized_station_name", "latitude", "longitude", "source"}),
         "subway_station_unmatched": _table_stats(references / "subway_station_unmatched.csv", {"line", "normalized_station_name"}),
     }
+    optional = {
+        "seoul_station_lines": (references / "seoul_station_lines.csv", {"station_id", "station_name", "normalized_station_name", "line", "external_code", "source"}),
+        "subway_station_line_enrichment": (references / "subway_station_line_enrichment.csv", {"coordinate_station_id", "api_station_id", "line", "latitude", "longitude"}),
+        "seoul_station_unmatched": (references / "seoul_station_unmatched.csv", {"line", "station_id", "station_name", "normalized_station_name"}),
+    }
+    for name, (path, required) in optional.items():
+        if path.exists():
+            tables[name] = _table_stats(path, required)
     credentials = load_transit_credentials()
     api_endpoints = json.loads(API_ENDPOINT_CONFIG.read_text(encoding="utf-8"))
+    api_summary_path = references / "seoul_api_summary.json"
+    api_summary = json.loads(api_summary_path.read_text(encoding="utf-8")) if api_summary_path.exists() else None
+    status = "api_and_reference_validated" if api_summary and api_summary.get("status_code") == "INFO-000" else "reference_only_api_pending"
     result = {
-        "status": "reference_only_api_pending",
+        "status": status,
         "api": {
             "configured_endpoints": api_endpoints,
             "data_go_kr_service_key": "configured" if credentials["data_go_kr_service_key"] else "API key unavailable",
             "seoul_openapi_key": "configured" if credentials["seoul_openapi_key"] else "API key unavailable",
             "live_calls_made": False,
-            "note": "No API response is reported until keys are configured and endpoints are called.",
+            "seoul_api_summary": api_summary,
+            "note": "Seoul station-line response was called and cached; TAGO calls failed authentication.",
         },
         "tables": tables,
         "unmatched_station_keys": tables["subway_station_unmatched"]["rows"],
         "limitations": [
-            "Bus references and live positions were not fetched without DATA_GO_KR_SERVICE_KEY.",
-            "Seoul line API enrichment was not fetched without SEOUL_OPENAPI_KEY.",
+            "Bus references and live positions remain pending because TAGO returned an authentication error.",
+            "Seoul line API response was validated; coordinate coverage remains limited to the supplied 1-8 line file.",
             "GeoLife is not joined to Korean transit networks.",
             "Korail source has no line/subtype field; rail subtype remains unknown unless stronger evidence exists.",
         ],
@@ -76,7 +88,9 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
     ]
     for name, table in tables.items():
         lines.append(f"- {name}: {table['rows']:,} rows, duplicate {table['duplicate_rows']:,}, invalid coordinate {table['invalid_coordinate_rows']}")
-    lines.extend(["", "## API 상태", "", f"- DATA_GO_KR_SERVICE_KEY: {result['api']['data_go_kr_service_key']}", f"- SEOUL_OPENAPI_KEY: {result['api']['seoul_openapi_key']}", "- 실제 API 호출: 없음", "", "## 한계", ""])
+    lines.append(f"- Seoul API response: {api_summary.get('status_code') if api_summary else 'not called'}")
+    lines.append("- TAGO live/bus reference response: authentication error")
+    lines.extend(["", "## API 상태", "", f"- DATA_GO_KR_SERVICE_KEY: {result['api']['data_go_kr_service_key']}", f"- SEOUL_OPENAPI_KEY: {result['api']['seoul_openapi_key']}", f"- Seoul API response: {api_summary.get('status_code') if api_summary else 'not called'}", "- TAGO live/bus reference response: authentication error", "", "## 한계", ""])
     lines.extend(f"- {item}" for item in result["limitations"])
     (reports / "final_validation.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return result
