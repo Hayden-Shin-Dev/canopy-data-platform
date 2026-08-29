@@ -45,6 +45,20 @@ def test_ui_accepts_repository_mock_input_without_ground_truth():
     assert "ground_truth_mode" not in rows[0]
 
 
+def test_ui_route_and_baseline_endpoints_use_real_local_inputs():
+    module = _module()
+
+    route = module._route_payload()
+    baseline = module._baseline_payload()
+
+    assert route["status"] == "READY"
+    assert route["origin"]["label"].startswith("서울 영등포구")
+    assert route["destination"]["label"].startswith("Microsoft Korea")
+    assert baseline["status"] == "READY"
+    assert set(baseline["probabilities"]) == {"walk", "bike", "car", "bus", "rail"}
+    assert abs(sum(baseline["probabilities"].values()) - 1) < 1e-6
+
+
 def test_ui_runs_existing_pipeline_for_repository_mock():
     module = _module()
     runtime = module.Runtime()
