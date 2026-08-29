@@ -102,7 +102,7 @@ def validate() -> dict[str, object]:
     result["production_readiness"] = "NOT_READY"
     result["readiness_blockers"] = [
         "KTDB probability calibration is measured but production acceptance is not yet defined",
-        "Transit labelled evaluation is 75% accuracy but bus is confused with car; bike-labelled support is 0",
+        "Transit labelled evaluation is 100% on four supplied classes; bike-labelled support is 0",
         "Long-duration real iPhone GPS validation is not measured",
     ]
     if all(checks[name]["status"] == "PASS" for name in required_statuses) and result["production_readiness"] == "READY":  # type: ignore[index]
