@@ -26,3 +26,13 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
 
     assert snapshot["status"] == "WAITING"
     assert "KTDB Expected Behaviour inputs" in snapshot["pipeline"]["reason"]
+
+
+def test_ui_accepts_repository_mock_input_without_ground_truth():
+    module = _module()
+
+    path = module._fixture_path("mock/canopy_iphone_mock_yeongdeungpo_to_microsoft.csv")
+    assert path == module.DEFAULT_MOCK
+    rows = module.read_replay_csv(path)
+    assert len(rows) == 433
+    assert "ground_truth_mode" not in rows[0]
