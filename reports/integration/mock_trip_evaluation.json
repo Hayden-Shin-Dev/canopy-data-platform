@@ -1,0 +1,161 @@
+{
+  "status": "PASS",
+  "input": {
+    "csv": "C:\\Users\\user\\Desktop\\canopy-project-pt\\mock\\canopy_iphone_mock_yeongdeungpo_to_microsoft.csv",
+    "rows": 433,
+    "ground_truth_used_by_inference": false
+  },
+  "replay": {
+    "trip_id": "trip-ydp-gwanghwamun-001",
+    "device_id": "iphone-test-001",
+    "status": "ACTIVE",
+    "accepted_event_count": 433,
+    "rejected_event_count": 0,
+    "warning_counts": {
+      "invalid_sentinel:course_deg": 1
+    },
+    "rejection_counts": {},
+    "first_timestamp": "2026-08-28T23:00:00Z",
+    "last_timestamp": "2026-08-28T23:36:00Z",
+    "result": null,
+    "failure_reason": null
+  },
+  "expected_mode_sequence": [
+    "walk",
+    "rail",
+    "walk"
+  ],
+  "actual_geolife_window_sequence": [
+    "walk",
+    "bike",
+    "walk"
+  ],
+  "actual_geolife_windows": [
+    {
+      "window_start": "2026-08-28T23:00:00+00:00",
+      "window_end": "2026-08-28T23:02:00+00:00",
+      "predicted_mode": "walk",
+      "confidence": 0.57
+    },
+    {
+      "window_start": "2026-08-28T23:02:00+00:00",
+      "window_end": "2026-08-28T23:04:00+00:00",
+      "predicted_mode": "walk",
+      "confidence": 0.72
+    },
+    {
+      "window_start": "2026-08-28T23:04:00+00:00",
+      "window_end": "2026-08-28T23:06:00+00:00",
+      "predicted_mode": "walk",
+      "confidence": 0.73
+    },
+    {
+      "window_start": "2026-08-28T23:06:00+00:00",
+      "window_end": "2026-08-28T23:08:00+00:00",
+      "predicted_mode": "walk",
+      "confidence": 0.79
+    },
+    {
+      "window_start": "2026-08-28T23:08:00+00:00",
+      "window_end": "2026-08-28T23:10:00+00:00",
+      "predicted_mode": "bike",
+      "confidence": 0.53
+    },
+    {
+      "window_start": "2026-08-28T23:10:00+00:00",
+      "window_end": "2026-08-28T23:12:00+00:00",
+      "predicted_mode": "bike",
+      "confidence": 0.56
+    },
+    {
+      "window_start": "2026-08-28T23:12:00+00:00",
+      "window_end": "2026-08-28T23:14:00+00:00",
+      "predicted_mode": "bike",
+      "confidence": 0.57
+    },
+    {
+      "window_start": "2026-08-28T23:14:00+00:00",
+      "window_end": "2026-08-28T23:16:00+00:00",
+      "predicted_mode": "bike",
+      "confidence": 0.58
+    },
+    {
+      "window_start": "2026-08-28T23:16:00+00:00",
+      "window_end": "2026-08-28T23:18:00+00:00",
+      "predicted_mode": "bike",
+      "confidence": 0.45
+    },
+    {
+      "window_start": "2026-08-28T23:18:00+00:00",
+      "window_end": "2026-08-28T23:20:00+00:00",
+      "predicted_mode": "bike",
+      "confidence": 0.45
+    },
+    {
+      "window_start": "2026-08-28T23:20:00+00:00",
+      "window_end": "2026-08-28T23:22:00+00:00",
+      "predicted_mode": "bike",
+      "confidence": 0.42
+    },
+    {
+      "window_start": "2026-08-28T23:22:00+00:00",
+      "window_end": "2026-08-28T23:24:00+00:00",
+      "predicted_mode": "bike",
+      "confidence": 0.46
+    },
+    {
+      "window_start": "2026-08-28T23:24:00+00:00",
+      "window_end": "2026-08-28T23:26:00+00:00",
+      "predicted_mode": "bike",
+      "confidence": 0.41
+    },
+    {
+      "window_start": "2026-08-28T23:26:00+00:00",
+      "window_end": "2026-08-28T23:28:00+00:00",
+      "predicted_mode": "bike",
+      "confidence": 0.43
+    },
+    {
+      "window_start": "2026-08-28T23:28:00+00:00",
+      "window_end": "2026-08-28T23:30:00+00:00",
+      "predicted_mode": "bike",
+      "confidence": 0.39
+    },
+    {
+      "window_start": "2026-08-28T23:30:00+00:00",
+      "window_end": "2026-08-28T23:32:00+00:00",
+      "predicted_mode": "walk",
+      "confidence": 0.97
+    },
+    {
+      "window_start": "2026-08-28T23:32:00+00:00",
+      "window_end": "2026-08-28T23:34:00+00:00",
+      "predicted_mode": "walk",
+      "confidence": 0.94
+    },
+    {
+      "window_start": "2026-08-28T23:34:00+00:00",
+      "window_end": "2026-08-28T23:36:00+00:00",
+      "predicted_mode": "walk",
+      "confidence": 0.89
+    }
+  ],
+  "production_pipeline": {
+    "status": "PASS",
+    "final_mode": "walk",
+    "distance_km": 10.179588320609643
+  },
+  "comparison": {
+    "initial_walk": true,
+    "rail_present": false,
+    "final_walk": true,
+    "walk_to_rail": false,
+    "rail_to_walk": false,
+    "note": "Comparison is evaluation-only; no ground-truth correction is applied."
+  },
+  "label_leakage": {
+    "status": "PASS",
+    "forbidden_fields_in_replay": false,
+    "ground_truth_read_path": "C:\\Users\\user\\Desktop\\canopy-project-pt\\mock\\canopy_iphone_mock_yeongdeungpo_to_microsoft_ground_truth.txt"
+  }
+}
