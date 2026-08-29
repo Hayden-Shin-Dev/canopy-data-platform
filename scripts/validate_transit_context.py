@@ -69,6 +69,11 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
     bus_match_summary = json.loads(bus_match_path.read_text(encoding="utf-8")) if bus_match_path.exists() else None
     seoul_bus_match_path = references / "seoul_bus_match_summary.json"
     seoul_bus_summary = json.loads(seoul_bus_match_path.read_text(encoding="utf-8")) if seoul_bus_match_path.exists() else None
+    live_validation = {
+        "status": "NOT_CONNECTED",
+        "report": "reports/transit_context/seoul_tago_live_validation.md",
+        "cache": "data/cache/transit/tago_seoul_live_route_121900014.json",
+    } if (PROJECT_ROOT / "reports/transit_context/seoul_tago_live_validation.md").exists() else None
     status = "INCOMPLETE_PENDING_FINAL_CHECKLIST"
     result = {
         "status": status,
@@ -82,11 +87,13 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
             "tago_api_summary": tago_summary,
             "bus_match_summary": bus_match_summary,
             "seoul_bus_match_summary": seoul_bus_summary,
+            "seoul_tago_live_validation": live_validation,
             "note": "Seoul station-line and TAGO bus reference responses were called and cached; bus coordinates were joined from the supplied national file.",
         },
         "tables": tables,
         "bus_coordinate_match": bus_match_summary,
         "seoul_bus_reference": seoul_bus_summary,
+        "seoul_tago_live_validation": live_validation,
         "unmatched_station_keys": tables["subway_station_unmatched"]["rows"],
         "limitations": [
             "TAGO references are currently limited to the requested 광주 서구 sample scope.",
@@ -131,6 +138,8 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
             f"- Seoul invalid coordinate rows: {seoul_bus_summary.get('invalid_coordinate_rows', 0):,}",
             f"- Seoul duplicate route-stop rows removed: {seoul_bus_summary.get('duplicate_route_stop_rows_removed', 0):,}",
         ])
+    if live_validation:
+        lines.append(f"- Seoul TAGO live route join: {live_validation['status']} ({live_validation['report']})")
     lines.extend(["", "## API 상태", "", f"- DATA_GO_KR_SERVICE_KEY: {result['api']['data_go_kr_service_key']}", f"- SEOUL_OPENAPI_KEY: {result['api']['seoul_openapi_key']}", f"- Seoul API response: {api_summary.get('status_code') if api_summary else 'not called'}", f"- TAGO live/bus reference response: {tago_summary.get('status') if tago_summary else 'not called'}", "", "## 한계", ""])
     lines.extend(f"- {item}" for item in result["limitations"])
     (reports / "final_validation.md").write_text("\n".join(lines) + "\n", encoding="utf-8")

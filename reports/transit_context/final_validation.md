@@ -35,6 +35,7 @@
 - Seoul route-stop coordinate coverage: 100.000%
 - Seoul invalid coordinate rows: 0
 - Seoul duplicate route-stop rows removed: 0
+- Seoul TAGO live route join: NOT_CONNECTED (reports/transit_context/seoul_tago_live_validation.md)
 
 ## API 상태
 

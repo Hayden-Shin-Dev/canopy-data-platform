@@ -152,6 +152,11 @@
       "join_key": "NODE_ID",
       "coordinate_system": "observed longitude/latitude values; WGS84 geographic coordinates"
     },
+    "seoul_tago_live_validation": {
+      "status": "NOT_CONNECTED",
+      "report": "reports/transit_context/seoul_tago_live_validation.md",
+      "cache": "data/cache/transit/tago_seoul_live_route_121900014.json"
+    },
     "note": "Seoul station-line and TAGO bus reference responses were called and cached; bus coordinates were joined from the supplied national file."
   },
   "tables": {
@@ -463,6 +468,11 @@
     "route_stop_coordinate_coverage": 1.0,
     "join_key": "NODE_ID",
     "coordinate_system": "observed longitude/latitude values; WGS84 geographic coordinates"
+  },
+  "seoul_tago_live_validation": {
+    "status": "NOT_CONNECTED",
+    "report": "reports/transit_context/seoul_tago_live_validation.md",
+    "cache": "data/cache/transit/tago_seoul_live_route_121900014.json"
   },
   "unmatched_station_keys": 185,
   "limitations": [

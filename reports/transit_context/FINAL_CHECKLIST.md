@@ -6,6 +6,7 @@
 | --- | --- | --- |
 | 서울 버스 reference coverage 확보 | PASS | `seoul_bus_match_summary.json`: 12,898/12,898 stops with coordinates (100%) |
 | 서울 route-stop-coordinate 연결 | PASS | `seoul_bus_match_summary.json`: 41,676/41,676 rows (100%) |
+| TAGO live route ID ↔ 서울 `ROUTE_ID`/`NODE_ID` 연결 | NOT TESTED | TAGO 응답 `totalCount=0`으로 `routeId`/`nodeId`/`nodeord` 행이 없음; [seoul_tago_live_validation.md](seoul_tago_live_validation.md) |
 | TAGO 전국 버스 coverage | FAIL | 현재 TAGO 샘플은 광주 서구이며 377건 중 31건만 좌표 연결 (`bus_match_summary.json`) |
 | Bus Context 실제 reference integration | PASS | `tests/test_transit_reference_integration.py` |
 | Subway 실제 reference integration | PASS | `tests/test_rail_reference_integration.py::test_real_seoul_subway_line_one_endpoint_pair` |
