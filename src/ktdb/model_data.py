@@ -13,6 +13,10 @@ TARGET_COLUMN = "actual_mode"
 NUMERIC_FEATURES: tuple[str, ...] = (
     "departure_hour",
     "departure_minute_bin",
+    "origin_x",
+    "origin_y",
+    "destination_x",
+    "destination_y",
     "od_straight_distance_km",
 )
 CATEGORICAL_FEATURES: tuple[str, ...] = tuple(
