@@ -19,3 +19,24 @@ def test_smoothing_keeps_evidence_backed_rail_run_and_exits_on_walk() -> None:
         _record("rail", "walk", 0.95, 0.7, 1.0),
     ]
     assert smooth_window_modes(records, minimum_context_score=0.35, minimum_ml_confidence=0.8) == ["walk", "rail", "rail", "walk"]
+
+
+def test_smoothing_collapses_short_low_confidence_bike_spike_before_rail() -> None:
+    records = [
+        _record("walk", "walk", 0.9, 0.0, 0.0, None),
+        _record("bike", "bike", 0.68, 0.45, 0.0),
+        _record("bike", "bike", 0.70, 0.48, 0.0),
+        _record("rail", "bike", 0.73, 0.66, 1.0),
+    ]
+    assert smooth_window_modes(records, minimum_context_score=0.35, minimum_ml_confidence=0.55) == ["walk", "walk", "walk", "rail"]
+
+
+def test_smoothing_keeps_sustained_bike_trip_without_rail_evidence() -> None:
+    records = [
+        _record("walk", "walk", 0.9, 0.0, 0.0, None),
+        _record("bike", "bike", 0.68, 0.45, 0.0),
+        _record("bike", "bike", 0.70, 0.48, 0.0),
+        _record("bike", "bike", 0.80, 0.20, 0.0),
+        _record("walk", "walk", 0.9, 0.0, 0.0, None),
+    ]
+    assert smooth_window_modes(records, minimum_context_score=0.35, minimum_ml_confidence=0.55) == ["walk", "bike", "bike", "bike", "walk"]
