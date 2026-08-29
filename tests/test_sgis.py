@@ -62,7 +62,10 @@ def test_load_sgis_credentials_reads_environment_only() -> None:
         assert load_sgis_credentials() == ("key", "secret")
 
 
-def test_load_sgis_credentials_reports_missing_names() -> None:
+def test_load_sgis_credentials_reports_missing_names(monkeypatch: pytest.MonkeyPatch) -> None:
+    # The repository .env is intentionally present for local runs; isolate this
+    # missing-variable case from that developer machine configuration.
+    monkeypatch.setattr("src.ktdb.sgis.load_dotenv", lambda **_: None)
     with patch.dict(os.environ, {}, clear=True):
         with pytest.raises(SgisApiError, match="SGIS_CONSUMER_KEY.*SGIS_CONSUMER_SECRET"):
             load_sgis_credentials()
