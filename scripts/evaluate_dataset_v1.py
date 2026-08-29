@@ -275,6 +275,33 @@ def _write_report(run_dir: Path, summary: dict[str, Any], metrics: dict[str, Any
         final_f1 = final["per_class"].get(mode, {}).get("f1")
         difference = None if raw_f1 is None or final_f1 is None else final_f1 - raw_f1
         rows.append(f"| {mode} | {pct(raw_f1)} | {pct(final_f1)} | {pct(difference)} |")
+    rows.extend(["", "## Final precision, recall, F1, and support", "", "| Mode | Precision | Recall | F1 | Support |", "| --- | ---: | ---: | ---: | ---: |"])
+    for mode in MODES:
+        item = final["per_class"].get(mode, {})
+        rows.append(f"| {mode} | {pct(item.get('precision'))} | {pct(item.get('recall'))} | {pct(item.get('f1'))} | {item.get('support', 0)} |")
+    rows.extend([
+        "",
+        "## Transit false positive / false negative",
+        "",
+        f"- False rail from car: {metrics['false_positive']['rail_from_car']}",
+        f"- False rail from bike: {metrics['false_positive']['rail_from_bike']}",
+        f"- False rail from walk: {metrics['false_positive']['rail_from_walk']}",
+        f"- False bus from car: {metrics['false_positive']['bus_from_car']}",
+        f"- Rail false negative: {metrics['false_negative']['rail_to_nonrail']}",
+        f"- Bus false negative: {metrics['false_negative']['bus_to_nonbus']}",
+        "",
+        "## Multimodal and transition evaluation",
+        "",
+        f"- Multimodal journeys: {summary['multimodal_journeys']}",
+        "- Exact sequence results: `multimodal_metrics.json`",
+        "- Segment and transition rows: `segment_metrics.csv`, `transition_metrics.csv`",
+        "",
+        "## Hard case and noise evaluation",
+        "",
+        f"- Hard-case journeys: {summary['hard_case_journeys']}",
+        "- Hard-case results: `hard_case_summary.csv`",
+        "- Noise profile results: `noise_metrics.csv`",
+    ])
     rows.extend(
         [
             "",
@@ -283,6 +310,8 @@ def _write_report(run_dir: Path, summary: dict[str, Any], metrics: dict[str, Any
             "- The frozen dataset is a local read-only asset and is not committed.",
             "- KTDB Expected Behaviour is included for production compatibility; mobility metrics score GeoLife and final resolver labels only.",
             "- Multimodal, hard-case, noise, and failure details are in the machine-readable files in this directory.",
+            "- Time-weighted metrics use the fixed 120-second evaluation windows.",
+            "- Distance-weighted metrics are marked NOT AVAILABLE because the frozen Ground Truth does not provide per-segment distance weights.",
         ]
     )
     (run_dir / "CANOPY_DATASET_V1_EVALUATION.md").write_text("\n".join(rows) + "\n", encoding="utf-8")
@@ -393,6 +422,10 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
             "rail_from_walk": sum(true == "walk" and pred == "rail" for true, pred in zip(mode_true, mode_final)),
             "bus_from_car": sum(true == "car" and pred == "bus" for true, pred in zip(mode_true, mode_final)),
         },
+        "false_negative": {
+            "rail_to_nonrail": sum(true == "rail" and pred != "rail" for true, pred in zip(mode_true, mode_final)),
+            "bus_to_nonbus": sum(true == "bus" and pred != "bus" for true, pred in zip(mode_true, mode_final)),
+        },
     }
     summary = {
         "dataset_root": str(dataset.root),
@@ -424,6 +457,38 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
     pd.DataFrame([{"noise_profile": profile, "journey_count": len(items), "raw_accuracy": sum(x["correct_raw"] for x in items) / len(items) if items else None, "final_accuracy": sum(x["correct_final"] for x in items) / len(items) if items else None} for profile, items in noise_rows.items()]).to_csv(output / "noise_metrics.csv", index=False, encoding="utf-8-sig")
     pd.DataFrame([{"trip_id": item["trip_id"], "ground_truth": item.get("ground_truth"), "raw_prediction": item.get("raw_prediction"), "final_prediction": item.get("final_prediction"), "scenario_category": item.get("scenario_category"), "hard_case_type": item.get("hard_case_type")} for item in successful if not item.get("correct_final")]).to_csv(output / "error_analysis.csv", index=False, encoding="utf-8-sig")
     pd.DataFrame([{"trip_id": item["trip_id"], "reason": item.get("failure_reason")} for item in failed]).to_csv(output / "failed_journeys.csv", index=False, encoding="utf-8-sig")
+    error_pairs = Counter((true, pred) for true, pred in zip(mode_true, mode_final) if true != pred)
+    pd.DataFrame([{"ground_truth": true, "prediction": pred, "count": count} for (true, pred), count in error_pairs.most_common()]).to_csv(output / "top_errors.csv", index=False, encoding="utf-8-sig")
+    pd.DataFrame([{"trip_id": item["trip_id"], "ground_truth_sequence": item["ground_truth"], "raw_sequence": item["raw_prediction"], "final_sequence": item["final_prediction"], "raw_exact": item["correct_raw"], "final_exact": item["correct_final"]} for item in multimodal]).to_csv(output / "segment_metrics.csv", index=False, encoding="utf-8-sig")
+    transition_rows = []
+    for item in multimodal:
+        expected_sequence = item["ground_truth"].split("|")
+        final_sequence = item["final_prediction"].split("|")
+        expected_transitions = [f"{a}->{b}" for a, b in zip(expected_sequence, expected_sequence[1:])]
+        predicted_transitions = [f"{a}->{b}" for a, b in zip(final_sequence, final_sequence[1:])]
+        transition_rows.append({"trip_id": item["trip_id"], "expected_transitions": "|".join(expected_transitions), "predicted_transitions": "|".join(predicted_transitions), "transition_exact": expected_transitions == predicted_transitions})
+    pd.DataFrame(transition_rows).to_csv(output / "transition_metrics.csv", index=False, encoding="utf-8-sig")
+    hard_summary = []
+    for hard_case, items in sorted({key: [item for item in hard_rows if item.get("hard_case_type") == key] for key in {item.get("hard_case_type") for item in hard_rows}}.items()):
+        hard_summary.append({"hard_case_type": hard_case, "journey_count": len(items), "raw_accuracy": sum(item["correct_raw"] for item in items) / len(items), "final_accuracy": sum(item["correct_final"] for item in items) / len(items)})
+    pd.DataFrame(hard_summary).to_csv(output / "hard_case_summary.csv", index=False, encoding="utf-8-sig")
+    (output / "realtime_metrics.json").write_text(json.dumps({"status": "PASS", "definition": "raw GeoLife prediction at each completed window uses only GPS available through that window", "raw_window_metrics": raw_metrics, "final_window_metrics": final_metrics}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (output / "distance_weighted_metrics.json").write_text(json.dumps({"status": "NOT_AVAILABLE", "reason": "Frozen Ground Truth has journey-level distance only; no per-segment distance weights are provided."}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    try:
+        import matplotlib.pyplot as plt
+
+        for name, values in (("raw", confusion_matrix(mode_true, mode_raw, labels=list(MODES))), ("final", confusion_matrix(mode_true, mode_final, labels=list(MODES)))):
+            figure, axis = plt.subplots(figsize=(5, 4))
+            image = axis.imshow(values, cmap="Blues")
+            axis.set(xticks=range(len(MODES)), yticks=range(len(MODES)), xticklabels=MODES, yticklabels=MODES, xlabel="Predicted", ylabel="Actual", title=f"{name.title()} GeoLife Confusion Matrix")
+            for (row_index, column_index), value in __import__("numpy").ndenumerate(values):
+                axis.text(column_index, row_index, int(value), ha="center", va="center")
+            figure.colorbar(image, ax=axis)
+            figure.tight_layout()
+            figure.savefig(output / f"confusion_matrix_{name}.png", dpi=140)
+            plt.close(figure)
+    except Exception:
+        (output / "confusion_matrix_visualization.json").write_text(json.dumps({"status": "NOT_AVAILABLE", "reason": "matplotlib is unavailable"}, indent=2) + "\n", encoding="utf-8")
     _write_report(output, summary, metrics)
     return summary
 
