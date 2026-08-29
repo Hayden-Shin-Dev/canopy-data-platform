@@ -150,7 +150,7 @@ def validate_frozen_dataset(dataset: FrozenDataset, *, verify_hashes: bool = Tru
     return {
         "root": str(dataset.root),
         "dataset_version": manifest.get("dataset_version"),
-        "frozen": freeze.get("status"),
+        "frozen": frozen_status,
         "journey_count": len(dataset.journey_manifest),
         "gps_file_count": len(gps_files),
         "ground_truth_file_count": len(truth_files),
