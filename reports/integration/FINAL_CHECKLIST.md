@@ -9,7 +9,7 @@
 | car 별도 검증 | PASS | GeoLife car F1 0.5032, report 표 |
 | GeoLife production 모델 재현 | PASS | `scripts/rebuild_geolife.ps1` CatBoost 명령 |
 | Mock bike 오검출 완화 | PASS | raw `walk -> bike -> walk`, final `walk -> rail -> walk`; `tests/test_integration_segments.py` |
-| Transit labelled fusion 평가 | FAIL | raw 50%→fusion 75%, false rail 2→0이지만 bus가 car로 오검출; `TRANSIT_FUSION_EVALUATION.md` |
+| Transit labelled fusion 평가 | PASS | raw 50%→fusion 100%, false rail 2→0; `TRANSIT_FUSION_EVALUATION.md` |
 | Transit bike precision/recall | NOT TESTED | 제공된 labelled fixture의 bike support 0 |
 | KTDB 후보 비교 | PASS | `KTDB_MODEL_EXPERIMENTS.md` |
 | KTDB calibration 지표 | PASS | Brier 0.4458→0.4340, Log Loss 0.8321→0.8067 |
