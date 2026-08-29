@@ -52,10 +52,28 @@
       "refresh": false
     },
     "tago_api_summary": {
-      "endpoint": "https://apis.data.go.kr/1613000/BusRouteInfoInqireService/getCtyCodeList",
-      "status": "http_error",
-      "status_code": 403,
-      "response_body": "{\n  \"OpenAPI_ServiceResponse\": {\n    \"cmmMsgHeader\": {\n      \"errMsg\": \"SERVICE_KEY_IS_NOT_REGISTERED_ERROR\",\n      \"returnAuthMsg\": \"등록되지 않은 서비스키\",\n      \"returnReasonCode\": \"30\"\n    }\n  }\n}\n",
+      "endpoint": "http://apis.data.go.kr/1613000/BusLcInfoInqireService/getCtyCodeList",
+      "status": "success",
+      "from_cache": false,
+      "service_probes": {
+        "bus_stops": {
+          "endpoint": "http://apis.data.go.kr/1613000/BusSttnInfoInqireService/getCtyCodeList",
+          "status": "http_error",
+          "status_code": 403,
+          "response_body": "{\n  \"OpenAPI_ServiceResponse\": {\n    \"cmmMsgHeader\": {\n      \"errMsg\": \"SERVICE_KEY_IS_NOT_REGISTERED_ERROR\",\n      \"returnAuthMsg\": \"등록되지 않은 서비스키\",\n      \"returnReasonCode\": \"30\"\n    }\n  }\n}\n"
+        },
+        "bus_routes": {
+          "endpoint": "http://apis.data.go.kr/1613000/BusRouteInfoInqireService/getCtyCodeList",
+          "status": "http_error",
+          "status_code": 403,
+          "response_body": "{\n  \"OpenAPI_ServiceResponse\": {\n    \"cmmMsgHeader\": {\n      \"errMsg\": \"SERVICE_KEY_IS_NOT_REGISTERED_ERROR\",\n      \"returnAuthMsg\": \"등록되지 않은 서비스키\",\n      \"returnReasonCode\": \"30\"\n    }\n  }\n}\n"
+        },
+        "bus_locations": {
+          "endpoint": "http://apis.data.go.kr/1613000/BusLcInfoInqireService/getCtyCodeList",
+          "status": "success",
+          "from_cache": false
+        }
+      },
       "cache_path": "data/cache/transit/tago_city_codes.json",
       "refresh": true
     },
