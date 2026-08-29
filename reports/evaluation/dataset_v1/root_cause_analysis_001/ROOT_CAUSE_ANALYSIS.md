@@ -52,9 +52,14 @@ Harmful Intervention Rate: 0.5306
 | rail | 826 | 0.0085 | 0.8475 | 0.8390 |
 | walk | 8673 | 0.9640 | 0.8712 | -0.0928 |
 
-## Multimodal
+## Single-mode vs multimodal
 
-- Multimodal journeys: 200
+| Scope | Journeys | Raw journey accuracy | Final journey accuracy |
+|---|---:|---:|---:|
+| multimodal | 200 | 0.0050 | 0.0250 |
+| single_mode | 500 | 0.5020 | 0.4220 |
+
+Multimodal journeys: 200
 - Exact sequence and failure categories are in `multimodal_failure_analysis.csv`.
 - Sequence matching is evaluated without changing the production segmenter.
 
@@ -89,6 +94,7 @@ Harmful Intervention Rate: 0.5306
 
 Transit evidence levels are descriptive bins over stored trace scores (none < 0.25, weak 0.25–0.55, strong ≥ 0.55); they are not production thresholds.
 False activation, missing evidence, and resolver changes are recorded in `transit_error_analysis.csv`.
+Raw confidence analysis is NOT_AVAILABLE because the frozen trace stores only the selected raw mode, not class probabilities.
 
 ## Code locations (read-only mapping)
 

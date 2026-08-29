@@ -1,0 +1,9 @@
+{
+  "input_run": "reports\\evaluation\\dataset_v1\\baseline_run_001",
+  "output_dir": "reports\\evaluation\\dataset_v1\\root_cause_analysis_001",
+  "production_logic_modified": false,
+  "dataset_modified": false,
+  "ground_truth_used_only_after_inference": true,
+  "confidence_analysis": "NOT_AVAILABLE",
+  "distance_weighted_metrics": "NOT_AVAILABLE"
+}

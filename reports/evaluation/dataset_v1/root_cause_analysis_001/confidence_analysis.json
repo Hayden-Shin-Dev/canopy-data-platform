@@ -1,0 +1,8 @@
+{
+  "status": "NOT_AVAILABLE",
+  "reason": "prediction_traces.jsonl stores selected raw_mode but not raw class probabilities/confidence.",
+  "required_for": [
+    "high-confidence raw correctness",
+    "confidence vs resolver override"
+  ]
+}
