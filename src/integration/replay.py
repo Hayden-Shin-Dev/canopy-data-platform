@@ -14,6 +14,19 @@ from .ingestion import IngestionDecision, TripIngestor, TripSession
 
 
 ALLOWED_SPEEDS = (1, 5, 10, 30, "instant")
+FORBIDDEN_INFERENCE_FIELDS = frozenset(
+    {
+        "mode",
+        "transport_mode",
+        "ground_truth",
+        "ground_truth_mode",
+        "segment",
+        "ground_truth_segment",
+        "expected_mode",
+        "label",
+        "target",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -31,10 +44,18 @@ class ReplayResult:
 
 
 def read_replay_csv(path: str | Path) -> list[dict[str, Any]]:
-    """Read fixture rows without changing the canonical event field names."""
+    """Read GPS rows and reject evaluation labels from production replay."""
 
     with Path(path).open("r", encoding="utf-8-sig", newline="") as handle:
-        return [dict(row) for row in csv.DictReader(handle)]
+        reader = csv.DictReader(handle)
+        fields = {field.strip() for field in (reader.fieldnames or []) if field}
+        forbidden = sorted(fields & FORBIDDEN_INFERENCE_FIELDS)
+        if forbidden:
+            raise ValueError(
+                "production GPS replay cannot contain evaluation fields: "
+                + ", ".join(forbidden)
+            )
+        return [dict(row) for row in reader]
 
 
 class ReplayEngine:

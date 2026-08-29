@@ -40,3 +40,23 @@ pytest -q
 ```
 
 상세 JSON 결과는 `reports/integration/validation.json`에 저장됩니다.
+## Supplied iPhone mock replay
+
+`mock/canopy_iphone_mock_yeongdeungpo_to_microsoft.csv`를 기존 Replay Engine과
+기존 `run_full_pipeline()`에 그대로 전달했습니다.
+
+- CSV rows: 433
+- accepted events: 433
+- rejected events: 0
+- GeoLife window count: 18 (기존 `infer_windows()` 결과)
+- GeoLife compressed sequence: `walk -> bike -> walk`
+- production final mode: `walk`
+- production pipeline status: `PASS`
+- ground truth used by inference: `NO`
+- label leakage check: `PASS`
+
+ground truth의 기대 sequence는 `walk -> rail -> walk`이지만 실제 예측은 이를
+충족하지 않았습니다. 결과를 보정하지 않고 [mock_trip_evaluation.json](mock_trip_evaluation.json)에
+`rail_present: false`로 기록했습니다.
+Full Pipeline의 KTDB 입력은 기존 processed dataset 첫 행을 local replay용으로 읽었습니다.
+이는 새로운 feature 생성이나 ground-truth 보정이 아닙니다.

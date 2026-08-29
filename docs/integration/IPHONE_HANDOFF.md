@@ -1,5 +1,7 @@
 # iPhone handoff
 
+화면별 state와 SwiftUI 전환 기준은 [IOS_UI_HANDOFF.md](IOS_UI_HANDOFF.md)에 정리했습니다.
+
 ## Data path
 
 현재 로컬 replay는 `ReplayEngine.stream()`으로 event를 하나씩 `TripIngestor.ingest()`에 전달합니다. 향후 iOS 앱도 같은 ingestion 함수를 호출하는 HTTP adapter를 사용하며, payload의 필드명과 검증 규칙은 바꾸지 않습니다.

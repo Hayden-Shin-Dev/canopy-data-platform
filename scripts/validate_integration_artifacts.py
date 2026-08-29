@@ -16,6 +16,7 @@ from src.integration.emissions import load_factor_resolver
 from src.integration.gps_contract import validate_gps_event
 from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
 from src.integration.replay import ReplayEngine, read_replay_csv
+from scripts.evaluate_mock_trip import evaluate as evaluate_mock_trip
 from src.predict_expected_behaviour import predict_expected_behaviour
 from src.ktdb.schema import MODEL_FEATURES
 
@@ -29,6 +30,18 @@ def validate() -> dict[str, object]:
     checks: dict[str, object] = result["checks"]  # type: ignore[assignment]
     checks["gps_contract"] = {"status": "PASS", "evidence": "tests/test_gps_contract.py"}
     checks["replay_fixtures"] = {"status": "PASS", "fixture_count": len(list((ROOT / "data/fixtures/integration").glob("*.csv")))}
+    try:
+        mock = evaluate_mock_trip()
+        checks["iphone_mock_replay"] = {
+            "status": "PASS" if mock["status"] == "PASS" and mock["input"]["ground_truth_used_by_inference"] is False else "FAIL",
+            "rows": mock["input"]["rows"],
+            "accepted_event_count": mock["replay"]["accepted_event_count"],
+            "actual_geolife_window_sequence": mock["actual_geolife_window_sequence"],
+            "production_final_mode": mock["production_pipeline"]["final_mode"],
+            "evaluation_report": "reports/integration/mock_trip_evaluation.json",
+        }
+    except Exception as error:
+        checks["iphone_mock_replay"] = {"status": "FAIL", "reason": str(error)}
     checks["ktdb_model"] = {"status": "FAIL", "path": "models/expected_behaviour/ktdb_population_baseline.pkl"}
     if ktdb_model.is_file() and ktdb_sample.is_file():
         try:
@@ -67,7 +80,7 @@ def validate() -> dict[str, object]:
     else:
         missing = [name for name in required_checks if checks[name]["status"] != "PASS"]  # type: ignore[index]
         checks["full_pipeline_production_replay"] = {"status": "FAIL", "reason": f"required checks not ready: {missing}"}
-    required_statuses = ("gps_contract", "replay_fixtures", "ktdb_model", "geolife_model", "emission_factors", "seoul_transit_references", "full_pipeline_production_replay")
+    required_statuses = ("gps_contract", "replay_fixtures", "iphone_mock_replay", "ktdb_model", "geolife_model", "emission_factors", "seoul_transit_references", "full_pipeline_production_replay")
     result["overall_status"] = "COMPLETE" if all(checks[name]["status"] == "PASS" for name in required_statuses) else "INCOMPLETE"  # type: ignore[index]
     return result
 
