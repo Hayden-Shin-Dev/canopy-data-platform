@@ -64,7 +64,14 @@ KTDB → GeoLife → Emission Factors → 필요 시 Transit Context → Realtim
 
 KTDB의 10자리 행정동 코드를 SGIS 2021 읍면동(7자리) reference와 전체 행정구역명으로 매칭합니다. SGIS가 제공한 EPSG:5179 대표좌표를 WGS84로 변환한 뒤 Haversine 직선거리를 계산하며, Polygon을 평균내지 않습니다.
 
-SGIS 키는 환경변수로만 전달합니다.
+SGIS 키는 코드에 하드코딩하지 않고 환경변수 또는 프로젝트 루트 `.env`로 전달합니다.
+
+PowerShell을 매번 설정하기 어렵다면 프로젝트 루트에 `.env` 파일을 만들고 아래처럼 입력해도 됩니다. `.env`는 Git에서 자동으로 제외됩니다.
+
+```dotenv
+SGIS_CONSUMER_KEY=발급받은 키
+SGIS_CONSUMER_SECRET=발급받은 시크릿
+```
 
 ```powershell
 $env:SGIS_CONSUMER_KEY = "발급받은 키"
