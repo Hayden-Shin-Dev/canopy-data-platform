@@ -19,6 +19,10 @@ def _frame() -> pd.DataFrame:
         {
             "departure_hour": [8, 18],
             "departure_minute_bin": [2, 3],
+            "origin_x": [953808.5, None],
+            "origin_y": [1952441.25, None],
+            "destination_x": [954100.0, 953808.5],
+            "destination_y": [1953000.0, 1952441.25],
             "od_straight_distance_km": [None, 4.5],
             "actual_mode": ["car", "walk"],
             "split": ["train", "test"],
@@ -36,6 +40,7 @@ def test_prepare_model_data_excludes_identifiers_and_types_features() -> None:
     assert not set(FORBIDDEN_MODEL_COLUMNS) & set(result.features.columns)
     assert result.categorical_features == CATEGORICAL_FEATURES
     assert result.numeric_features == NUMERIC_FEATURES
+    assert result.features.loc[0, "origin_x"] == 953808.5
     assert result.features.loc[0, "od_straight_distance_km"] != result.features.loc[0, "od_straight_distance_km"]
 
 
