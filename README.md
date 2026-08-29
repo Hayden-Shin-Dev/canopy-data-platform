@@ -1,53 +1,36 @@
-# Transit Context
+# Canopy Integration
 
-서울 POC에서 GPS 이동을 Bus, Subway, Train Context와 비교해 ML mode 판단을 보조하는 evidence layer입니다.
+이 Branch는 iPhone 호환 GPS Event를 같은 ingestion 경로로 받아 Expected Behaviour와 Actual Behaviour를 비교하는 local integration 단계입니다.
+
+## 구성
+
+- GPS Event Contract와 품질 검증
+- 120초 GeoLife Window adapter와 기존 model 호출
+- 서울 Bus/Subway/KORAIL Transit Context
+- KTDB Expected Behaviour 확률
+- Emission Factor 기반 Expected/Actual CO2와 Reduction
+- event-by-event Replay Engine과 dependency-free Local Test UI
+
+## 실행
+
+```powershell
+python scripts/validate_integration_artifacts.py
+python scripts/replay_integration.py data/fixtures/integration/seoul_bus_route.csv --speed instant
+python scripts/run_integration_ui.py
+pytest -q
+```
+
+브라우저 UI는 `http://127.0.0.1:8765`에서 확인합니다. KTDB Expected Behaviour를 실행하려면 `src/ktdb/schema.py`의 `MODEL_FEATURES`를 모두 포함한 JSON 입력이 필요합니다.
 
 ## 현재 상태
 
-**COMPLETE (SEOUL POC)**
+**INCOMPLETE / LOCAL REPLAY READY**
 
-- Bus: 서울 공식 노선별 정류소 reference
-- Subway: 역사 좌표, station-line, timetable
-- Train: KORAIL 역 좌표
-- 전체 테스트: 169 passed
+Contract, ingestion, replay, 서울 reference loader, KTDB sample inference, Emission 계산과 테스트는 준비되어 있습니다. GeoLife hardened model artifact가 로컬에 없어 실제 full production pipeline은 아직 PASS가 아닙니다. 상세 근거는 [FINAL_INTEGRATION_VALIDATION.md](reports/integration/FINAL_INTEGRATION_VALIDATION.md)를 확인합니다.
 
-## ACTIVE reference
+## 문서
 
-- `seoul_bus_stops.csv`: 12,898개 정류장 좌표
-- `seoul_bus_route_stops.csv`: 41,676개 노선-정류장 행, 718개 노선
-- `subway_station_line_enrichment.csv`: 서울 station-line 연결 결과
-- `subway_timetable.csv`: 열차운행시각표
-- `korail_stations.csv`: KORAIL 역 좌표
-
-버스 POC는 서울시 공식 노선별 정류소 파일의 `ROUTE_ID`, `NODE_ID`,
-정류장 순번, 정류장명, X/Y를 그대로 사용합니다. 모든 버스 정류장과
-route-stop 행의 좌표 coverage는 100%이며, fuzzy matching을 사용하지 않습니다.
-
-## POC 검증
-
-실제 서울 노선 `121900014`의 정류장 4개를 사용한 Bus Context integration,
-1호선 역 endpoint와 timetable 확인, KORAIL 서울–용산 endpoint를 검증했습니다.
-
-- [DATA_USAGE_README.md](reports/transit_context/DATA_USAGE_README.md)
-- [FINAL_TEST_RESULT.md](reports/transit_context/FINAL_TEST_RESULT.md)
-- [FINAL_CHECKLIST.md](reports/transit_context/FINAL_CHECKLIST.md)
-
-## POC 범위 밖
-
-TAGO BusStop/BusRoutespecificStopInformation과 전국 정류장 파일 매칭,
-TAGO 서울 live bus-position evidence, 전국 버스 coverage는 LEGACY 또는
-OPTIONAL 확장 과제입니다. 현재 서울 POC runtime dependency가 아닙니다.
-
-## 재생성
-
-```powershell
-python scripts/build_transit_references.py `
-  --subway-coordinates data/raw/transit/서울교통공사_1_8호선 역사 좌표(위경도) 정보_20250814.csv `
-  --subway-timetable data/raw/transit/서울교통공사_서울 도시철도 열차운행시각표_20260616.csv `
-  --korail-stations data/raw/transit/한국철도공사_역 위치 정보_20240401.csv
-
-python scripts/build_seoul_bus_reference.py `
-  data/raw/transit/서울시버스노선별정류소정보_20260804.xlsx
-
-python -m pytest -q
-```
+- [GPS Event Contract](docs/integration/GPS_EVENT_CONTRACT.md)
+- [iPhone handoff](docs/integration/IPHONE_HANDOFF.md)
+- [Manual test guide](reports/integration/MANUAL_TEST_GUIDE.md)
+- [Final validation](reports/integration/FINAL_INTEGRATION_VALIDATION.md)
