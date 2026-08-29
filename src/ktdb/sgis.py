@@ -8,7 +8,9 @@ from dataclasses import dataclass
 from typing import Any, Callable, Mapping
 
 import requests
+from dotenv import load_dotenv
 
+from src.config import PROJECT_ROOT
 
 AUTH_URL = "https://sgisapi.mods.go.kr/OpenAPI3/auth/authentication.json"
 BOUNDARY_URL = "https://sgisapi.mods.go.kr/OpenAPI3/boundary/hadmarea.geojson"
@@ -114,8 +116,14 @@ def parse_boundary_response(payload: Mapping[str, Any]) -> list[SgisBoundaryReco
     return records
 
 
-def load_sgis_credentials() -> tuple[str, str]:
-    """키를 파일이나 코드가 아닌 현재 프로세스 환경에서만 읽는다."""
+def load_sgis_credentials(*, env_path: str | os.PathLike[str] | None = None) -> tuple[str, str]:
+    """프로젝트 루트 ``.env`` 또는 환경변수에서 키를 읽는다.
+
+    이미 설정된 프로세스 환경변수는 ``.env`` 값보다 우선한다.
+    """
+
+    dotenv_path = env_path if env_path is not None else PROJECT_ROOT / ".env"
+    load_dotenv(dotenv_path=dotenv_path, override=False)
 
     consumer_key = os.environ.get("SGIS_CONSUMER_KEY", "").strip()
     consumer_secret = os.environ.get("SGIS_CONSUMER_SECRET", "").strip()
