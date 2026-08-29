@@ -16,8 +16,15 @@
 - mode class: walk 98,467 / bike 4,679 / car 172,593 / bus 33,068 / rail 22,382
 - split: train 232,489 / validation 49,396 / test 49,304
 
-## 남은 데이터 blocker
+## SGIS 거리 Feature 재현 경로
 
-현재 KTDB 제공 파일에는 행정동 대표 좌표가 없어 OD 직선거리와 distance band를
-계산하지 않았다. 좌표 파일이 준비되면 `scripts/rebuild_ktdb.ps1`에
-`--centroid-file`을 전달해 같은 pipeline으로 재생성한다.
+`src.build_population_dataset`는 SGIS 2021 행정동 reference가 없을 때 환경변수
+`SGIS_CONSUMER_KEY`와 `SGIS_CONSUMER_SECRET`로 계층 수집한다. 수집 결과는
+`data/reference/admin_dong_centroids_2021.csv`에 cache하고, `--refresh-sgis`로
+강제 갱신한다. SGIS 10자리/7자리 코드 차이는 전체 행정구역명 exact match로
+검증하며, 임의의 코드 자르기나 Polygon 평균은 사용하지 않는다.
+
+재빌드 후 `06_dataset_summary.json`에는 SGIS 행정동 수, 출발·도착 매칭률,
+거리 성공·실패 행 수, 거리 통계, distance band별 건수와 미매칭 리포트 경로가
+기록된다. 현재 작업 환경에는 SGIS 자격 증명이 없어 전국 reference와 실제
+거리 수치는 아직 생성하지 않았다.
