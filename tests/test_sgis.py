@@ -13,6 +13,7 @@ from src.ktdb.sgis import (
     SgisApiError,
     load_sgis_credentials,
     parse_authentication_response,
+    parse_boundary_response,
 )
 
 
@@ -102,3 +103,45 @@ def test_client_refreshes_expired_token_and_repeats_boundary_request() -> None:
     final_params = session.get.call_args_list[-1].kwargs["params"]
     assert final_params["accessToken"] == "new"
     assert final_params["adm_cd"] == "11"
+
+
+def test_parse_boundary_response_reads_representative_coordinates() -> None:
+    records = parse_boundary_response(
+        {
+            "errCd": 0,
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": {"type": "Polygon", "coordinates": [[[1, 2], [3, 4]]]},
+                    "properties": {
+                        "adm_cd": "1101053",
+                        "adm_nm": "서울특별시 종로구 사직동",
+                        "x": "953808.5",
+                        "y": "1952441.25",
+                    },
+                }
+            ],
+        }
+    )
+
+    assert records[0].adm_cd == "1101053"
+    assert records[0].adm_nm == "서울특별시 종로구 사직동"
+    assert records[0].x == pytest.approx(953808.5)
+    assert records[0].y == pytest.approx(1952441.25)
+
+
+def test_parse_boundary_response_does_not_average_polygon_when_xy_is_missing() -> None:
+    records = parse_boundary_response(
+        {
+            "errCd": 0,
+            "features": [
+                {
+                    "geometry": {"type": "Polygon", "coordinates": [[[1, 2], [3, 4]]]},
+                    "properties": {"adm_cd": "1101053", "adm_nm": "서울특별시 종로구 사직동"},
+                }
+            ],
+        }
+    )
+
+    assert records[0].x is None
+    assert records[0].y is None
