@@ -12,7 +12,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.transit_context.api import load_transit_credentials
-from src.transit_context.tago_api import fetch_tago_city_codes
+from src.transit_context.tago_api import fetch_tago_city_codes, probe_tago_services
 
 
 def main() -> None:
@@ -23,6 +23,7 @@ def main() -> None:
     args = parser.parse_args()
     credentials = load_transit_credentials()
     payload, summary = fetch_tago_city_codes(credentials["data_go_kr_service_key"], cache_path=args.cache, refresh=args.refresh_tago)
+    summary["service_probes"] = probe_tago_services(credentials["data_go_kr_service_key"])
     if payload is not None:
         Path(args.cache).parent.mkdir(parents=True, exist_ok=True)
         Path(args.cache).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
