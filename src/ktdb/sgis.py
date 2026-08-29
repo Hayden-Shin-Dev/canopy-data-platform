@@ -165,6 +165,8 @@ class SgisClient:
         for attempt in range(self._max_retries + 1):
             try:
                 response = self._session.get(url, params=params, timeout=self._timeout_seconds)
+                if response.status_code == 401:
+                    raise SgisApiError("SGIS HTTP 인증 토큰이 만료되었습니다", code=TOKEN_EXPIRED_CODE)
                 if response.status_code >= 500:
                     raise requests.HTTPError(f"SGIS HTTP {response.status_code}", response=response)
                 response.raise_for_status()
