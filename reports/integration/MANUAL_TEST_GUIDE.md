@@ -26,4 +26,4 @@ python scripts/run_integration_ui.py
 pytest -q tests/test_gps_contract.py tests/test_integration_distance.py tests/test_integration_ingestion.py tests/test_integration_replay.py tests/test_integration_geolife_adapter.py tests/test_integration_expected_behaviour.py tests/test_integration_emissions.py tests/test_integration_pipeline.py tests/test_integration_ui.py
 ```
 
-현재 시스템에 없는 GeoLife artifact를 요구하는 실제 production replay는 `FINAL_INTEGRATION_VALIDATION.md`의 FAIL 근거를 함께 확인합니다.
+실제 production replay는 Desktop의 `models/mobility_recognition/geolife_hardened_120s_purity_090.joblib`, KTDB model, processed dataset, 서울 Transit reference를 사용합니다. artifact가 누락되면 성공으로 대체하지 않고 validation에서 실패 원인을 표시합니다.
