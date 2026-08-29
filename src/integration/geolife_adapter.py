@@ -52,6 +52,23 @@ def build_window_table(events: Sequence[GpsEvent], *, window_seconds: int = 120)
     return [(window, compute_window_features(window.points)) for window in windows]
 
 
+def build_window_event_table(
+    events: Sequence[GpsEvent], *, window_seconds: int = 120
+) -> list[tuple[TimeWindow, tuple[GpsEvent, ...], dict[str, float | int]]]:
+    """Keep the canonical events belonging to each feature window."""
+
+    table = build_window_table(events, window_seconds=window_seconds)
+    output: list[tuple[TimeWindow, tuple[GpsEvent, ...], dict[str, float | int]]] = []
+    for window, features in table:
+        window_events = tuple(
+            event
+            for event in events
+            if window.window_start <= event.timestamp < window.window_end
+        )
+        output.append((window, window_events, features))
+    return output
+
+
 def infer_windows(
     events: Sequence[GpsEvent],
     *,
