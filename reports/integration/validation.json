@@ -1,0 +1,44 @@
+{
+  "checks": {
+    "gps_contract": {
+      "status": "PASS",
+      "evidence": "tests/test_gps_contract.py"
+    },
+    "replay_fixtures": {
+      "status": "PASS",
+      "fixture_count": 6
+    },
+    "ktdb_model": {
+      "status": "PASS",
+      "path": "models/expected_behaviour/ktdb_population_baseline.pkl",
+      "predicted_mode": "walk",
+      "probabilities": {
+        "walk": 0.8698466307099824,
+        "bike": 0.024061279528974452,
+        "car": 0.07921779430886734,
+        "bus": 0.02161257956588083,
+        "rail": 0.005261715886295013
+      }
+    },
+    "geolife_model": {
+      "status": "FAIL",
+      "path": "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"
+    },
+    "emission_factors": {
+      "status": "PASS",
+      "row_count": 40
+    },
+    "seoul_transit_references": {
+      "status": "PASS",
+      "bus_stops": 12898,
+      "bus_route_stops": 41676,
+      "subway_stations": 276,
+      "korail_stations": 202
+    },
+    "full_pipeline_production_artifacts": {
+      "status": "FAIL",
+      "reason": "GeoLife model artifact is unavailable locally"
+    }
+  },
+  "overall_status": "INCOMPLETE"
+}
