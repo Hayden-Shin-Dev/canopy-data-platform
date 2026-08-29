@@ -37,6 +37,15 @@ TEXT_COLUMNS = (
     "actual_mode",
     "split",
 )
+NUMERIC_COLUMNS = (
+    "departure_hour",
+    "departure_minute_bin",
+    "origin_x",
+    "origin_y",
+    "destination_x",
+    "destination_y",
+    "od_straight_distance_km",
+)
 
 
 def validate_feature_frame(frame: pd.DataFrame, schema_path: str | Path = DEFAULT_SCHEMA) -> dict[str, object]:
@@ -68,8 +77,14 @@ def validate_feature_frame(frame: pd.DataFrame, schema_path: str | Path = DEFAUL
     errors: list[str] = []
     for index, row in frame.iterrows():
         payload = row.where(row.notna(), None).to_dict()
-        if payload.get("od_straight_distance_km") == "":
-            payload["od_straight_distance_km"] = None
+        for column in NUMERIC_COLUMNS:
+            value = payload.get(column)
+            if value is None or (isinstance(value, str) and value == "") or pd.isna(value):
+                payload[column] = None
+            elif column in {"departure_hour", "departure_minute_bin"}:
+                payload[column] = int(value)
+            else:
+                payload[column] = float(value)
         for error in validator.iter_errors(payload):
             errors.append(f"row={index}: {error.message}")
             if len(errors) >= 10:
