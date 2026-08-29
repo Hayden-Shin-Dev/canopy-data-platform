@@ -276,7 +276,15 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
     parser.add_argument("--chunksize", type=int, default=50_000)
     parser.add_argument("--lookup-min-samples", type=int, default=30)
-    parser.add_argument("--centroid-file", type=Path, default=None)
+    parser.add_argument("--centroid-file", type=Path, default=SGIS_CENTROID_PATH)
+    parser.add_argument(
+        "--refresh-sgis",
+        action="store_true",
+        help="기존 centroid CSV가 있어도 SGIS 2021 reference를 다시 수집합니다.",
+    )
+    parser.add_argument("--sgis-timeout", type=float, default=20.0)
+    parser.add_argument("--sgis-max-retries", type=int, default=3)
+    parser.add_argument("--sgis-request-interval", type=float, default=0.2)
     args = parser.parse_args()
     configure_logging()
     summary = build_population_dataset(
@@ -285,6 +293,10 @@ def main() -> int:
         chunksize=args.chunksize,
         lookup_min_samples=args.lookup_min_samples,
         centroid_path=args.centroid_file,
+        refresh_sgis=args.refresh_sgis,
+        sgis_timeout_seconds=args.sgis_timeout,
+        sgis_max_retries=args.sgis_max_retries,
+        sgis_request_interval_seconds=args.sgis_request_interval,
     )
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0
