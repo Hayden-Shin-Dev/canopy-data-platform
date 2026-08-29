@@ -61,7 +61,7 @@ def evaluate(predictions: list[dict]) -> tuple[list[dict], dict[str, list[list[i
 
 def write_report(output_dir: Path, metrics: list[dict], matrices: dict[str, list[list[int]]], per_class: dict[str, list[dict]]) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
-    with (output_dir / "candidate_comparison.csv").open("w", encoding="utf-8", newline="") as handle:
+    with (output_dir / "candidate_replay_comparison.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(metrics[0]))
         writer.writeheader()
         writer.writerows(metrics)
