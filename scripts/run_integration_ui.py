@@ -17,6 +17,9 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.integration.geolife_adapter import infer_windows
+from src.integration.distance import trajectory_distance_km
+from src.predict_expected_behaviour import predict_expected_behaviour
+from src.integration.emissions import calculate_expected_emission, load_factor_resolver
 from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
 from src.integration.replay import ReplayEngine, read_replay_csv
 from src.ktdb.schema import MODEL_FEATURES
@@ -68,6 +71,34 @@ async function init(){const f=await json('/api/fixtures');document.getElementByI
 </script></body></html>"""
 
 
+MOBILE_APP_HTML = """<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Canopy</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""><style>
+*{box-sizing:border-box}body{margin:0;background:#dfe5e2;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#14231d}#phone{width:400px;max-width:100vw;height:820px;max-height:100vh;margin:0 auto;background:#f8faf9;position:relative;overflow:hidden;box-shadow:0 18px 60px #17352a33}header{height:68px;padding:22px 20px 10px;display:flex;justify-content:space-between;align-items:center;position:absolute;z-index:20;inset:0 0 auto;background:linear-gradient(#fff,transparent);pointer-events:none}header>*{pointer-events:auto}header strong{font-size:18px;letter-spacing:.12em}header button{border:0;background:#ffffffdd;border-radius:20px;padding:8px 11px;font-size:12px}.screen{position:absolute;inset:0;display:none;animation:slideIn .28s ease-out}.screen.active{display:block}@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}.map{position:absolute;inset:0 0 160px;z-index:1}.leaflet-container{font:inherit}.leaflet-control-attribution{font-size:8px}.sheet{position:absolute;z-index:5;left:10px;right:10px;bottom:10px;background:#fffffff2;border-radius:24px;padding:18px 18px 16px;box-shadow:0 8px 30px #17352a30;backdrop-filter:blur(14px);animation:sheetUp .35s ease-out}@keyframes sheetUp{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}.eyebrow{font-size:11px;color:#618074;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.route{display:grid;gap:8px;margin:10px 0 14px}.route div{display:flex;gap:9px;align-items:flex-start;font-size:13px}.dot{width:9px;height:9px;border-radius:50%;background:#2e9c70;margin-top:4px}.dot.end{background:#e07055}.muted{font-size:11px;color:#6a7771;margin-top:2px}.baseline{border-top:1px solid #e6ece8;padding-top:12px;margin-top:8px}.baseline h3{font-size:15px;margin:4px 0}.bar{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:11px}.bar span:first-child{width:38px}.bar i{height:7px;background:#54a982;border-radius:8px;display:block;min-width:2px;transition:width .5s}.bar b{font-weight:600}.cta{width:100%;border:0;border-radius:14px;padding:14px;background:#177950;color:#fff;font-size:15px;font-weight:700;margin-top:12px;box-shadow:0 5px 12px #17795044}.cta:active,button:active{transform:scale(.97)}.status{font-size:20px;font-weight:700;margin:5px 0 12px}.status-sub{font-size:12px;color:#65746d}.stats{display:flex;gap:8px;margin-top:14px}.stat{flex:1;background:#f0f5f2;border-radius:12px;padding:9px}.stat small{display:block;color:#718078;font-size:10px}.stat strong{display:block;margin-top:3px;font-size:15px}.stop{background:#fff;border:1px solid #e0e7e2;color:#b34d3c}.result-title{font-size:22px;font-weight:750;margin:4px 0 12px}.compare{display:grid;gap:8px;margin:12px 0}.compare-row{display:flex;justify-content:space-between;align-items:center;background:#f3f6f4;border-radius:11px;padding:10px 12px;font-size:12px}.compare-row strong{font-size:16px}.reduction{background:#e2f4ea;color:#147146;border-radius:13px;padding:13px;text-align:center;margin-top:10px}.reduction strong{font-size:24px;display:block}.developer{background:#f8faf9;overflow:auto;padding:80px 14px 18px}.developer h2{margin:0 0 12px}.developer label{display:block;font-size:12px;margin:8px 0}.developer select,.developer textarea{width:100%;padding:8px;border:1px solid #ccd8d1;border-radius:8px;background:#fff}.developer button{padding:8px 10px;border:1px solid #cbd8d0;border-radius:8px;background:#fff;margin:3px 0}.developer pre{white-space:pre-wrap;overflow:auto;background:#edf2ef;border-radius:8px;padding:8px;font-size:10px}.developer table{font-size:9px;width:100%;display:block;overflow:auto;max-height:180px}.developer td,.developer th{padding:3px;border:1px solid #dbe4df;white-space:nowrap}
+</style></head><body><div id="phone"><header><strong>CANOPY</strong><button onclick="openDeveloper()">Developer</button></header>
+<section id="home" class="screen active"><div id="homeMap" class="map"></div><div class="sheet"><div class="eyebrow">오늘의 출근</div><div class="route"><div><span class="dot"></span><div><b>서울 영등포구 버드나루로10길 7</b><div class="muted">출발지</div></div></div><div><span class="dot end"></span><div><b>Microsoft Korea</b><div class="muted">서울 종로구 종로1길 50</div></div></div></div><div class="baseline"><div class="eyebrow">Population baseline</div><h3>비슷한 조건의 사람들은 보통 어떻게 이동했을까요?</h3><div id="baselineBars">불러오는 중...</div></div><button class="cta" onclick="startTrip()">출근 시작하기</button></div></section>
+<section id="active" class="screen"><div id="activeMap" class="map"></div><div class="sheet"><div class="eyebrow">ACTIVE TRIP</div><div id="activeStatus" class="status">이동 패턴을 확인하고 있어요</div><div id="activeSub" class="status-sub">120초 Window가 준비되면 실제 모델 결과를 보여드려요.</div><div class="stats"><div class="stat"><small>현재 이동수단</small><strong id="activeMode">확인 중</strong></div><div class="stat"><small>이동 시간</small><strong id="activeTime">00:00</strong></div><div class="stat"><small>현재 거리</small><strong id="activeDistance">0.00 km</strong></div></div><button class="cta stop" onclick="finishTrip()">이동 종료</button></div></section>
+<section id="result" class="screen"><div id="resultMap" class="map"></div><div class="sheet"><div class="eyebrow">TRIP COMPLETE</div><div class="result-title">오늘의 이동이 끝났어요</div><div class="stats"><div class="stat"><small>총 이동거리</small><strong id="resultDistance">-</strong></div><div class="stat"><small>총 이동시간</small><strong id="resultTime">-</strong></div></div><div class="compare"><div class="compare-row"><span>비슷한 조건의 이동 · Expected CO2</span><strong id="resultExpected">-</strong></div><div class="compare-row"><span>나의 실제 이동 · Actual CO2</span><strong id="resultActual">-</strong></div></div><div class="reduction"><span>CO2 Reduction</span><strong id="resultReduction">-</strong></div><p class="muted">감지된 이동수단: <b id="resultMode">-</b></p><button class="cta" onclick="showScreen('home')">홈으로</button></div></section>
+<section id="developer" class="screen developer"><h2>Developer Mode</h2><label>Fixture<select id="fixture"></select></label><label>Replay speed<select id="speed"><option>instant</option><option>1</option><option>5</option><option>10</option><option>30</option></select></label><textarea id="expectedInput" rows="4" placeholder="기존 KTDB MODEL_FEATURES JSON (선택)"></textarea><button onclick="startDeveloper()">Replay 실행</button><button onclick="showScreen('home')">User Mode로 돌아가기</button><h3>Replay / raw GPS</h3><pre id="replay">-</pre><h3>120s Window / GeoLife</h3><pre id="windows">WAITING</pre><h3>Transit / KTDB / Emission</h3><pre id="pipeline">WAITING</pre></section>
+</div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script><script>
+const maps={},layers={},route={};let pollTimer=null,currentScreen='home';
+async function api(url,options){const r=await fetch(url,options);return await r.json()}
+function showScreen(name){currentScreen=name;document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(name).classList.add('active');Object.values(maps).forEach(m=>setTimeout(()=>m.invalidateSize(),30))}
+function openDeveloper(){showScreen('developer')}
+function setupMap(id){if(!window.L)return null;const map=L.map(id,{zoomControl:false}).setView([37.55,126.95],12);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);maps[id]=map;layers[id]={route:L.layerGroup().addTo(map),path:L.polyline([],{color:'#19835b',weight:5,opacity:.9}).addTo(map)};return map}
+function drawMaps(events=[]){const points=events.filter(e=>e.accepted&&e.latitude!==undefined).map(e=>[+e.latitude,+e.longitude]);const all=[route.origin&&[route.origin.latitude,route.origin.longitude],route.destination&&[route.destination.latitude,route.destination.longitude]].filter(Boolean);Object.entries(maps).forEach(([id,map])=>{const group=layers[id].route;group.clearLayers();if(route.origin)L.circleMarker([route.origin.latitude,route.origin.longitude],{radius:7,color:'#238e65',fillColor:'#fff',fillOpacity:1}).bindTooltip('출발').addTo(group);if(route.destination)L.circleMarker([route.destination.latitude,route.destination.longitude],{radius:7,color:'#dc7058',fillColor:'#fff',fillOpacity:1}).bindTooltip('도착').addTo(group);layers[id].path.setLatLngs(id==='homeMap'?all:points);if(points.length){if(!layers[id].current)layers[id].current=L.circleMarker(points[points.length-1],{radius:8,color:'#135f43',fillColor:'#45bd88',fillOpacity:1}).addTo(map);else layers[id].current.setLatLng(points[points.length-1]);}const fit=(id==='homeMap'?all:points.length?points:all);if(fit.length)map.fitBounds(fit,{padding:[35,35],maxZoom:15})})}
+function renderBaseline(data){const el=document.getElementById('baselineBars');if(!data||data.status!=='READY'){el.textContent='Baseline을 불러오지 못했습니다.';return}const names={car:'자동차',bus:'버스',rail:'철도',walk:'도보',bike:'자전거'};el.innerHTML=Object.entries(data.probabilities).map(([mode,value])=>`<div class="bar"><span>${names[mode]||mode}</span><i style="width:${Math.max(2,Number(value)*100)}%"></i><b>${(Number(value)*100).toFixed(1)}%</b></div>`).join('')}
+function formatTime(seconds){const s=Math.max(0,Math.floor(seconds||0));return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
+function modeText(mode,transit){if(transit&&transit.matched_subway_line)return `${transit.matched_subway_line}호선을 타셨네요!`;return {walk:'지금은 걷는 중!',bike:'자전거로 이동 중이에요',car:'자동차로 이동 중이에요',bus:'버스를 타셨네요!',rail:'지하철/철도로 이동 중이에요'}[mode]||'이동 패턴을 확인하고 있어요'}
+function updateFromStatus(s){const events=s.events||[];drawMaps(events);const p=s.pipeline||{};document.getElementById('activeDistance').textContent=`${Number(s.live_distance_km||0).toFixed(2)} km`;if(events.length){const first=new Date(events[0].timestamp),last=new Date(events[events.length-1].timestamp);document.getElementById('activeTime').textContent=formatTime((last-first)/1000)}const windows=s.window_predictions||[];const latest=[...windows].reverse().find(w=>w.status==='READY');if(latest){document.getElementById('activeMode').textContent=modeText(latest.predicted_mode,p.transit_context);document.getElementById('activeStatus').textContent=modeText(latest.predicted_mode,p.transit_context);document.getElementById('activeSub').textContent=`${latest.window_start} · confidence ${(Number(latest.confidence||0)*100).toFixed(0)}%`}if(p.status==='PASS'){document.getElementById('resultDistance').textContent=`${Number(p.distance_km||0).toFixed(2)} km`;document.getElementById('resultExpected').textContent=`${Number(p.co2?.expected_co2e_g||0).toFixed(1)} g`;document.getElementById('resultActual').textContent=`${Number(p.co2?.actual_co2e_g||0).toFixed(1)} g`;document.getElementById('resultReduction').textContent=`${Number(p.co2?.reduction_co2e_g||0).toFixed(1)} g`;document.getElementById('resultMode').textContent=p.actual_behaviour?.final_mode||'-';document.getElementById('resultTime').textContent=events.length?formatTime((new Date(events[events.length-1].timestamp)-new Date(events[0].timestamp))/1000):'-';if(currentScreen==='active')showScreen('result')}}
+async function refresh(){const s=await api('/api/status');updateFromStatus(s);document.getElementById('replay').textContent=JSON.stringify(s.replay,null,2);document.getElementById('windows').textContent=JSON.stringify(s.window_predictions||'WAITING',null,2);document.getElementById('pipeline').textContent=JSON.stringify(s.pipeline||'WAITING',null,2)}
+async function startTrip(){showScreen('active');await api('/api/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fixture:'mock/canopy_iphone_mock_yeongdeungpo_to_microsoft.csv',speed:'30',view_mode:'user'})});}
+async function finishTrip(){await api('/api/stop',{method:'POST'});}
+async function startDeveloper(){let expected=null;const text=document.getElementById('expectedInput').value.trim();if(text)expected=JSON.parse(text);showScreen('active');await api('/api/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fixture:document.getElementById('fixture').value,speed:document.getElementById('speed').value,expected_features:expected,view_mode:'developer'})});}
+async function init(){const r=await api('/api/route'),b=await api('/api/baseline'),f=await api('/api/fixtures');Object.assign(route,r);renderBaseline(b);document.getElementById('fixture').innerHTML=f.map(x=>`<option value="${x}">${x}</option>`).join('');setupMap('homeMap');setupMap('activeMap');setupMap('resultMap');drawMaps();refresh();pollTimer=setInterval(refresh,700)}init();
+</script></body></html>"""
+
+
 class Runtime:
     def __init__(self) -> None:
         self.lock = Lock()
@@ -110,7 +141,7 @@ class Runtime:
         with self.lock:
             self.replay.update({"status": result.status, "accepted": sum(item.decision.accepted for item in result.updates), "rejected": sum(not item.decision.accepted for item in result.updates)})
             stopped = result.status == "STOPPED"
-            if stopped:
+            if stopped and len(result.session.events) < 2:
                 self.status = "STOPPED"
                 self.pipeline = {"status": "WAITING", "reason": "replay stopped before final processing"}
                 return
@@ -176,7 +207,12 @@ class Runtime:
 
     def snapshot(self) -> dict[str, Any]:
         with self.lock:
-            return {"status": self.status, "view_mode": self.view_mode, "fixture": self.fixture, "replay": dict(self.replay), "pipeline": self.pipeline, "window_predictions": list(self.window_predictions), "events": list(self.events), "raw_debug": {"event_count": len(self.events), "accepted_count": sum(bool(event["accepted"]) for event in self.events), "rejected_count": sum(not bool(event["accepted"]) for event in self.events)}}
+            live_events = []
+            if self.engine and self.fixture:
+                session = self.engine.ingestor.sessions.get(next(iter(self.engine.ingestor.sessions), ""))
+                live_events = session.events if session else []
+            live_distance = trajectory_distance_km(live_events) if len(live_events) >= 2 else 0.0
+            return {"status": self.status, "view_mode": self.view_mode, "fixture": self.fixture, "replay": dict(self.replay), "pipeline": self.pipeline, "window_predictions": list(self.window_predictions), "events": list(self.events), "live_distance_km": live_distance, "raw_debug": {"event_count": len(self.events), "accepted_count": sum(bool(event["accepted"]) for event in self.events), "rejected_count": sum(not bool(event["accepted"]) for event in self.events)}}
 
 
 class _WaitingForInput(ValueError):
@@ -206,6 +242,39 @@ def _default_expected_features() -> dict[str, object] | None:
     return {name: sample[name] for name in MODEL_FEATURES}
 
 
+def _baseline_payload() -> dict[str, object]:
+    """Return the existing KTDB model output for the pre-trip card."""
+
+    if not DEFAULT_KTDB_SAMPLE.is_file():
+        return {"status": "WAITING", "reason": "existing KTDB processed sample is unavailable"}
+    model = ROOT / "models/expected_behaviour/ktdb_population_baseline.pkl"
+    if not model.is_file():
+        return {"status": "WAITING", "reason": "existing KTDB model artifact is unavailable"}
+    sample = pd.read_csv(DEFAULT_KTDB_SAMPLE, nrows=1, encoding="utf-8-sig")
+    prediction = predict_expected_behaviour(sample, model_path=model).iloc[0]
+    return {
+        "status": "READY",
+        "predicted_mode": str(prediction["predicted_mode"]),
+        "probabilities": {mode: float(prediction[f"{mode}_probability"]) for mode in ("walk", "bike", "car", "bus", "rail")},
+        "source": "existing KTDB population baseline model",
+    }
+
+
+def _route_payload() -> dict[str, object]:
+    """Read displayed origin/destination points from the supplied GPS CSV."""
+
+    if not DEFAULT_MOCK.is_file():
+        return {"status": "WAITING"}
+    rows = read_replay_csv(DEFAULT_MOCK)
+    if not rows:
+        return {"status": "WAITING"}
+    return {
+        "status": "READY",
+        "origin": {"label": "서울 영등포구 버드나루로10길 7", "latitude": float(rows[0]["latitude"]), "longitude": float(rows[0]["longitude"])},
+        "destination": {"label": "Microsoft Korea · 서울 종로구 종로1길 50", "latitude": float(rows[-1]["latitude"]), "longitude": float(rows[-1]["longitude"])},
+    }
+
+
 class Handler(BaseHTTPRequestHandler):
     def _send(self, status: int, payload: object, content_type: str = "application/json") -> None:
         body = payload.encode("utf-8") if isinstance(payload, str) else json.dumps(payload, ensure_ascii=False, default=str).encode("utf-8")
@@ -224,6 +293,10 @@ class Handler(BaseHTTPRequestHandler):
             if DEFAULT_MOCK.is_file():
                 fixture_names.insert(0, "mock/" + DEFAULT_MOCK.name)
             self._send(200, fixture_names)
+        elif path == "/api/baseline":
+            self._send(200, _baseline_payload())
+        elif path == "/api/route":
+            self._send(200, _route_payload())
         elif path == "/api/status":
             self._send(200, RUNTIME.snapshot())
         else:

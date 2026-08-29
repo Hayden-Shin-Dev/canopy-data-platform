@@ -19,6 +19,9 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     assert "Baseline Preview" in module.IPHONE_HTML
     assert "Trip Detail" in module.IPHONE_HTML
     assert "developer-only" in module.IPHONE_HTML
+    assert "openstreetmap.org" in module.MOBILE_APP_HTML
+    assert "startTrip()" in module.MOBILE_APP_HTML
+    assert 'class="screen active"' in module.MOBILE_APP_HTML
 
     assert module._fixture_path("insufficient_gps.csv").is_file()
     runtime.start("insufficient_gps.csv", "instant")
