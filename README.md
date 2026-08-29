@@ -1,23 +1,29 @@
-# Canopy Integration
+# Canopy Data Platform
 
-이 Branch는 iPhone 호환 GPS Event를 같은 ingestion 경로로 받아 Expected Behaviour와 Actual Behaviour를 비교하는 local integration 단계입니다.
+## 프로젝트 목적
 
-## 구성
+Canopy는 친환경 이동 자체를 보상하는 것이 아니라, 일반적으로 예상되는 이동행동과 실제 이동행동의 차이를 비교해 저탄소 방향의 Behaviour Shift를 측정하는 프로젝트입니다.
 
-- GPS Event Contract와 품질 검증
-- 120초 GeoLife Window와 실제 model inference
-- 서울 Bus/Subway/KORAIL Transit Context
-- KTDB Expected Behaviour 확률
-- Emission Factor 기반 Expected/Actual CO2와 Reduction
-- event-by-event Replay Engine과 Local Test UI
+## 전체 구조
 
-## 현재 상태
+- KTDB: Expected Behaviour / Population Baseline
+- GeoLife: Mobility Recognition Model 학습
+- Emission Factors: 교통수단별 CO2 환산 기준
+- Transit Context: GPS만으로 구분하기 어려운 bus/car 등의 판단 보조
+- Realtime GPS: iOS GPS 수집과 Streaming
+- Integration: Expected Behaviour와 Actual Behaviour 비교, CO2 Reduction 및 Reward 계산
 
-**INTEGRATION COMPLETE / LOCAL REPLAY READY**
+## 현재 진행 상태
 
-Desktop 저장소의 실제 model, KTDB 재생성 dataset, 서울 Transit reference로 6개 fixture를 검증했습니다. 부족한 GPS는 `COLLECTING`으로 남기며 임의 결과를 만들지 않습니다.
+- KTDB Population Baseline v1 완료
+- GeoLife Mobility Recognition v1 완료
+- Emission Factors v1 완료
+- Transit Context 서울 POC 완료
+- Integration v1 완료
+- iPhone 호환 GPS Event Contract, Replay Engine, Local Test UI 준비
+- Integration validation: 192 tests passed
 
-## 실행
+## 실행 순서
 
 ```powershell
 python scripts/validate_integration_artifacts.py
@@ -26,6 +32,15 @@ python scripts/run_integration_ui.py
 pytest -q
 ```
 
-UI: `http://127.0.0.1:8765`
+Local UI는 `http://127.0.0.1:8765`에서 확인합니다. 상세 결과는 [Integration validation](reports/integration/FINAL_INTEGRATION_VALIDATION.md), iPhone 연동 규격은 [GPS Event Contract](docs/integration/GPS_EVENT_CONTRACT.md)를 참고합니다.
 
-자세한 결과는 [FINAL_INTEGRATION_VALIDATION.md](reports/integration/FINAL_INTEGRATION_VALIDATION.md), 계약은 [GPS_EVENT_CONTRACT.md](docs/integration/GPS_EVENT_CONTRACT.md), iPhone 연동은 [IPHONE_HANDOFF.md](docs/integration/IPHONE_HANDOFF.md)를 확인합니다.
+## Branch
+
+- `main`: 전체 프로젝트 통합 상태
+- `dev/ktdb-v1`: KTDB Population Baseline
+- `dev/geolife-v1`: GeoLife Mobility Recognition
+- `dev/emission-factors-v1`: Emission Factors
+- `dev/transit-context-v1`: 서울 Transit Context POC
+- `dev/integration-v1`: GPS Replay와 Expected/Actual Behaviour Integration
+
+대용량 raw data, generated processed data, model artifact, `.env`는 Git에 커밋하지 않고 로컬에서 재생성·관리합니다.
