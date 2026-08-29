@@ -41,6 +41,16 @@ Harmful Intervention Rate: 0.5306
 | bus | 107 | 4 | 2056 | 4901 | -2052 |
 | rail | 45 | 2729 | 2 | 125 | 2727 |
 
+## Mode metrics snapshot
+
+| Mode | Raw F1 | Final F1 |
+|---|---:|---:|
+| walk | 0.9641 | 0.8803 |
+| bike | 0.4797 | 0.1240 |
+| car | 0.1884 | 0.1381 |
+| bus | 0.3757 | 0.0295 |
+| rail | 0.0319 | 0.1876 |
+
 ## Scenario별 성능
 
 | Scenario | Windows | Raw accuracy | Final accuracy | Difference |
