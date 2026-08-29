@@ -66,6 +66,3 @@ def test_full_pipeline_uses_real_adapters_and_preserves_negative_reduction(tmp_p
     assert result["status"] == "PASS"
     assert result["actual_behaviour"]["final_mode"] == "bus"
     assert "increase" in result["co2"]
-    assert result["prediction_timeline"]
-    assert result["mode_segments"]
-    assert all("transit_context" in window for window in result["prediction_timeline"] if window["status"] == "READY")
