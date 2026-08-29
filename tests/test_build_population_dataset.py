@@ -23,6 +23,8 @@ class BuildPopulationDatasetTests(unittest.TestCase):
         self.assertEqual(list(result.columns), list(OUTPUT_COLUMNS))
         self.assertTrue(pd.isna(result.loc[0, "od_straight_distance_km"]))
         self.assertTrue(pd.isna(result.loc[0, "distance_band"]))
+        for column in ("origin_x", "origin_y", "destination_x", "destination_y"):
+            self.assertTrue(pd.isna(result.loc[0, column]))
         self.assertIn(result.loc[0, "split"], {"train", "validation", "test"})
 
 
