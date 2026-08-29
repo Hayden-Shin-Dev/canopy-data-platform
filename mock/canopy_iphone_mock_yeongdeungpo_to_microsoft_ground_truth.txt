@@ -1,0 +1,21 @@
+Canopy mock trip ground truth — DO NOT FEED THIS FILE TO THE MODEL
+
+Purpose
+Validate whether the production pipeline can infer a multimodal trip from an iPhone-compatible GPS payload that contains no transport-mode labels.
+
+Route scenario
+Start: 서울 영등포구 버드나루로10길 7
+Destination: 서울 종로구 종로1길 50 더케이트윈타워 A동 (Microsoft Korea)
+
+Expected physical journey used to construct the mock
+1) WALK: start address -> 영등포시장역
+2) RAIL/SUBWAY: 서울 지하철 5호선 영등포시장역 -> 광화문역
+   Station order used for validation:
+   영등포시장 -> 신길 -> 여의도 -> 여의나루 -> 마포 -> 공덕 -> 애오개 -> 충정로 -> 서대문 -> 광화문
+3) WALK: 광화문역 -> 더케이트윈타워 A동
+
+IMPORTANT
+- The CSV has no mode, segment, ground_truth, source, or simulated flag.
+- This text file is evaluation metadata only and must never be loaded by GeoLife/Transit Context inference.
+- The coordinates are synthetic replay coordinates, not an actual iPhone recording.
+- Subway GNSS is inherently less reliable underground; the mock intentionally uses poorer horizontal accuracy in the rail section, but it is still a synthetic trajectory designed for pipeline validation.
