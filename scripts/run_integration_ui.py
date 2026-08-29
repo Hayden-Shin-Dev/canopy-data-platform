@@ -97,7 +97,7 @@ async function refresh(){const s=await api('/api/status');updateFromStatus(s);do
 async function startTrip(){showScreen('active');await api('/api/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fixture:'mock/canopy_iphone_mock_yeongdeungpo_to_microsoft.csv',speed:'30',view_mode:'user'})});}
 async function finishTrip(){await api('/api/stop',{method:'POST'});}
 async function startDeveloper(){let expected=null;const text=document.getElementById('expectedInput').value.trim();if(text)expected=JSON.parse(text);showScreen('active');await api('/api/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fixture:document.getElementById('fixture').value,speed:document.getElementById('speed').value,expected_features:expected,view_mode:'developer'})});}
-async function init(){const r=await api('/api/route'),b=await api('/api/baseline'),f=await api('/api/fixtures');Object.assign(route,r);renderBaseline(b);document.getElementById('fixture').innerHTML=f.map(x=>`<option value="${x}">${x}</option>`).join('');setupMap('homeMap');setupMap('activeMap');setupMap('resultMap');drawMaps();refresh();pollTimer=setInterval(refresh,700)}init();
+async function init(){let r={};try{r=await api('/api/route')}catch(e){console.warn('route loading failed',e)}Object.assign(route,r);let b={status:'WAITING'};try{b=await api('/api/baseline')}catch(e){console.warn('baseline loading failed',e)}renderBaseline(b);let f=[];try{f=await api('/api/fixtures')}catch(e){console.warn('fixture loading failed',e)}document.getElementById('fixture').innerHTML=f.map(x=>`<option value="${x}">${x}</option>`).join('');setupMap('homeMap');setupMap('activeMap');setupMap('resultMap');drawMaps();refresh().catch(e=>console.warn('status loading failed',e));pollTimer=setInterval(()=>refresh().catch(e=>console.warn('status refresh failed',e)),700)}init();
 </script></body></html>"""
 
 
@@ -128,7 +128,7 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
 # 이동수단 전환은 실제 추론 결과를 그대로 받아 간단한 SVG로 표현한다.
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "</style></head>",
-    "</style><style>.mode-visual{height:34px;display:flex;align-items:center;justify-content:center;margin:-4px 0 2px;overflow:hidden;color:#177950;transition:color .2s ease}.mode-visual[data-mode=\\\"bike\\\"]{color:#2875b8}.mode-visual[data-mode=\\\"car\\\"]{color:#7452a8}.mode-visual[data-mode=\\\"bus\\\"]{color:#b06435}.mode-visual[data-mode=\\\"rail\\\"]{color:#c04f5a}.mode-visual svg{width:96px;height:30px;animation:modeFloat 1.6s ease-in-out infinite}.mode-visual .mode-track{stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-dasharray:5 5;animation:trackMove .8s linear infinite}.mode-visual .mode-body{fill:currentColor;opacity:.9}.mode-visual .mode-wheel{fill:#fff;stroke:currentColor;stroke-width:2}.mode-visual .mode-window{fill:#fff;opacity:.85}@keyframes modeFloat{0%,100%{transform:translateY(1px)}50%{transform:translateY(-2px)}}@keyframes trackMove{to{stroke-dashoffset:-10}}</style></head>",
+    "</style><style>.mode-visual{height:34px;display:flex;align-items:center;justify-content:center;margin:-4px 0 2px;overflow:hidden;color:#177950;transition:color .2s ease}.mode-visual[data-mode=\\\"bike\\\"]{color:#2875b8}.mode-visual[data-mode=\\\"car\\\"]{color:#7452a8}.mode-visual[data-mode=\\\"bus\\\"]{color:#b06435}.mode-visual[data-mode=\\\"rail\\\"]{color:#c04f5a}.mode-visual svg{width:96px;height:30px}.mode-visual .mode-track{stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-dasharray:5 5;animation:trackMove .8s linear infinite}.mode-visual .mode-body{fill:currentColor;opacity:.9}.mode-visual .mode-wheel{fill:#fff;stroke:currentColor;stroke-width:2}.mode-visual .mode-window{fill:#fff;opacity:.85}.mode-visual .mode-walk{fill:currentColor;animation:walkBob .7s ease-in-out infinite}.mode-visual .mode-bike{animation:bikeRoll 1s linear infinite;transform-origin:50% 22px}.mode-visual .mode-car{animation:carDrive 1.4s ease-in-out infinite}.mode-visual .mode-bus{animation:busDrive 1.2s ease-in-out infinite}.mode-visual .mode-rail{animation:railSlide 1.6s ease-in-out infinite}@keyframes walkBob{0%,100%{transform:translateY(1px)}50%{transform:translateY(-2px)}}@keyframes bikeRoll{to{transform:rotate(360deg)}}@keyframes carDrive{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}@keyframes busDrive{0%,100%{transform:translateX(3px)}50%{transform:translateX(-3px)}}@keyframes railSlide{0%,100%{transform:translateX(-4px)}50%{transform:translateX(4px)}}@keyframes trackMove{to{stroke-dashoffset:-10}}</style></head>",
 )
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     '<div id="activeStatus" class="status">',
@@ -136,11 +136,78 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
 )
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "function modeText(mode,transit){",
-    "function renderModeVisual(mode){const el=document.getElementById('modeVisual');if(!el)return;const safe=['walk','bike','car','bus','rail'].includes(mode)?mode:'unknown';el.dataset.mode=safe;el.innerHTML='<svg viewBox=\\\"0 0 100 38\\\" role=\\\"img\\\" aria-label=\\\"'+safe+' mode\\\"><path class=\\\"mode-track\\\" d=\\\"M5 34h90\\\"/><circle class=\\\"mode-body\\\" cx=\\\"50\\\" cy=\\\"19\\\" r=\\\"6\\\"/></svg>'}function modeText(mode,transit){",
+    "function renderModeVisual(mode){const el=document.getElementById('modeVisual');if(!el)return;const safe=['walk','bike','car','bus','rail'].includes(mode)?mode:'unknown';const visuals={walk:`<svg viewBox='0 0 100 38' role='img' aria-label='walk mode'><path class='mode-track' d='M5 34h90'/><circle class='mode-walk' cx='50' cy='12' r='4'/><path class='mode-walk' d='M47 17h6l4 11h-4l-3-6-4 6h-4z'/></svg>`,bike:`<svg viewBox='0 0 100 38' role='img' aria-label='bike mode'><path class='mode-track' d='M5 34h90'/><g class='mode-bike'><circle class='mode-wheel' cx='36' cy='24' r='8'/><circle class='mode-wheel' cx='64' cy='24' r='8'/><path d='M36 24l10-11 9 11m-9-11h9l9 11m-18-5h10' fill='none' stroke='currentColor' stroke-width='2'/></g></svg>`,car:`<svg viewBox='0 0 100 38' role='img' aria-label='car mode'><path class='mode-track' d='M5 34h90'/><g class='mode-car'><path class='mode-body' d='M28 25l6-10h25l10 10v6H28z'/><path class='mode-window' d='M38 16h8v7h-12zm11 0h9l6 7H49z'/><circle class='mode-wheel' cx='38' cy='30' r='4'/><circle class='mode-wheel' cx='62' cy='30' r='4'/></g></svg>`,bus:`<svg viewBox='0 0 100 38' role='img' aria-label='bus mode'><path class='mode-track' d='M5 34h90'/><g class='mode-bus'><rect class='mode-body' x='27' y='10' width='46' height='21' rx='4'/><path class='mode-window' d='M31 14h9v7h-9zm12 0h9v7h-9zm12 0h9v7h-9z'/><circle class='mode-wheel' cx='37' cy='31' r='4'/><circle class='mode-wheel' cx='63' cy='31' r='4'/></g></svg>`,rail:`<svg viewBox='0 0 100 38' role='img' aria-label='rail mode'><path class='mode-track' d='M5 34h90'/><g class='mode-rail'><rect class='mode-body' x='25' y='9' width='50' height='21' rx='6'/><path class='mode-window' d='M30 13h12v8H30zm16 0h12v8H46zm16 0h8v8h-8z'/><circle class='mode-wheel' cx='36' cy='31' r='3'/><circle class='mode-wheel' cx='64' cy='31' r='3'/></g></svg>`};el.dataset.mode=safe;el.innerHTML=visuals[safe]||visuals.walk}function modeText(mode,transit){",
 )
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "document.getElementById('activeStatus').textContent=modeText(activeMode,activeTransit);",
     "renderModeVisual(activeMode);document.getElementById('activeStatus').textContent=modeText(activeMode,activeTransit);",
+)
+
+# Result 이후에는 실제 감축량을 Token으로 환산해 보상 화면까지 이어간다.
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "</style></head>",
+    "</style><style>.reward-card{text-align:center;padding:28px 18px}.token-burst{font-size:54px;animation:tokenPop .7s ease-out}.token-earned{font-size:30px;color:#177950;margin:8px 0}.token-balance{font-size:13px;color:#63756c}.reward-note{font-size:12px;color:#718078;margin:8px 0 18px}.text-button{border:0;background:none;color:#5c7469;font-size:13px;margin-top:10px;padding:8px 16px}.home-distance{display:flex;justify-content:space-between;align-items:center;background:#f0f5f2;border-radius:12px;padding:10px 12px;margin:10px 0;font-size:12px}.profile-screen{overflow:auto;padding:82px 16px 92px}.profile-screen h2{font-size:24px;margin:0 0 6px}.profile-screen .profile-card{background:#fff;border-radius:18px;padding:18px;margin-top:14px;box-shadow:0 5px 18px #17352a12}.profile-screen .profile-token{font-size:34px;color:#177950;font-weight:750}.profile-screen .history-row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #edf1ee;font-size:12px}.profile-screen .history-row:last-child{border-bottom:0}.sheet{bottom:78px}.bottom-nav{position:absolute;z-index:30;left:10px;right:10px;bottom:10px;height:58px;display:flex;align-items:stretch;justify-content:space-around;background:#fffffff2;border:1px solid #e2e9e4;border-radius:18px;box-shadow:0 8px 24px #17352a24;backdrop-filter:blur(14px)}.bottom-nav button{flex:1;border:0;background:none;color:#77857e;font-size:11px;font-weight:600}.bottom-nav button.active{color:#177950}.bottom-nav button span{display:block;font-size:18px;line-height:20px;margin-bottom:2px}@keyframes tokenPop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}</style></head>",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<section id="developer" class="screen developer">',
+    '<section id="reward" class="screen"><div class="sheet reward-card"><div class="eyebrow">CANOPY TOKEN</div><div class="token-burst" aria-hidden="true">✦</div><div class="token-earned" id="tokenEarned">+0 Token</div><div class="reward-note" id="rewardNote">이번 이동의 CO2 감축량을 기준으로 계산했습니다.</div><div class="token-balance">현재 보유 <strong id="tokenBalance">0</strong> Token</div><button class="cta" onclick="showScreen(\'result\')">결과 확인</button><button class="text-button" onclick="showScreen(\'home\')">홈으로</button></div></section><section id="developer" class="screen developer">',
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<div class="baseline"><div class="eyebrow">Population baseline</div>',
+    '<div class="home-distance"><span>집에서 직장까지</span><strong id="homeRouteDistance">거리 계산 중</strong></div><div class="baseline"><div class="eyebrow">Population baseline</div>',
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<section id="active" class="screen">',
+    '<section id="journey" class="screen"><div id="journeyMap" class="map"></div><div class="sheet"><div class="eyebrow">여정</div><div class="status">오늘의 출근 여정</div><div class="route"><div><span class="dot"></span><div><b>서울 영등포구 버드나루로10길 7</b><div class="muted">집</div></div></div><div><span class="dot end"></span><div><b>Microsoft Korea</b><div class="muted">직장</div></div></div></div><div class="home-distance"><span>예상 이동 거리</span><strong id="journeyDistance">-</strong></div><button class="cta" onclick="startTrip()">출근 시작하기</button></div></section><section id="active" class="screen">',
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<div class="eyebrow">?ㅻ뒛??異쒓렐</div>',
+    '<div class="eyebrow">?ㅻ뒛??異쒓렐</div><div class="token-balance">Canopy Token <strong id="homeTokenBalance">0</strong></div>',
+)
+# 템플릿 인코딩이 달라도 홈 화면에 Token 잔액이 반드시 존재하도록 보강한다.
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<section id="home" class="screen active"><div id="homeMap" class="map"></div><div class="sheet"><div class="eyebrow">오늘의 출근</div>',
+    '<section id="home" class="screen active"><div id="homeMap" class="map"></div><div class="sheet"><div class="eyebrow">오늘의 출근</div><div class="token-balance">Canopy Token <strong id="homeTokenBalance">0</strong></div>',
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "const maps={},layers={},route={};let pollTimer=null,currentScreen='home';",
+    "const maps={},layers={},route={};let pollTimer=null,currentScreen='home';let rewardShown=false;const TOKEN_GRAMS_PER_TOKEN=10;let tokenBalance=Number(localStorage.getItem('canopyTokenBalance')||0);",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function showScreen(name){currentScreen=name;",
+    "function showScreen(name){currentScreen=name;const homeToken=document.getElementById('homeTokenBalance');const rewardToken=document.getElementById('tokenBalance');if(homeToken)homeToken.textContent=tokenBalance;if(rewardToken)rewardToken.textContent=tokenBalance;const myToken=document.getElementById('myTokenBalance');if(myToken)myToken.textContent=tokenBalance+' Token';if(name==='mypage')renderMyPage();document.querySelectorAll('.bottom-nav button').forEach(button=>button.classList.toggle('active',button.dataset.tab===(name==='active'||name==='result'||name==='reward'?'journey':name)));document.querySelectorAll('.bottom-nav').forEach(nav=>nav.style.display=name==='developer'?'none':'flex');",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function openDeveloper(){showScreen('developer')}",
+    "function renderMyPage(){const balance=document.getElementById('myTokenBalance');if(balance)balance.textContent=tokenBalance+' Token';const target=document.getElementById('myRewardHistory');if(!target)return;let history=[];try{history=JSON.parse(localStorage.getItem('canopyTokenHistory')||'[]')}catch(e){history=[]}target.innerHTML=history.length?history.map(item=>'<div class=history-row><span>'+item.date+'</span><strong>+'+item.earned+' Token</strong></div>').join(''):'<p class=muted>아직 받은 Token이 없어요.</p>'}function navigateTab(tab){if(tab==='home')return showScreen('home');if(tab==='mypage')return showScreen('mypage');if(currentScreen==='active'||currentScreen==='result'||currentScreen==='reward')return showScreen(currentScreen==='reward'?'result':currentScreen);showScreen('journey')}function openDeveloper(){showScreen('developer')}",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function drawMaps(events=[]){",
+    "function updateRouteDistance(){if(!route.origin||!route.destination)return;const rad=Math.PI/180,a=route.origin.latitude*rad,b=route.destination.latitude*rad,c=(route.destination.latitude-route.origin.latitude)*rad,d=(route.destination.longitude-route.origin.longitude)*rad;const km=6371*2*Math.asin(Math.sqrt(Math.sin(c/2)**2+Math.cos(a)*Math.cos(b)*Math.sin(d/2)**2));['homeRouteDistance','journeyDistance'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=km.toFixed(1)+' km'})}function drawMaps(events=[]){",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "Object.assign(route,r);",
+    "Object.assign(route,r);updateRouteDistance();",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "setupMap('homeMap');setupMap('activeMap');setupMap('resultMap');",
+    "setupMap('homeMap');setupMap('journeyMap');setupMap('activeMap');setupMap('resultMap');",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function formatTime(seconds){",
+    "function showReward(p){if(rewardShown||!p.co2)return;rewardShown=true;const reduction=Math.max(0,Number(p.co2.reduction_co2e_g||0));const earned=Math.floor(reduction/TOKEN_GRAMS_PER_TOKEN);const previous=tokenBalance;tokenBalance+=earned;localStorage.setItem('canopyTokenBalance',String(tokenBalance));let history=[];try{history=JSON.parse(localStorage.getItem('canopyTokenHistory')||'[]')}catch(e){history=[]}history.unshift({earned,reduction,date:new Date().toLocaleString('ko-KR')});localStorage.setItem('canopyTokenHistory',JSON.stringify(history.slice(0,20)));document.getElementById('tokenEarned').textContent='+'+earned+' Token';document.getElementById('rewardNote').textContent='CO2 감축량 '+reduction.toFixed(1)+' g 기준 · 10 g당 1 Token';document.getElementById('tokenBalance').textContent=previous;showScreen('reward');let current=previous;const started=performance.now();const tick=(now)=>{const progress=Math.min(1,(now-started)/800);current=Math.round(previous+(tokenBalance-previous)*progress);document.getElementById('tokenBalance').textContent=current;if(progress<1)requestAnimationFrame(tick)};requestAnimationFrame(tick)}function formatTime(seconds){",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "if(currentScreen==='active')showScreen('result')}",
+    "if(currentScreen==='active'){showScreen('result');setTimeout(()=>showReward(p),650)}}",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "async function startTrip(){showScreen('active');",
+    "async function startTrip(){rewardShown=false;showScreen('active');",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '</section>\n</div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"',
+    '</section><section id="mypage" class="screen profile-screen"><h2>마이페이지</h2><p class="muted">이번 데모에서 쌓은 Canopy Token을 확인할 수 있어요.</p><div class="profile-card"><div class="eyebrow">현재 보유 Token</div><div class="profile-token" id="myTokenBalance">0 Token</div></div><div class="profile-card"><div class="eyebrow">Token 받은 내역</div><div id="myRewardHistory"><p class="muted">아직 받은 Token이 없어요.</p></div></div></section><nav class="bottom-nav" aria-label="앱 메뉴"><button class="active" data-tab="home" onclick="navigateTab(\'home\')"><span>⌂</span>홈</button><button data-tab="journey" onclick="navigateTab(\'journey\')"><span>●</span>여정</button><button data-tab="mypage" onclick="navigateTab(\'mypage\')"><span>○</span>마이페이지</button></nav></div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"',
 )
 
 
@@ -369,7 +436,12 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", f"{content_type}; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionAbortedError):
+            # 브라우저 새로고침이나 요청 취소로 소켓이 먼저 닫힐 수 있다.
+            # 해당 상황은 서버 오류가 아니므로 traceback 없이 응답만 종료한다.
+            return
 
     def do_GET(self) -> None:  # noqa: N802
         path = urlparse(self.path).path

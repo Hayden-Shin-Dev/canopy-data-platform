@@ -1,0 +1,6 @@
+metric,count
+false_bus,294
+false_rail,17195
+missing_bus,254
+missing_rail,84
+resolver_or_smoothing_changes,26670

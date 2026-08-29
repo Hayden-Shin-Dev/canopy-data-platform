@@ -1,8 +1,22 @@
 # Integration validation
 
+## Latest model and replay validation
+
+The latest reproducible run uses CatBoost for GeoLife and the validation-selected HistGradientBoosting candidate for KTDB. Candidate metrics and calibration scores are recorded in `GEOLIFE_MODEL_EXPERIMENTS.md` and `KTDB_MODEL_EXPERIMENTS.md`.
+
+- GeoLife test: Accuracy 0.7183, Macro F1 0.5616
+- KTDB test: Accuracy 0.6852, Macro F1 0.4193, multiclass Brier 0.4340
+- Mock raw GeoLife sequence: `walk -> bike -> walk`
+- Mock final sequence after evidence-aware smoothing: `walk -> rail -> walk`
+- Mock replay: 433 accepted, 0 rejected
+
+Production readiness remains **NOT READY** until labelled Transit precision/recall and long-duration real iPhone GPS validation are available. The JSON validation status is not a claim that those external checks passed.
+
 검증일: 2026-08-29
 
-현재 상태: **INTEGRATION COMPLETE / LOCAL REPLAY READY**
+현재 상태: **INTEGRATION VALIDATED / NOT READY FOR PRODUCTION**
+
+계약과 로컬 산출물 검증은 통과했지만, KTDB probability calibration, Transit labelled precision/recall, 장시간 실제 iPhone GPS 검증이 아직 없어 운영 완료로 표시하지 않는다.
 
 Desktop 저장소의 실제 model·reference·KTDB 재생성 산출물로 검증했습니다. 원본 raw는 수정하지 않았습니다.
 
@@ -36,7 +50,7 @@ Desktop 저장소의 실제 model·reference·KTDB 재생성 산출물로 검증
 - KTDB route-condition baseline: `rail` (walk 5.44%, bike 0.18%, car 20.74%, bus 11.96%, rail 61.69%)
 - GeoLife 원시 Window 예측: `walk -> bike -> walk`
 - Transit 증거를 반영한 최종 Segment: `walk -> bike -> rail -> walk`
-- Expected CO2: 668.0 g, Actual CO2: 231.3 g, Reduction: 436.6 g
+- Expected CO2: 668.0 g, Actual CO2: 232.4 g, Reduction: 435.6 g
 - 상세 Window별 근거: [e2e_root_cause_analysis.md](e2e_root_cause_analysis.md)
 
 ## 실행

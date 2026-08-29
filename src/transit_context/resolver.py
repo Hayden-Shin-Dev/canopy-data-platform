@@ -50,7 +50,21 @@ def resolve_mode(
     decision_status = "unchanged"
     rail_subtype = None
 
-    if structured_subway and probs["rail"] < probs[ml_mode] + margin:
+    rail_has_structured_evidence = structured_subway or train_score >= strong
+    if ml_mode == "rail" and not rail_has_structured_evidence:
+        # Station proximity alone is not enough to turn a high-speed car/bus
+        # window into rail. Keep rail only when ordered subway evidence or a
+        # strong KORAIL context is present.
+        non_rail_modes = {mode: value for mode, value in probs.items() if mode != "rail"}
+        strongest_non_rail = max(non_rail_modes, key=non_rail_modes.get)
+        if bus_score >= minimum and bus_score > non_rail_modes[strongest_non_rail] + margin:
+            final_mode = "bus"
+        else:
+            final_mode = strongest_non_rail
+        correction_applied = final_mode != ml_mode
+        decision_status = "insufficient_context"
+        correction_reason = "rail prediction requires structured transit evidence"
+    elif structured_subway and probs["rail"] < probs[ml_mode] + margin:
         final_mode = "rail"
         correction_applied = final_mode != ml_mode
         decision_status = "corrected" if correction_applied else "confirmed"
@@ -66,6 +80,16 @@ def resolve_mode(
     elif ml_confidence < settings.resolver["minimum_ml_confidence"] and evidence_score < minimum:
         decision_status = "insufficient_context"
         correction_reason = "ML confidence and transit evidence are both low"
+
+    # A non-rail model prediction must not be promoted to rail on a marginal
+    # station/trajectory score.  The threshold is versioned in transit config.
+    rail_confirmation_score = settings.resolver.get("rail_confirmation_score", strong)
+    if final_mode == "rail" and ml_mode != "rail" and rail_score < rail_confirmation_score:
+        non_rail_modes = {mode: value for mode, value in probs.items() if mode != "rail"}
+        final_mode = max(non_rail_modes, key=non_rail_modes.get)
+        correction_applied = True
+        decision_status = "insufficient_context"
+        correction_reason = "non-rail prediction requires stronger rail confirmation"
 
     if final_mode == "rail":
         if train_score > subway_score and train_score >= strong:

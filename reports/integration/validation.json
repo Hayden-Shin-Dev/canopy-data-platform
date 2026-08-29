@@ -19,7 +19,6 @@
       ],
       "production_mode_sequence": [
         "walk",
-        "bike",
         "rail",
         "walk"
       ],
@@ -53,11 +52,11 @@
       "path": "models/expected_behaviour/ktdb_population_baseline.pkl",
       "predicted_mode": "walk",
       "probabilities": {
-        "walk": 0.8680654650961465,
-        "bike": 0.0007086156827510376,
-        "car": 0.029756370875655927,
-        "bus": 0.007325340435386572,
-        "rail": 0.09414420791005992
+        "walk": 0.8658548810942516,
+        "bike": 0.0011988491280671908,
+        "car": 0.11736624066424592,
+        "bus": 0.007946511209819268,
+        "rail": 0.00763351790361607
       }
     },
     "geolife_model": {
@@ -74,6 +73,14 @@
       "bus_route_stops": 41676,
       "subway_stations": 276,
       "korail_stations": 202
+    },
+    "transit_fusion_evaluation": {
+      "status": "PASS",
+      "raw_accuracy": 0.5,
+      "fused_accuracy": 1.0,
+      "false_rail_raw": 2,
+      "false_rail_fused": 0,
+      "bike_support": 0
     },
     "full_pipeline_production_replay": {
       "status": "PASS",
@@ -96,14 +103,14 @@
           "status": "PASS",
           "accepted_event_count": 4,
           "rejected_event_count": 0,
-          "actual_mode": "rail",
+          "actual_mode": "bus",
           "distance_km": 0.9257038315071642
         },
         "seoul_car_no_transit.csv": {
           "status": "PASS",
           "accepted_event_count": 4,
           "rejected_event_count": 0,
-          "actual_mode": "rail",
+          "actual_mode": "car",
           "distance_km": 1.4146645565135663
         },
         "seoul_subway_line1.csv": {
@@ -124,5 +131,11 @@
       "unexpected_statuses": []
     }
   },
-  "overall_status": "COMPLETE"
+  "overall_status": "INCOMPLETE",
+  "production_readiness": "NOT_READY",
+  "readiness_blockers": [
+    "KTDB probability calibration is measured but production acceptance is not yet defined",
+    "Transit labelled evaluation is 100% on four supplied classes; bike-labelled support is 0",
+    "Long-duration real iPhone GPS validation is not measured"
+  ]
 }

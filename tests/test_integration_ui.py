@@ -26,6 +26,15 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     assert "renderSegments" in module.MOBILE_APP_HTML
     assert "modeVisual" in module.MOBILE_APP_HTML
     assert "renderModeVisual" in module.MOBILE_APP_HTML
+    assert 'id="reward"' in module.MOBILE_APP_HTML
+    assert "결과 확인" in module.MOBILE_APP_HTML
+    assert 'id="homeTokenBalance"' in module.MOBILE_APP_HTML
+    assert "showReward" in module.MOBILE_APP_HTML
+    assert "TOKEN_GRAMS_PER_TOKEN" in module.MOBILE_APP_HTML
+    assert "tokenEarned" in module.MOBILE_APP_HTML
+    assert 'id="mypage"' in module.MOBILE_APP_HTML
+    assert 'class="bottom-nav"' in module.MOBILE_APP_HTML
+    assert "navigateTab" in module.MOBILE_APP_HTML
 
     assert module._fixture_path("insufficient_gps.csv").is_file()
     runtime.start("insufficient_gps.csv", "instant")

@@ -10,11 +10,11 @@
 
 현재 확률:
 
-- walk: 5.44%
-- bike: 0.18%
-- car: 20.74%
-- bus: 11.96%
-- rail: 61.69%
+- walk: 3.44%
+- bike: 0.31%
+- car: 20.95%
+- bus: 14.58%
+- rail: 60.73%
 
 예측 mode: rail
 provenance: {'origin_sgis_adm_cd': '1119074', 'destination_sgis_adm_cd': '1101053', 'origin_ktdb_admin_code': '1156053500', 'destination_ktdb_admin_code': '1111053000', 'origin_centroid_distance_source': 'EPSG:5179', 'destination_centroid_distance_source': 'EPSG:5179', 'route_distance_km': 10.179588320609643, 'purpose_source': 'KTDB rows with commute_direction=to_work'}
@@ -27,8 +27,8 @@ provenance: {'origin_sgis_adm_cd': '1119074', 'destination_sgis_adm_cd': '110105
 | 2026-08-28T23:02:00+00:00 | walk | walk | 0.000 | 0.000 |  |
 | 2026-08-28T23:04:00+00:00 | walk | walk | 0.000 | 0.000 |  |
 | 2026-08-28T23:06:00+00:00 | walk | walk | 0.000 | 0.000 |  |
-| 2026-08-28T23:08:00+00:00 | bike | bike | 0.452 | 0.000 | 2527 |
-| 2026-08-28T23:10:00+00:00 | bike | bike | 0.480 | 0.000 | 2527 |
+| 2026-08-28T23:08:00+00:00 | bike | walk | 0.452 | 0.000 | 2527 |
+| 2026-08-28T23:10:00+00:00 | bike | walk | 0.480 | 0.000 | 2527 |
 | 2026-08-28T23:12:00+00:00 | bike | rail | 0.663 | 0.500 | 2527,2528 |
 | 2026-08-28T23:14:00+00:00 | bike | rail | 0.694 | 0.500 | 2528 |
 | 2026-08-28T23:16:00+00:00 | bike | rail | 0.526 | 1.000 | 2529 |
@@ -46,19 +46,18 @@ GeoLife 모델은 rail 구간에서 bike를 예측했지만, 여러 Window에 �
 
 ## Trip Segmentation 및 Emission
 
-mode sequence: `walk → bike → rail → walk`
+mode sequence: `walk → rail → walk`
 
 | Segment | Window | 거리(km) | CO2e(g) | Subway line |
 | --- | --- | ---: | ---: | --- |
-| 1. walk | 0,1,2,3 | 0.634 | 0.0 | - |
-| 2. bike | 4,5 | 1.638 | 0.0 | - |
-| 3. rail | 6,7,8,9,10,11,12,13,14 | 7.515 | 232.4 | 5 |
-| 4. walk | 15,16,17 | 0.393 | 0.0 | - |
+| 1. walk | 0,1,2,3,4,5 | 2.272 | 0.0 | - |
+| 2. rail | 6,7,8,9,10,11,12,13,14 | 7.515 | 232.4 | 5 |
+| 3. walk | 15,16,17 | 0.393 | 0.0 | - |
 
 - 총 거리: 10.180 km
-- Expected CO2: 668.0 g
+- Expected CO2: 695.6 g
 - Actual CO2: 232.4 g
-- Reduction: 435.6 g
+- Reduction: 463.2 g
 
 Actual CO2는 각 Segment의 거리와 기존 Emission Factor를 곱해 합산했습니다. 마지막 Window 하나의 mode로 계산하지 않습니다.
 

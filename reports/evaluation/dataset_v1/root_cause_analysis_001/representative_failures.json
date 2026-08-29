@@ -1,0 +1,227 @@
+[
+  {
+    "trip_id": "trip_000594",
+    "ground_truth": "walk->bus->rail->bus->walk",
+    "raw_prediction": "car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->rail->bus->car->bus->rail->car->bus->car->bus->walk->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car",
+    "final_prediction": "car->walk->car->walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 350,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000556",
+    "ground_truth": "walk->bus->rail->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->rail->bus->car->bus->car->bus->car->walk->car->walk->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car",
+    "final_prediction": "walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 343,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000503",
+    "ground_truth": "walk->rail->bus->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->car->bus->rail->bus->car->bus->car->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 334,
+    "failure_stage": "TRANSIT_CONTEXT_OR_RESOLVER",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000560",
+    "ground_truth": "walk->bus->rail->bus->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->bus->car->bus->car->bus->walk->bus->car->bus->rail->bus->car->bus->car->bus->car->bus->car->bus->car->bus->bike->bus->car->bus->car->bus->walk->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk",
+    "wrong_windows": 328,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000539",
+    "ground_truth": "walk->bus->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->walk->car->walk->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "walk->car->walk->car->walk->car->walk->rail->walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->bus->rail->walk->rail->walk->rail->walk->rail->walk->rail->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 326,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000651",
+    "ground_truth": "walk->bike->rail->walk",
+    "raw_prediction": "car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->rail->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->rail->walk->rail->walk->rail->bus->rail->car->rail->walk->car->walk->rail->walk->rail->walk->rail->bus->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 312,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000694",
+    "ground_truth": "walk->bike->walk",
+    "raw_prediction": "car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->bus->car->bus->car->walk->car->walk->bus->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car",
+    "final_prediction": "car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 309,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000591",
+    "ground_truth": "walk->car->walk",
+    "raw_prediction": "car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->bus->car->bus->car->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 296,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000644",
+    "ground_truth": "walk->bus->rail->bus->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->bus->car->bus->car->bus->rail->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->car->walk->rail->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 282,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000507",
+    "ground_truth": "walk->rail->bus->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->bus->car->rail->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->rail->walk->rail->walk->rail->walk->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 265,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000647",
+    "ground_truth": "walk->bus->rail->bus->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->rail->walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk",
+    "wrong_windows": 259,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000536",
+    "ground_truth": "walk->rail->bus->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "walk->rail->walk->rail->walk->rail->walk->rail->walk->car->walk->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 258,
+    "failure_stage": "TRANSIT_CONTEXT_OR_RESOLVER",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000559",
+    "ground_truth": "walk->bike->rail->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->bike->bus->car->bus->car->bus->car->bus->car->walk->bus->car->bus->car->bus->car->bus->car->bus->car->bus->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car",
+    "final_prediction": "walk->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->car->rail->walk->rail->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 255,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000586",
+    "ground_truth": "walk->bus->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->walk->bus->car->walk->car->walk->car->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car",
+    "final_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->rail->walk->car->walk->rail->walk->rail->walk->rail->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 253,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000527",
+    "ground_truth": "walk->bus->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "walk->car->rail->walk->rail->walk->rail->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 249,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000602",
+    "ground_truth": "walk->car->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->bus->car->bus->car->bus->car->bus->car->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "walk->car->walk->car->walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->car->rail->bus->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 249,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000550",
+    "ground_truth": "walk->bus->walk",
+    "raw_prediction": "car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "car->walk->car->walk->car->walk->car->walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->car->rail->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk",
+    "wrong_windows": 246,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000661",
+    "ground_truth": "walk->bike->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->bus->car->bus->car->bus->walk->bus->car->bus->car->bus->car->bus->car->walk->car->bus->car->walk->car->bus->car->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->bus->rail->walk->rail->walk->rail->walk->rail->walk->rail->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk",
+    "wrong_windows": 238,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000612",
+    "ground_truth": "walk->car->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car",
+    "final_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->car",
+    "wrong_windows": 232,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000522",
+    "ground_truth": "walk->car->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->bus->car->bus->car->bus->walk->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->walk->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "walk->rail->walk->rail->bus->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->car->walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk",
+    "wrong_windows": 229,
+    "failure_stage": "TRANSIT_CONTEXT_OR_RESOLVER",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000684",
+    "ground_truth": "walk->bus->rail->bus->walk",
+    "raw_prediction": "car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->walk->car->walk->car->walk->car->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->rail->walk->rail->walk->rail->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 221,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000666",
+    "ground_truth": "walk->rail->walk",
+    "raw_prediction": "car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->car->bus->rail->car->bus->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car",
+    "final_prediction": "car->walk->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->car->walk->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->car->walk->rail->walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->car",
+    "wrong_windows": 215,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000658",
+    "ground_truth": "walk->bus->rail->bus->walk",
+    "raw_prediction": "walk->car->walk->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->bus->walk->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->bus->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk",
+    "wrong_windows": 211,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000501",
+    "ground_truth": "walk->car->walk",
+    "raw_prediction": "car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->bus->car->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car",
+    "final_prediction": "car->walk->car->walk->car->walk->car->walk->rail->walk->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 210,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  },
+  {
+    "trip_id": "trip_000535",
+    "ground_truth": "walk->bus->rail->bus->walk",
+    "raw_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->bus->car->walk->car->bus->car->bus->car->bus->car->bus->car->walk->car->bus->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->bus->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk",
+    "final_prediction": "walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->car->walk->rail->car->walk->car->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->car->walk->rail->walk->car->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail->walk->rail",
+    "wrong_windows": 207,
+    "failure_stage": "RAW_ML",
+    "scenario_category": "multimodal"
+  }
+]

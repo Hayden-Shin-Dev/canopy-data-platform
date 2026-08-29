@@ -1,0 +1,84 @@
+{
+  "status": "PASS",
+  "definition": "raw GeoLife prediction at each completed window uses only GPS available through that window",
+  "raw_window_metrics": {
+    "count": 76005,
+    "accuracy": 0.8067232418919807,
+    "macro_precision": 0.6083091945091078,
+    "macro_recall": 0.4379583717441955,
+    "macro_f1": 0.40796004317856643,
+    "weighted_f1": 0.8135700775784417,
+    "per_class": {
+      "walk": {
+        "precision": 0.976802806225873,
+        "recall": 0.9517389437526835,
+        "f1": 0.9641080065416333,
+        "support": 58225
+      },
+      "bike": {
+        "precision": 0.45602836879432623,
+        "recall": 0.5060003934684242,
+        "f1": 0.47971649724890425,
+        "support": 5083
+      },
+      "car": {
+        "precision": 0.12231947483588622,
+        "recall": 0.40982404692082114,
+        "f1": 0.18840579710144928,
+        "support": 2728
+      },
+      "bus": {
+        "precision": 0.48639532268945357,
+        "recall": 0.3060271646859083,
+        "f1": 0.3756838905775076,
+        "support": 7068
+      },
+      "rail": {
+        "precision": 1.0,
+        "recall": 0.016201309893140295,
+        "f1": 0.03188602442333786,
+        "support": 2901
+      }
+    }
+  },
+  "final_window_metrics": {
+    "count": 76005,
+    "accuracy": 0.6565489112558385,
+    "macro_precision": 0.4357288299834116,
+    "macro_recall": 0.3870059183600139,
+    "macro_f1": 0.2718913230793187,
+    "weighted_f1": 0.6975199333768052,
+    "per_class": {
+      "walk": {
+        "precision": 0.983175827435691,
+        "recall": 0.7969085444396736,
+        "f1": 0.8802967207049962,
+        "support": 58225
+      },
+      "bike": {
+        "precision": 0.6051724137931035,
+        "recall": 0.06905370843989769,
+        "f1": 0.12396256401200777,
+        "support": 5083
+      },
+      "car": {
+        "precision": 0.23852385238523852,
+        "recall": 0.0971407624633431,
+        "f1": 0.13805678562125553,
+        "support": 2728
+      },
+      "bus": {
+        "precision": 0.24776785714285715,
+        "recall": 0.015704584040747028,
+        "f1": 0.029536987759446513,
+        "support": 7068
+      },
+      "rail": {
+        "precision": 0.10400419916016797,
+        "recall": 0.9562219924164082,
+        "f1": 0.1876035572988875,
+        "support": 2901
+      }
+    }
+  }
+}

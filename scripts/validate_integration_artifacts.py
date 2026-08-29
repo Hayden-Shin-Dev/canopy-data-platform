@@ -17,6 +17,7 @@ from src.integration.gps_contract import validate_gps_event
 from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
 from src.integration.replay import ReplayEngine, read_replay_csv
 from scripts.evaluate_mock_trip import evaluate as evaluate_mock_trip
+from scripts.evaluate_transit_fusion import evaluate as evaluate_transit_fusion
 from src.predict_expected_behaviour import predict_expected_behaviour
 from src.ktdb.schema import MODEL_FEATURES
 
@@ -64,6 +65,18 @@ def validate() -> dict[str, object]:
         checks["seoul_transit_references"] = {"status": "PASS", "bus_stops": len(refs.bus_stops), "bus_route_stops": len(refs.bus_route_stops), "subway_stations": len(refs.subway_stations), "korail_stations": len(refs.korail_stations)}
     except Exception as error:
         checks["seoul_transit_references"] = {"status": "FAIL", "error": str(error)}
+    try:
+        transit_eval = evaluate_transit_fusion(ROOT / "data/fixtures/integration", ROOT / "reports/integration/runs/transit_fusion_evaluation.json")
+        checks["transit_fusion_evaluation"] = {
+            "status": "PASS",
+            "raw_accuracy": transit_eval["raw_accuracy"],
+            "fused_accuracy": transit_eval["fused_accuracy"],
+            "false_rail_raw": transit_eval["false_rail_raw"],
+            "false_rail_fused": transit_eval["false_rail_fused"],
+            "bike_support": transit_eval["class_support"]["bike"],
+        }
+    except Exception as error:
+        checks["transit_fusion_evaluation"] = {"status": "FAIL", "error": str(error)}
     required_checks = ("geolife_model", "ktdb_model", "emission_factors", "seoul_transit_references")
     if all(checks[name]["status"] == "PASS" for name in required_checks):  # type: ignore[index]
         try:
@@ -84,7 +97,16 @@ def validate() -> dict[str, object]:
         missing = [name for name in required_checks if checks[name]["status"] != "PASS"]  # type: ignore[index]
         checks["full_pipeline_production_replay"] = {"status": "FAIL", "reason": f"required checks not ready: {missing}"}
     required_statuses = ("gps_contract", "replay_fixtures", "iphone_mock_replay", "ktdb_model", "geolife_model", "emission_factors", "seoul_transit_references", "full_pipeline_production_replay")
-    result["overall_status"] = "COMPLETE" if all(checks[name]["status"] == "PASS" for name in required_statuses) else "INCOMPLETE"  # type: ignore[index]
+    result["overall_status"] = "INCOMPLETE"
+    # 계약·산출물 검증 통과와 운영 준비 완료는 분리해서 기록한다.
+    result["production_readiness"] = "NOT_READY"
+    result["readiness_blockers"] = [
+        "KTDB probability calibration is measured but production acceptance is not yet defined",
+        "Transit labelled evaluation is 100% on four supplied classes; bike-labelled support is 0",
+        "Long-duration real iPhone GPS validation is not measured",
+    ]
+    if all(checks[name]["status"] == "PASS" for name in required_statuses) and result["production_readiness"] == "READY":  # type: ignore[index]
+        result["overall_status"] = "COMPLETE"
     return result
 
 

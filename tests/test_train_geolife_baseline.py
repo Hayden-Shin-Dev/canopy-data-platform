@@ -65,6 +65,34 @@ class GeoLifeBaselineTrainingTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             train_baseline("missing.csv", "model.joblib", "metrics.json", model_type="unknown")
 
+    def test_trains_catboost_candidate(self) -> None:
+        rows = []
+        for split in ("train", "validation", "test"):
+            for index, mode in enumerate(("walk", "bike", "car", "bus", "rail")):
+                rows.append(
+                    {
+                        "user_id": f"{split[0]}{index:02d}",
+                        "trajectory_id": "sample",
+                        "window_start": "2020-01-01 00:00:00",
+                        "window_end": "2020-01-01 00:01:00",
+                        "canonical_mode": mode,
+                        "split": split,
+                        "distance_m": float(index + 1),
+                        "mean_speed_mps": float(index + 1),
+                    }
+                )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            dataset = root / "dataset.csv"
+            model = root / "model.joblib"
+            metrics = root / "metrics.json"
+            pd.DataFrame(rows).to_csv(dataset, index=False, encoding="utf-8-sig")
+            result = train_baseline(dataset, model, metrics, n_estimators=5, class_weight=None, model_type="catboost")
+            model_created = model.exists()
+
+        self.assertEqual(result["model"], "CatBoostClassifier")
+        self.assertTrue(model_created)
+
 
 if __name__ == "__main__":
     unittest.main()

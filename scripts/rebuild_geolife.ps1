@@ -50,8 +50,8 @@ py -3.13 -m scripts.train_geolife_baseline `
     "$ModelRoot/geolife_hardened_120s_purity_090.joblib" `
     "$OutputRoot/geolife_hardened_120s_purity_090_metrics.json" `
     --class-weight none `
-    --model-type random_forest `
-    --n-estimators 100 `
+    --model-type catboost `
+    --n-estimators 250 `
     --random-seed 2021
 
 py -3.13 -m scripts.evaluate_geolife_model `
