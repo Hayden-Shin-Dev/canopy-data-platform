@@ -75,7 +75,17 @@ def evaluate(csv_path: str | Path = DEFAULT_CSV, ground_truth_path: str | Path =
             for window in windows
         ],
         "ktdb_baseline": {"features": scenario.features, "provenance": scenario.provenance, "predicted_mode": pipeline.get("expected_behaviour", {}).get("predicted_mode"), "probabilities": pipeline.get("expected_behaviour", {}).get("probabilities", {})},
-        "production_pipeline": {"status": pipeline.get("status"), "final_mode": pipeline.get("actual_behaviour", {}).get("final_mode"), "distance_km": pipeline.get("distance_km")},
+        "production_pipeline": {
+            "status": pipeline.get("status"),
+            "final_mode": pipeline.get("actual_behaviour", {}).get("final_mode"),
+            "mode_sequence": pipeline.get("actual_behaviour", {}).get("mode_sequence", []),
+            "segments": pipeline.get("actual_behaviour", {}).get("segments", []),
+            "window_results": pipeline.get("window_results", []),
+            "distance_km": pipeline.get("distance_km"),
+            "expected_co2e_g": pipeline.get("co2", {}).get("expected_co2e_g"),
+            "actual_co2e_g": pipeline.get("co2", {}).get("actual_co2e_g"),
+            "reduction_co2e_g": pipeline.get("co2", {}).get("reduction_co2e_g"),
+        },
         "comparison": {
             "initial_walk": bool(actual_sequence and actual_sequence[0] == "walk"),
             "rail_present": "rail" in actual_sequence,

@@ -111,7 +111,7 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
 )
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "function updateFromStatus(s){",
-    "function renderSegments(segments){const el=document.getElementById('resultSegments');if(!el)return;const names={walk:'도보',bike:'자전거',car:'자동차',bus:'버스',rail:'철도'};el.innerHTML=(segments||[]).map(x=>'<div class=segment><strong>'+(x.matched_subway_line?x.matched_subway_line+'호선':names[x.mode]||x.mode)+'</strong><span><b>'+Number(x.distance_km||0).toFixed(2)+' km</b><small> · '+Number(x.co2e_g||0).toFixed(1)+' g</small></span></div>').join('')}\nfunction updateFromStatus(s){",
+    "function renderSegments(segments){const el=document.getElementById('resultSegments');if(!el)return;const names={walk:'도보',bike:'자전거',car:'자동차',bus:'버스',rail:'철도'};el.innerHTML=(segments||[]).map(x=>'<div class=segment><strong>'+(x.mode==='rail'&&x.matched_subway_line?x.matched_subway_line+'호선':names[x.mode]||x.mode)+'</strong><span><b>'+Number(x.distance_km||0).toFixed(2)+' km</b><small> · '+Number(x.co2e_g||0).toFixed(1)+' g</small></span></div>').join('')}\nfunction updateFromStatus(s){",
 ).replace(
     "document.getElementById('resultMode').textContent=p.actual_behaviour?.final_mode||'-';",
     "document.getElementById('resultMode').textContent=(p.actual_behaviour?.mode_sequence||[]).filter((x,i,a)=>i===0||x!==a[i-1]).join(' → ')||p.actual_behaviour?.final_mode||'-';renderSegments(p.actual_behaviour?.segments||[]);",
