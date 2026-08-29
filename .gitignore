@@ -32,6 +32,9 @@ models/**/*.joblib
 reports/**/runs/*
 !reports/**/runs/**/README.md
 
+# Frozen evaluation datasets are supplied locally and remain read-only.
+data/evaluation/**
+
 # Local logs and editor files
 *.log
 .idea/
