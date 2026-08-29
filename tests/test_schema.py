@@ -22,7 +22,10 @@ class SchemaTests(unittest.TestCase):
         forbidden = {"idx", "fid", "person_group_id", "actual_mode", "split"}
 
         self.assertTrue(set(MODEL_FEATURES).isdisjoint(forbidden))
-        self.assertEqual(len(MODEL_FEATURES), 15)
+        self.assertEqual(len(MODEL_FEATURES), 19)
+        self.assertTrue(
+            {"origin_x", "origin_y", "destination_x", "destination_y"}.issubset(MODEL_FEATURES)
+        )
 
 
 if __name__ == "__main__":
