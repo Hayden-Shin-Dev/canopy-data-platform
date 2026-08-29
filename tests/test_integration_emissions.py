@@ -6,8 +6,8 @@ from src.emission_factors.resolver import FactorResolver
 from src.integration.emissions import calculate_actual_emission, calculate_expected_emission
 
 
-def _row(mode, subtype, value, unit):
-    values = [mode, subtype, None, None, value, unit, value / 1000, "kg CO2e/km", "source", None, 2026, "test", "operational", False, f"{mode}-{subtype}"]
+def _row(mode, subtype, value, unit, fuel=None, size=None):
+    values = [mode, subtype, fuel, size, value, unit, value / 1000, "kg CO2e/km", "source", None, 2026, "test", "operational", False, f"{mode}-{subtype}"]
     return dict(zip(OUTPUT_COLUMNS, values, strict=True))
 
 
@@ -15,7 +15,7 @@ def _resolver():
     return FactorResolver(pd.DataFrame([
         _row("walk", "conventional_walk", 0.0, "gCO2e/person.km"),
         _row("bike", "conventional_bicycle", 0.0, "gCO2e/person.km"),
-        _row("car", "unknown_average", 180.0, "gCO2e/vehicle.km"),
+        _row("car", "unknown_average", 180.0, "gCO2e/vehicle.km", fuel="unknown", size="average"),
         _row("bus", "average_local_bus", 100.0, "gCO2e/passenger.km"),
         _row("rail", "national_rail", 40.0, "gCO2e/passenger.km"),
     ]))

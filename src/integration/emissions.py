@@ -58,7 +58,12 @@ def calculate_expected_emission(
     contributions: dict[str, dict[str, object]] = {}
     total = 0.0
     for mode, probability in values.items():
-        factor = resolver.resolve_emission_factor(mode)
+        # A population probability has no vehicle subtype; use the resolver's
+        # documented unknown/average car fallback rather than inventing a factor.
+        if mode == "car":
+            factor = resolver.resolve_emission_factor(mode, fuel_type="unknown", vehicle_size="average")
+        else:
+            factor = resolver.resolve_emission_factor(mode)
         mode_emission = calculate_segment_emission(distance_km, factor)
         contributions[mode] = {"probability": probability, "factor": factor, "co2e_g": mode_emission}
         total += probability * mode_emission
