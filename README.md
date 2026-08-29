@@ -30,6 +30,18 @@ GPS Window → 정류장·역 근접성 → route/line·순서·시간표 증거
 - Seoul station-line API: `INFO-000`, 799 rows
 - TAGO bus APIs: all three endpoints respond successfully; BusStop/route responses contain no latitude/longitude
 
+## Bus coordinate matching
+
+TAGO BusStop와 BusRoutespecificStopInformation 응답을 국토교통부 전국 버스정류장 위치정보 파일과 결합합니다. 정류장번호 exact match를 먼저 시도하고, 지역명이 확인된 뒤 유일한 정류장명+지역 match만 좌표를 붙입니다. 중복 후보는 추측하지 않고 unmatched 파일에 남깁니다.
+
+- 전국 위치정보 파일: 227,065 rows
+- BusStop API sample: 377 rows
+- exact ID match: 0 rows
+- name/region exact match: 31 rows
+- 좌표가 있는 bus_stops.csv: 31 rows
+- 좌표가 있는 bus_route_stops.csv: 130 rows
+- 결과 요약: `data/processed/transit_context/bus_match_summary.json`
+
 ## 실행
 
 ```powershell
@@ -41,6 +53,13 @@ python scripts/build_transit_references.py `
 python scripts/validate_transit_context.py
 python scripts/fetch_seoul_reference.py --refresh-seoul
 python scripts/fetch_tago_reference.py --refresh-tago
+```
+
+전국 정류장 파일을 명시하려면 다음 옵션을 추가합니다.
+
+```powershell
+python scripts/fetch_tago_reference.py --refresh-tago `
+  --national-bus-stops data/raw/transit/국토교통부_전국 버스정류장 위치정보_20251031.csv
 ```
 
 `reports/transit_context/final_validation.md`와 `validation.json`에 실제 처리 수치와 미검증 항목을 기록합니다.
