@@ -1,0 +1,84 @@
+{
+  "status": "reference_only_api_pending",
+  "api": {
+    "data_go_kr_service_key": "API key unavailable",
+    "seoul_openapi_key": "API key unavailable",
+    "live_calls_made": false,
+    "note": "No API response is reported until keys are configured and endpoints are called."
+  },
+  "tables": {
+    "subway_stations": {
+      "path": "data\\processed\\transit_context\\subway_stations.csv",
+      "rows": 276,
+      "columns": [
+        "station_id",
+        "station_name",
+        "normalized_station_name",
+        "line",
+        "latitude",
+        "longitude",
+        "source"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
+    },
+    "subway_timetable": {
+      "path": "data\\processed\\transit_context\\subway_timetable.csv",
+      "rows": 424264,
+      "columns": [
+        "line",
+        "station_id",
+        "station_name",
+        "normalized_station_name",
+        "direction",
+        "service_type",
+        "service_type_raw",
+        "arrival_time",
+        "departure_time",
+        "source"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 496,
+      "invalid_coordinate_rows": null,
+      "coordinates_valid": true
+    },
+    "korail_stations": {
+      "path": "data\\processed\\transit_context\\korail_stations.csv",
+      "rows": 202,
+      "columns": [
+        "station_id",
+        "station_name",
+        "normalized_station_name",
+        "latitude",
+        "longitude",
+        "source",
+        "region"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
+    },
+    "subway_station_unmatched": {
+      "path": "data\\processed\\transit_context\\subway_station_unmatched.csv",
+      "rows": 185,
+      "columns": [
+        "line",
+        "normalized_station_name"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": null,
+      "coordinates_valid": true
+    }
+  },
+  "unmatched_station_keys": 185,
+  "limitations": [
+    "Bus references and live positions were not fetched without DATA_GO_KR_SERVICE_KEY.",
+    "Seoul line API enrichment was not fetched without SEOUL_OPENAPI_KEY.",
+    "GeoLife is not joined to Korean transit networks.",
+    "Korail source has no line/subtype field; rail subtype remains unknown unless stronger evidence exists."
+  ]
+}
