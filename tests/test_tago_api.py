@@ -2,7 +2,7 @@ from pathlib import Path
 
 import requests
 
-from src.transit_context.tago_api import fetch_tago_city_codes, probe_tago_services
+from src.transit_context.tago_api import fetch_tago_city_codes, parse_tago_bus_stops, parse_tago_route_stops, probe_tago_services
 
 
 class ErrorSession:
@@ -35,3 +35,15 @@ def test_tago_service_probe_keeps_service_statuses_separate() -> None:
     result = probe_tago_services("key", client=SuccessClient())
     assert set(result) == {"bus_stops", "bus_routes", "bus_locations"}
     assert all(item["status"] == "success" for item in result.values())
+
+
+def test_parse_observed_bus_stop_schema_does_not_invent_coordinates() -> None:
+    frame = parse_tago_bus_stops({"Response": {"body": {"items": {"item": [{"sttn_id": "s1", "sttn_nm": "정류장", "ctpv_cd": "29"}]}}}})
+    assert frame.loc[0, "stop_id"] == "s1"
+    assert frame.loc[0, "coordinate_status"] == "not_provided_by_api"
+
+
+def test_parse_observed_route_stop_schema() -> None:
+    frame = parse_tago_route_stops({"response": {"body": {"items": {"item": [{"rte_id": "r1", "rte_no": "1", "rte_nm": "1번", "sttn_seq": 1, "sttn_id": "s1", "sttn_nm": "정류장", "ctpv_cd": "29"}]}}}})
+    assert frame.loc[0, "route_id"] == "r1"
+    assert frame.loc[0, "stop_sequence"] == 1
