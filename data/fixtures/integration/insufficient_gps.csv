@@ -1,0 +1,2 @@
+schema_version,trip_id,device_id,sequence,timestamp,latitude,longitude,horizontal_accuracy_m,altitude_m,vertical_accuracy_m,speed_mps,course_deg,source,is_simulated
+1.0,fixture-insufficient,fixture-device,0,2026-08-29T16:00:00Z,37.566500,126.978000,8,30,5,0,90,insufficient_gps_fixture,true
