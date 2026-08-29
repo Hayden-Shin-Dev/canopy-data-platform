@@ -1,0 +1,3 @@
+candidate,false_rail_activation,true_rail_correction,false_rail_override,rail_precision,rail_recall,rail_f1
+baseline,17195,2729,23898,0.10400419916016797,0.9562219924164082,0.1876035572988875
+selected_A_strict_score,4008,2354,9328,0.20457064892982008,0.8269562219924164,0.3280010937927263

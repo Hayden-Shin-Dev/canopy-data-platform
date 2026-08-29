@@ -1,0 +1,3 @@
+candidate,journey_count,exact_sequence_count,exact_sequence_accuracy,extra_segment_count
+baseline,200,5,0.025,174
+selected_A_strict_score,200,8,0.04,185

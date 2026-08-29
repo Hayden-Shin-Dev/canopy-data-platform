@@ -1,10 +1,89 @@
 {
   "candidate": "A_strict_score",
-  "accuracy": 0.7995263469508584,
-  "macro_precision": 0.4664872766681987,
-  "macro_recall": 0.47160153489852413,
-  "macro_f1": 0.4473390937963185,
-  "weighted_f1": 0.8138915093800098,
-  "false_rail_activation": 1948,
-  "journeys": 700
+  "baseline_commit": "0f252c19119de7b2c4f48be31623b88f7c675c01",
+  "candidate_commit": "f32fa5c",
+  "baseline": {
+    "count": 76005,
+    "accuracy": 0.6565489112558385,
+    "macro_precision": 0.4357288299834116,
+    "macro_recall": 0.3870059183600139,
+    "macro_f1": 0.2718913230793187,
+    "weighted_f1": 0.6975199333768052,
+    "per_class": {
+      "walk": {
+        "precision": 0.983175827435691,
+        "recall": 0.7969085444396736,
+        "f1": 0.8802967207049962,
+        "support": 58225
+      },
+      "bike": {
+        "precision": 0.6051724137931035,
+        "recall": 0.06905370843989769,
+        "f1": 0.12396256401200777,
+        "support": 5083
+      },
+      "car": {
+        "precision": 0.23852385238523852,
+        "recall": 0.0971407624633431,
+        "f1": 0.13805678562125553,
+        "support": 2728
+      },
+      "bus": {
+        "precision": 0.24776785714285715,
+        "recall": 0.015704584040747028,
+        "f1": 0.029536987759446513,
+        "support": 7068
+      },
+      "rail": {
+        "precision": 0.10400419916016797,
+        "recall": 0.9562219924164082,
+        "f1": 0.1876035572988875,
+        "support": 2901
+      }
+    }
+  },
+  "updated": {
+    "count": 76005,
+    "accuracy": 0.785198342214328,
+    "macro_precision": 0.4551752029613601,
+    "macro_recall": 0.46999010568960226,
+    "macro_f1": 0.3921187007132019,
+    "weighted_f1": 0.7895314462667884,
+    "per_class": {
+      "walk": {
+        "precision": 0.9778953199549686,
+        "recall": 0.939871189351653,
+        "f1": 0.9585062967439091,
+        "support": 58225
+      },
+      "bike": {
+        "precision": 0.6009270965023178,
+        "recall": 0.28054298642533937,
+        "f1": 0.3825107296137339,
+        "support": 5083
+      },
+      "car": {
+        "precision": 0.1397091229616571,
+        "recall": 0.23240469208211142,
+        "f1": 0.17451142306633635,
+        "support": 2728
+      },
+      "bus": {
+        "precision": 0.352773826458037,
+        "recall": 0.07017543859649122,
+        "f1": 0.11706396034930375,
+        "support": 7068
+      },
+      "rail": {
+        "precision": 0.20457064892982008,
+        "recall": 0.8269562219924164,
+        "f1": 0.3280010937927263,
+        "support": 2901
+      }
+    }
+  },
+  "release_gate": {
+    "all_aggregate_metrics_improved": true,
+    "false_rail_reduced": true
+  }
 }
