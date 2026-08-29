@@ -77,9 +77,9 @@
     "transit_fusion_evaluation": {
       "status": "PASS",
       "raw_accuracy": 0.5,
-      "fused_accuracy": 0.5,
+      "fused_accuracy": 0.75,
       "false_rail_raw": 2,
-      "false_rail_fused": 2,
+      "false_rail_fused": 0,
       "bike_support": 0
     },
     "full_pipeline_production_replay": {
@@ -103,14 +103,14 @@
           "status": "PASS",
           "accepted_event_count": 4,
           "rejected_event_count": 0,
-          "actual_mode": "rail",
+          "actual_mode": "car",
           "distance_km": 0.9257038315071642
         },
         "seoul_car_no_transit.csv": {
           "status": "PASS",
           "accepted_event_count": 4,
           "rejected_event_count": 0,
-          "actual_mode": "rail",
+          "actual_mode": "car",
           "distance_km": 1.4146645565135663
         },
         "seoul_subway_line1.csv": {
@@ -135,7 +135,7 @@
   "production_readiness": "NOT_READY",
   "readiness_blockers": [
     "KTDB probability calibration is measured but production acceptance is not yet defined",
-    "Transit labelled evaluation is 50% accuracy with two false-rail cases; bike-labelled support is 0",
+    "Transit labelled evaluation is 75% accuracy but bus is confused with car; bike-labelled support is 0",
     "Long-duration real iPhone GPS validation is not measured"
   ]
 }

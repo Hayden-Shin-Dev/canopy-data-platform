@@ -4,18 +4,18 @@
 
 | Fixture | Expected | GeoLife raw | Fusion |
 | --- | --- | --- | --- |
-| seoul_bus_route.csv | bus | rail | rail |
+| seoul_bus_route.csv | bus | rail | car |
 | seoul_car_no_transit.csv | car | rail | rail |
 | seoul_subway_line1.csv | rail | rail | rail |
 | seoul_walk_bike.csv | walk | walk | walk |
 
 - Raw accuracy: 2/4 = 50%
-- Fusion accuracy: 2/4 = 50%
+- Fusion accuracy: 3/4 = 75%
 - False rail raw: 2
-- False rail fusion: 2
+- False rail fusion: 0
 - Bike-labelled support: 0
 
-따라서 현재 Transit Context는 rail fixture를 확인하는 데는 사용되지만 car/bus 오검출을 줄였다고 볼 수 없다. 제공된 fixture에는 bike 정답 trajectory가 없어 bike precision/recall은 `NOT TESTED`로 남긴다. 특정 노선이나 좌표를 이용해 결과를 보정하지 않았다.
+따라서 rail fixture 확인과 car의 false rail 제거에는 도움이 됐지만 bus는 car로 오검출됐다. 제공된 fixture에는 bike 정답 trajectory가 없어 bike precision/recall은 `NOT TESTED`로 남긴다. 특정 노선이나 좌표를 이용해 결과를 보정하지 않았다.
 
 ## 재현
 
