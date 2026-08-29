@@ -139,6 +139,7 @@ def _evaluate_trip(
     ktdb_model: Path,
     factors_csv: Path,
     fallback_expected: dict[str, object],
+    derive_ktdb_features: bool = False,
 ) -> dict[str, Any]:
     """Run production inference, then load Ground Truth for scoring."""
 
@@ -152,11 +153,13 @@ def _evaluate_trip(
     # Expected Behaviour is an input contract for the existing pipeline; it is
     # not used to derive the mobility labels being evaluated here.
     try:
-        expected = build_expected_features(events).features
-        expected_source = "route_reference"
+        expected = build_expected_features(events).features if derive_ktdb_features else None
+        expected_source = "route_reference" if expected is not None else "repository_demo_reference_fallback"
     except Exception:
         expected = fallback_expected
         expected_source = "repository_demo_reference_fallback"
+    if expected is None:
+        expected = fallback_expected
     pipeline = run_full_pipeline(
         events,
         expected,
@@ -275,7 +278,7 @@ def _write_report(run_dir: Path, summary: dict[str, Any], metrics: dict[str, Any
     (run_dir / "CANOPY_DATASET_V1_EVALUATION.md").write_text("\n".join(rows) + "\n", encoding="utf-8")
 
 
-def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_baseline_commit: str, evaluation_commit: str, limit: int | None = None, resume: bool = False, verify_hashes: bool = True) -> dict[str, Any]:
+def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_baseline_commit: str, evaluation_commit: str, limit: int | None = None, resume: bool = False, verify_hashes: bool = True, derive_ktdb_features: bool = False) -> dict[str, Any]:
     dataset = discover_dataset(dataset_root)
     frozen_validation = validate_frozen_dataset(dataset, verify_hashes=verify_hashes)
     if frozen_validation["status"] != "PASS":
@@ -307,7 +310,7 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
     with predictions_path.open("a", encoding="utf-8") as predictions, traces_path.open("a", encoding="utf-8") as traces_file:
         for index, row in enumerate(rows, start=1):
             trip_id = str(row["trip_id"])
-            result = completed.get(trip_id) or _evaluate_trip(row, references=references, geolife_model=geolife_model, ktdb_model=ktdb_model, factors_csv=factors_csv, fallback_expected=fallback_expected)
+            result = completed.get(trip_id) or _evaluate_trip(row, references=references, geolife_model=geolife_model, ktdb_model=ktdb_model, factors_csv=factors_csv, fallback_expected=fallback_expected, derive_ktdb_features=derive_ktdb_features)
             if trip_id not in completed:
                 predictions.write(json.dumps(result, ensure_ascii=False, default=str) + "\n")
                 predictions.flush()
@@ -380,12 +383,12 @@ def main() -> int:
     parser.add_argument("--limit", type=int)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--skip-hash-verification", action="store_true")
+    parser.add_argument("--derive-ktdb-features", action="store_true", help="derive route-specific KTDB features for each journey; slower and not needed for mode metrics")
     args = parser.parse_args()
-    summary = run_evaluation(args.dataset_root, args.run_dir, canopy_baseline_commit=args.canopy_baseline_commit, evaluation_commit=args.evaluation_commit, limit=args.limit, resume=args.resume, verify_hashes=not args.skip_hash_verification)
+    summary = run_evaluation(args.dataset_root, args.run_dir, canopy_baseline_commit=args.canopy_baseline_commit, evaluation_commit=args.evaluation_commit, limit=args.limit, resume=args.resume, verify_hashes=not args.skip_hash_verification, derive_ktdb_features=args.derive_ktdb_features)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
