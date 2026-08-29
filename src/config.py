@@ -20,6 +20,8 @@ MODELS_DIR = PROJECT_ROOT / "models"
 
 SGIS_CENTROID_PATH = REFERENCE_DIR / "admin_dong_centroids_2021.csv"
 SGIS_RAW_RESPONSE_DIR = REFERENCE_DIR / "sgis" / "raw" / "2021"
+KTDB_SGIS_MAPPING_PATH = REFERENCE_DIR / "ktdb_sgis_admin_dong_mapping_2021.csv"
+KTDB_UNMATCHED_REPORT_PATH = REPORTS_DIR / "ktdb_admin_dong_unmatched.csv"
 
 # KTDB 파일명은 원본에서 받은 이름을 그대로 사용해야 하므로 여기서 한 번만 관리함.
 KTDB_RAW_FILES = {
