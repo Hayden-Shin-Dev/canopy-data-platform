@@ -37,7 +37,10 @@ def validate() -> dict[str, object]:
             "rows": mock["input"]["rows"],
             "accepted_event_count": mock["replay"]["accepted_event_count"],
             "actual_geolife_window_sequence": mock["actual_geolife_window_sequence"],
-            "production_final_mode": mock["production_pipeline"]["final_mode"],
+            "production_mode_sequence": mock["production_pipeline"]["mode_sequence"],
+            "production_final_mode": mock["production_pipeline"]["mode_sequence"][-1],
+            "ktdb_baseline_predicted_mode": mock["ktdb_baseline"]["predicted_mode"],
+            "ktdb_baseline_features": mock["ktdb_baseline"]["features"],
             "evaluation_report": "reports/integration/mock_trip_evaluation.json",
         }
     except Exception as error:
