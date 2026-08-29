@@ -21,6 +21,7 @@ data/interim/*
 data/processed/**
 !data/processed/**/
 !data/processed/**/README.md
+data/processed.zip
 data/reference/sgis/raw/**
 !data/reference/sgis/raw/README.md
 data/cache/transit/**
