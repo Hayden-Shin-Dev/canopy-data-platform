@@ -8,6 +8,7 @@ from typing import Sequence
 
 import pandas as pd
 
+from src.config import PROJECT_ROOT
 from src.transit_context.evidence import bus_context, korail_context, subway_context
 from src.transit_context.references import normalize_korail_stations, normalize_subway_stations, normalize_subway_timetable
 from src.transit_context.resolver import resolve_mode
@@ -32,8 +33,8 @@ class TransitRuntimeReferences:
     subway_timetable: pd.DataFrame | None = None
 
     @classmethod
-    def from_directory(cls, reference_dir: str | Path = "data/processed/transit_context") -> "TransitRuntimeReferences":
-        directory = Path(reference_dir)
+    def from_directory(cls, reference_dir: str | Path | None = None) -> "TransitRuntimeReferences":
+        directory = Path(reference_dir) if reference_dir is not None else PROJECT_ROOT / "data/processed/transit_context"
         paths = {
             "bus_stops": directory / "seoul_bus_stops.csv",
             "bus_route_stops": directory / "seoul_bus_route_stops.csv",

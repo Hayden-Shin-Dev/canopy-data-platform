@@ -7,12 +7,13 @@ from typing import Mapping
 
 import pandas as pd
 
+from src.config import PROJECT_ROOT
 from src.emission_factors.calculator import calculate_segment_emission
 from src.emission_factors.parser import OUTPUT_COLUMNS
 from src.emission_factors.resolver import FactorResolver
 
 
-DEFAULT_FACTORS_CSV = Path("data/processed/emission_factors/emission_factors_2026.csv")
+DEFAULT_FACTORS_CSV = PROJECT_ROOT / "data/processed/emission_factors/emission_factors_2026.csv"
 
 
 def load_factor_resolver(factors_csv: str | Path = DEFAULT_FACTORS_CSV) -> FactorResolver:

@@ -8,6 +8,7 @@ from typing import Sequence
 
 import pandas as pd
 
+from src.config import PROJECT_ROOT
 from src.geolife.predict import predict_probabilities
 from src.geolife.raw import TrajectoryPoint
 from src.geolife.window_features import compute_window_features
@@ -16,7 +17,7 @@ from src.geolife.windows import TimeWindow, iter_time_windows
 from .gps_contract import GpsEvent
 
 
-DEFAULT_GEOLIFE_MODEL = Path("models/mobility_recognition/geolife_hardened_120s_purity_090.joblib")
+DEFAULT_GEOLIFE_MODEL = PROJECT_ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"
 
 
 @dataclass(frozen=True)
