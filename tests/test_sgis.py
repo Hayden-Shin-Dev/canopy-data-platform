@@ -68,6 +68,32 @@ def test_load_sgis_credentials_reports_missing_names() -> None:
             load_sgis_credentials()
 
 
+def test_load_sgis_credentials_reads_project_env_file(tmp_path) -> None:
+    env_path = tmp_path / ".env"
+    env_path.write_text(
+        "SGIS_CONSUMER_KEY=file-key\nSGIS_CONSUMER_SECRET=file-secret\n",
+        encoding="utf-8",
+    )
+
+    with patch.dict(os.environ, {}, clear=True):
+        assert load_sgis_credentials(env_path=env_path) == ("file-key", "file-secret")
+
+
+def test_load_sgis_credentials_keeps_explicit_environment_precedence(tmp_path) -> None:
+    env_path = tmp_path / ".env"
+    env_path.write_text(
+        "SGIS_CONSUMER_KEY=file-key\nSGIS_CONSUMER_SECRET=file-secret\n",
+        encoding="utf-8",
+    )
+
+    with patch.dict(
+        os.environ,
+        {"SGIS_CONSUMER_KEY": "env-key", "SGIS_CONSUMER_SECRET": "env-secret"},
+        clear=True,
+    ):
+        assert load_sgis_credentials(env_path=env_path) == ("env-key", "env-secret")
+
+
 def test_client_retries_timeout_before_authentication_success() -> None:
     session = Mock()
     session.get.side_effect = [
