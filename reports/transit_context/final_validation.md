@@ -12,7 +12,7 @@
 - subway_station_line_enrichment: 273 rows, duplicate 0, invalid coordinate 0
 - seoul_station_unmatched: 526 rows, duplicate 0, invalid coordinate None
 - Seoul API response: INFO-000
-- TAGO live/bus reference response: authentication error
+- TAGO live/bus reference response: http_error
 
 ## API 상태
 

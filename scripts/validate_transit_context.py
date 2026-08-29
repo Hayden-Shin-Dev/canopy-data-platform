@@ -57,6 +57,8 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
     api_endpoints = json.loads(API_ENDPOINT_CONFIG.read_text(encoding="utf-8"))
     api_summary_path = references / "seoul_api_summary.json"
     api_summary = json.loads(api_summary_path.read_text(encoding="utf-8")) if api_summary_path.exists() else None
+    tago_summary_path = references / "tago_api_summary.json"
+    tago_summary = json.loads(tago_summary_path.read_text(encoding="utf-8")) if tago_summary_path.exists() else None
     status = "api_and_reference_validated" if api_summary and api_summary.get("status_code") == "INFO-000" else "reference_only_api_pending"
     result = {
         "status": status,
@@ -66,6 +68,7 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
             "seoul_openapi_key": "configured" if credentials["seoul_openapi_key"] else "API key unavailable",
             "live_calls_made": False,
             "seoul_api_summary": api_summary,
+            "tago_api_summary": tago_summary,
             "note": "Seoul station-line response was called and cached; TAGO calls failed authentication.",
         },
         "tables": tables,
@@ -89,7 +92,7 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
     for name, table in tables.items():
         lines.append(f"- {name}: {table['rows']:,} rows, duplicate {table['duplicate_rows']:,}, invalid coordinate {table['invalid_coordinate_rows']}")
     lines.append(f"- Seoul API response: {api_summary.get('status_code') if api_summary else 'not called'}")
-    lines.append("- TAGO live/bus reference response: authentication error")
+    lines.append(f"- TAGO live/bus reference response: {tago_summary.get('status') if tago_summary else 'not called'}")
     lines.extend(["", "## API 상태", "", f"- DATA_GO_KR_SERVICE_KEY: {result['api']['data_go_kr_service_key']}", f"- SEOUL_OPENAPI_KEY: {result['api']['seoul_openapi_key']}", f"- Seoul API response: {api_summary.get('status_code') if api_summary else 'not called'}", "- TAGO live/bus reference response: authentication error", "", "## 한계", ""])
     lines.extend(f"- {item}" for item in result["limitations"])
     (reports / "final_validation.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
