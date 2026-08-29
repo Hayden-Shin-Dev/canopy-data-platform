@@ -4,6 +4,10 @@ __pycache__/
 .pytest_cache/
 .pytest-tmp/
 .venv/
+.env
+.env.*
+!.env.example
+catboost_info/
 
 # Local source data (large and redistributed separately)
 data/raw/**
