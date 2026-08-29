@@ -156,13 +156,18 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     '<div class="eyebrow">?ㅻ뒛??異쒓렐</div>',
     '<div class="eyebrow">?ㅻ뒛??異쒓렐</div><div class="token-balance">Canopy Token <strong id="homeTokenBalance">0</strong></div>',
 )
+# 템플릿 인코딩이 달라도 홈 화면에 Token 잔액이 반드시 존재하도록 보강한다.
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<section id="home" class="screen active"><div id="homeMap" class="map"></div><div class="sheet"><div class="eyebrow">오늘의 출근</div>',
+    '<section id="home" class="screen active"><div id="homeMap" class="map"></div><div class="sheet"><div class="eyebrow">오늘의 출근</div><div class="token-balance">Canopy Token <strong id="homeTokenBalance">0</strong></div>',
+)
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "const maps={},layers={},route={};let pollTimer=null,currentScreen='home';",
     "const maps={},layers={},route={};let pollTimer=null,currentScreen='home';let rewardShown=false;const TOKEN_GRAMS_PER_TOKEN=10;let tokenBalance=Number(localStorage.getItem('canopyTokenBalance')||0);",
 )
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "function showScreen(name){currentScreen=name;",
-    "function showScreen(name){currentScreen=name;document.getElementById('homeTokenBalance').textContent=tokenBalance;document.getElementById('tokenBalance').textContent=tokenBalance;",
+    "function showScreen(name){currentScreen=name;const homeToken=document.getElementById('homeTokenBalance');const rewardToken=document.getElementById('tokenBalance');if(homeToken)homeToken.textContent=tokenBalance;if(rewardToken)rewardToken.textContent=tokenBalance;",
 )
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "function formatTime(seconds){",
