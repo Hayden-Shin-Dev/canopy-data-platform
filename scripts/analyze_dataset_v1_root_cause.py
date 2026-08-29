@@ -115,6 +115,7 @@ def _first_stage_rows(predictions: list[dict[str, Any]]) -> list[dict[str, Any]]
 
 def _markdown(
     summary: dict[str, Any],
+    metrics: dict[str, Any],
     transitions: Counter[str],
     interventions: Counter[str],
     mode_rows: list[dict[str, Any]],
@@ -170,6 +171,11 @@ def _markdown(
     ])
     for row in mode_rows:
         lines.append(f"| {row['ground_truth_mode']} | {row['kept_correct']} | {row['fixed_by_final']} | {row['broken_by_final']} | {row['still_wrong']} | {row['net_correction']} |")
+    lines.extend(["", "## Mode metrics snapshot", "", "| Mode | Raw F1 | Final F1 |", "|---|---:|---:|"])
+    for mode in MODES:
+        raw_f1 = metrics.get("raw", {}).get("per_class", {}).get(mode, {}).get("f1", 0.0)
+        final_f1 = metrics.get("final", {}).get("per_class", {}).get(mode, {}).get("f1", 0.0)
+        lines.append(f"| {mode} | {raw_f1:.4f} | {final_f1:.4f} |")
     lines.extend(["", "## Scenario별 성능", "", "| Scenario | Windows | Raw accuracy | Final accuracy | Difference |", "|---|---:|---:|---:|---:|"])
     for row in scenario_rows:
         lines.append(f"| {row['scenario']} | {row['window_count']} | {row['raw_accuracy']:.4f} | {row['final_accuracy']:.4f} | {row['difference']:.4f} |")
@@ -215,6 +221,7 @@ def analyze(run_dir: Path, output_dir: Path) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     predictions = _load(run_dir / "predictions.jsonl")
     summary = json.loads((run_dir / "summary.json").read_text(encoding="utf-8"))
+    metrics = json.loads((run_dir / "metrics.json").read_text(encoding="utf-8"))
 
     matrix = raw_final_transition_matrix(predictions)
     _write_csv(output_dir / "raw_to_final_transition_matrix.csv",
@@ -284,7 +291,7 @@ def analyze(run_dir: Path, output_dir: Path) -> None:
     })
     scope_rows = _journey_scope_metrics(predictions)
     (output_dir / "ROOT_CAUSE_ANALYSIS.md").write_text(
-        _markdown(summary, transitions, intervention, mode_rows, scenario_rows, multimodal_rows, hard_rows, pareto_rows, scope_rows),
+        _markdown(summary, metrics, transitions, intervention, mode_rows, scenario_rows, multimodal_rows, hard_rows, pareto_rows, scope_rows),
         encoding="utf-8",
     )
 
