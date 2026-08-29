@@ -27,6 +27,7 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     assert "modeVisual" in module.MOBILE_APP_HTML
     assert "renderModeVisual" in module.MOBILE_APP_HTML
     assert 'id="reward"' in module.MOBILE_APP_HTML
+    assert 'id="homeTokenBalance"' in module.MOBILE_APP_HTML
     assert "showReward" in module.MOBILE_APP_HTML
     assert "TOKEN_GRAMS_PER_TOKEN" in module.MOBILE_APP_HTML
     assert "tokenEarned" in module.MOBILE_APP_HTML
