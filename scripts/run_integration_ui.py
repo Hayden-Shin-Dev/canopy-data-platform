@@ -125,6 +125,24 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "function modeText(mode,transit){if(mode==='rail'&&transit&&transit.matched_subway_line)return",
 )
 
+# 이동수단 전환은 실제 추론 결과를 그대로 받아 간단한 SVG로 표현한다.
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "</style></head>",
+    "</style><style>.mode-visual{height:34px;display:flex;align-items:center;justify-content:center;margin:-4px 0 2px;overflow:hidden;color:#177950;transition:color .2s ease}.mode-visual[data-mode=\\\"bike\\\"]{color:#2875b8}.mode-visual[data-mode=\\\"car\\\"]{color:#7452a8}.mode-visual[data-mode=\\\"bus\\\"]{color:#b06435}.mode-visual[data-mode=\\\"rail\\\"]{color:#c04f5a}.mode-visual svg{width:96px;height:30px;animation:modeFloat 1.6s ease-in-out infinite}.mode-visual .mode-track{stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-dasharray:5 5;animation:trackMove .8s linear infinite}.mode-visual .mode-body{fill:currentColor;opacity:.9}.mode-visual .mode-wheel{fill:#fff;stroke:currentColor;stroke-width:2}.mode-visual .mode-window{fill:#fff;opacity:.85}@keyframes modeFloat{0%,100%{transform:translateY(1px)}50%{transform:translateY(-2px)}}@keyframes trackMove{to{stroke-dashoffset:-10}}</style></head>",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<div id="activeStatus" class="status">',
+    '<div id="activeStatus" class="status"><div id="modeVisual" class="mode-visual" data-mode="unknown" aria-hidden="true"></div>',
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function modeText(mode,transit){",
+    "function renderModeVisual(mode){const el=document.getElementById('modeVisual');if(!el)return;const safe=['walk','bike','car','bus','rail'].includes(mode)?mode:'unknown';el.dataset.mode=safe;el.innerHTML='<svg viewBox=\\\"0 0 100 38\\\" role=\\\"img\\\" aria-label=\\\"'+safe+' mode\\\"><path class=\\\"mode-track\\\" d=\\\"M5 34h90\\\"/><circle class=\\\"mode-body\\\" cx=\\\"50\\\" cy=\\\"19\\\" r=\\\"6\\\"/></svg>'}function modeText(mode,transit){",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "document.getElementById('activeStatus').textContent=modeText(activeMode,activeTransit);",
+    "renderModeVisual(activeMode);document.getElementById('activeStatus').textContent=modeText(activeMode,activeTransit);",
+)
+
 
 class Runtime:
     def __init__(self) -> None:

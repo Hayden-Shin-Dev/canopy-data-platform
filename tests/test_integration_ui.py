@@ -24,6 +24,8 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     assert 'class="screen active"' in module.MOBILE_APP_HTML
     assert "resultSegments" in module.MOBILE_APP_HTML
     assert "renderSegments" in module.MOBILE_APP_HTML
+    assert "modeVisual" in module.MOBILE_APP_HTML
+    assert "renderModeVisual" in module.MOBILE_APP_HTML
 
     assert module._fixture_path("insufficient_gps.csv").is_file()
     runtime.start("insufficient_gps.csv", "instant")
