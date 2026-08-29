@@ -1,0 +1,5 @@
+schema_version,trip_id,device_id,sequence,timestamp,latitude,longitude,horizontal_accuracy_m,altitude_m,vertical_accuracy_m,speed_mps,course_deg,source,is_simulated
+1.0,fixture-seoul-car,fixture-device,0,2026-08-29T14:00:00Z,37.500000,127.100000,8,50,5,12,90,seoul_negative_transit_fixture,true
+1.0,fixture-seoul-car,fixture-device,1,2026-08-29T14:01:00Z,37.501500,127.105000,8,50,5,12,70,seoul_negative_transit_fixture,true
+1.0,fixture-seoul-car,fixture-device,2,2026-08-29T14:02:00Z,37.503000,127.110000,8,50,5,12,70,seoul_negative_transit_fixture,true
+1.0,fixture-seoul-car,fixture-device,3,2026-08-29T14:03:00Z,37.504500,127.115000,8,50,5,12,70,seoul_negative_transit_fixture,true
