@@ -1,0 +1,15 @@
+{
+  "branch": "eval/seoul-synthetic-v1",
+  "canopy_baseline_commit": "0f252c19119de7b2c4f48be31623b88f7c675c01",
+  "evaluation_commit": "7b80bfc",
+  "working_tree_status_before_evaluation": "clean_except_local_frozen_dataset",
+  "geolife_model": "C:\\Users\\user\\Desktop\\canopy-project-pt\\models\\mobility_recognition\\geolife_hardened_120s_purity_090.joblib",
+  "geolife_model_sha256": "636b1db124076c6b8d3dda5f904594d360ed7cdbe267b31ac52b55ac09c325dd",
+  "ktdb_model": "C:\\Users\\user\\Desktop\\canopy-project-pt\\models\\expected_behaviour\\ktdb_population_baseline.pkl",
+  "ktdb_model_sha256": "feecb440045a6278eafda9ed78fe709aba5bbfbc5e5b55163c58f5435e9fa8ff",
+  "transit_resolver": "src/transit_context/resolver.py",
+  "transit_settings": "config/transit_context.json",
+  "transit_settings_sha256": "8db57cb996d811091ab65681535897140364a683bd73beca6ec41dd13a4a8f81",
+  "window_seconds": 120,
+  "smoothing": "src/integration/segments.py::smooth_window_modes"
+}
