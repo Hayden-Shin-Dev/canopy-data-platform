@@ -8,6 +8,18 @@
       "status": "PASS",
       "fixture_count": 6
     },
+    "iphone_mock_replay": {
+      "status": "PASS",
+      "rows": 433,
+      "accepted_event_count": 433,
+      "actual_geolife_window_sequence": [
+        "walk",
+        "bike",
+        "walk"
+      ],
+      "production_final_mode": "walk",
+      "evaluation_report": "reports/integration/mock_trip_evaluation.json"
+    },
     "ktdb_model": {
       "status": "PASS",
       "path": "models/expected_behaviour/ktdb_population_baseline.pkl",
