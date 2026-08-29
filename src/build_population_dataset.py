@@ -238,6 +238,8 @@ def build_population_dataset(
         pd.DataFrame().to_csv(all_lookup_path, index=False, encoding="utf-8-sig")
         pd.DataFrame().to_csv(commute_lookup_path, index=False, encoding="utf-8-sig")
 
+    distance_summary["unmatched_admin_dongs"] = unmatched_report.to_dict(orient="records")
+
     summary = {
         "raw_rows": raw_rows,
         "valid_rows": valid_rows,
