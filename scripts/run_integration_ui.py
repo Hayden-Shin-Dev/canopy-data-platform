@@ -27,13 +27,13 @@ HTML = """<!doctype html>
 <section><h2>GPS Replay</h2><pre id="replay">-</pre><table><thead><tr><th>sequence</th><th>timestamp</th><th>latitude</th><th>longitude</th><th>accuracy</th><th>speed</th><th>accepted</th><th>reason</th></tr></thead><tbody id="events"></tbody></table></section>
 <section><h2>Window / GeoLife</h2><pre id="window">WAITING</pre></section>
 <section><h2>Transit Context</h2><pre id="transit">WAITING</pre></section>
-<section><h2>KTDB Expected Behaviour</h2><pre id="expected">WAITING (required production inputs are supplied by the caller)</pre></section>
+<section><h2>KTDB Expected Behaviour</h2><p>필수 KTDB MODEL_FEATURES를 JSON으로 입력한 뒤 Start를 누릅니다.</p><textarea id="expectedInput" rows="5" cols="100" placeholder='{"weekday": "weekday", "departure_hour": 8, ...}'></textarea><pre id="expected">WAITING</pre></section>
 <section><h2>Emission / Full Pipeline</h2><pre id="pipeline">WAITING</pre></section>
 <section><h2>Raw Debug</h2><pre id="raw">-</pre></section>
 <script>
 async function json(url, options){const r=await fetch(url,options);return await r.json()}
 async function post(url){await json(url,{method:'POST'});}
-async function start(){await json('/api/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fixture:document.getElementById('fixture').value,speed:document.getElementById('speed').value})});}
+async function start(){let expected_features=null;const text=document.getElementById('expectedInput').value.trim();if(text){expected_features=JSON.parse(text)}await json('/api/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fixture:document.getElementById('fixture').value,speed:document.getElementById('speed').value,expected_features})});}
 async function refresh(){const s=await json('/api/status');document.getElementById('status').textContent=s.status;document.getElementById('replay').textContent=JSON.stringify(s.replay,null,2);document.getElementById('window').textContent=JSON.stringify(s.pipeline.window||s.pipeline.error||s.pipeline.status||'WAITING',null,2);document.getElementById('transit').textContent=JSON.stringify(s.pipeline.transit_context||'WAITING',null,2);document.getElementById('expected').textContent=JSON.stringify(s.pipeline.expected_behaviour||s.pipeline.expected||'WAITING',null,2);document.getElementById('pipeline').textContent=JSON.stringify(s.pipeline,null,2);document.getElementById('raw').textContent=JSON.stringify(s.raw_debug,null,2);document.getElementById('events').innerHTML=(s.events||[]).map(e=>`<tr><td>${e.sequence??''}</td><td>${e.timestamp??''}</td><td>${e.latitude??''}</td><td>${e.longitude??''}</td><td>${e.horizontal_accuracy_m??''}</td><td>${e.speed_mps??''}</td><td>${e.accepted}</td><td>${(e.reasons||[]).join(',')}</td></tr>`).join('');}
 async function init(){const f=await json('/api/fixtures');document.getElementById('fixture').innerHTML=f.map(x=>`<option>${x}</option>`).join('');refresh();setInterval(refresh,1000)} init();
 </script></body></html>"""
@@ -49,8 +49,9 @@ class Runtime:
         self.replay: dict[str, Any] = {}
         self.events: list[dict[str, Any]] = []
         self.pipeline: dict[str, Any] = {}
+        self.expected_features: dict[str, object] | None = None
 
-    def start(self, fixture: str, speed: str) -> None:
+    def start(self, fixture: str, speed: str, expected_features: dict[str, object] | None = None) -> None:
         with self.lock:
             if self.thread and self.thread.is_alive():
                 raise RuntimeError("a replay is already running")
@@ -62,6 +63,7 @@ class Runtime:
             self.replay = {"fixture": path.name, "speed": speed}
             self.events = []
             self.pipeline = {"status": "WAITING"}
+            self.expected_features = expected_features
             self.thread = Thread(target=self._run, args=(rows,), daemon=True)
             self.thread.start()
 
@@ -79,14 +81,34 @@ class Runtime:
             session = result.session
         try:
             session = self.engine.ingestor.stop_trip(session.trip_id)
+            if self.expected_features is None:
+                raise _WaitingForInput("KTDB Expected Behaviour inputs are required before final processing")
+            missing = sorted(set(MODEL_FEATURES) - set(self.expected_features))
+            if missing:
+                raise _WaitingForInput(f"KTDB Expected Behaviour inputs missing: {missing}")
             references = TransitRuntimeReferences.from_directory()
-            # The UI does not fabricate KTDB conditions. A caller can extend the POST
-            # payload with all MODEL_FEATURES before invoking pipeline processing.
-            raise ValueError("KTDB Expected Behaviour inputs are required before final processing")
-        except Exception as error:
+            pipeline = run_full_pipeline(
+                session.events,
+                self.expected_features,
+                references=references,
+                geolife_model_path=ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib",
+                ktdb_model_path=ROOT / "models/expected_behaviour/ktdb_population_baseline.pkl",
+                factors_csv=ROOT / "data/processed/emission_factors/emission_factors_2026.csv",
+            )
+            if pipeline.get("status") == "PASS":
+                self.engine.ingestor.complete_trip(session.trip_id, pipeline)
+            with self.lock:
+                self.pipeline = pipeline
+                self.status = str(pipeline.get("status", "FAIL"))
+                return
+        except _WaitingForInput as error:
             with self.lock:
                 self.pipeline = {"status": "WAITING", "reason": str(error), "accepted_event_count": len(session.events)}
                 self.status = "WAITING"
+        except Exception as error:
+            with self.lock:
+                self.pipeline = {"status": "FAIL", "reason": str(error), "accepted_event_count": len(session.events)}
+                self.status = "FAIL"
 
     def _on_update(self, update) -> None:
         event = update.decision.event
@@ -99,6 +121,10 @@ class Runtime:
     def snapshot(self) -> dict[str, Any]:
         with self.lock:
             return {"status": self.status, "fixture": self.fixture, "replay": dict(self.replay), "pipeline": self.pipeline, "events": list(self.events), "raw_debug": {"event_count": len(self.events), "accepted_count": sum(bool(event["accepted"]) for event in self.events), "rejected_count": sum(not bool(event["accepted"]) for event in self.events)}}
+
+
+class _WaitingForInput(ValueError):
+    """Pipeline cannot run until the user supplies required KTDB conditions."""
 
 
 RUNTIME = Runtime()
@@ -138,7 +164,10 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/start":
                 length = int(self.headers.get("Content-Length", "0"))
                 body = json.loads(self.rfile.read(length) or b"{}")
-                RUNTIME.start(str(body["fixture"]), str(body.get("speed", "instant")))
+                expected = body.get("expected_features")
+                if expected is not None and not isinstance(expected, dict):
+                    raise ValueError("expected_features must be a JSON object")
+                RUNTIME.start(str(body["fixture"]), str(body.get("speed", "instant")), expected)
             elif path == "/api/pause":
                 assert RUNTIME.engine is not None
                 RUNTIME.engine.pause()
