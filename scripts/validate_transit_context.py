@@ -48,6 +48,8 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
     optional = {
         "bus_stops": (references / "bus_stops.csv", {"city_code", "stop_id", "stop_name", "latitude", "longitude", "source", "coordinate_status"}),
         "bus_route_stops": (references / "bus_route_stops.csv", {"city_code", "route_id", "route_no", "route_name", "stop_id", "stop_name", "stop_sequence", "latitude", "longitude", "source", "coordinate_status"}),
+        "bus_stop_unmatched": (references / "bus_stop_unmatched.csv", {"stop_id", "stop_name", "match_type"}),
+        "bus_route_stop_unmatched": (references / "bus_route_stop_unmatched.csv", {"route_id", "stop_id", "stop_name"}),
         "seoul_station_lines": (references / "seoul_station_lines.csv", {"station_id", "station_name", "normalized_station_name", "line", "external_code", "source"}),
         "subway_station_line_enrichment": (references / "subway_station_line_enrichment.csv", {"coordinate_station_id", "api_station_id", "line", "latitude", "longitude"}),
         "seoul_station_unmatched": (references / "seoul_station_unmatched.csv", {"line", "station_id", "station_name", "normalized_station_name"}),
@@ -61,6 +63,8 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
     api_summary = json.loads(api_summary_path.read_text(encoding="utf-8")) if api_summary_path.exists() else None
     tago_summary_path = references / "tago_api_summary.json"
     tago_summary = json.loads(tago_summary_path.read_text(encoding="utf-8")) if tago_summary_path.exists() else None
+    bus_match_path = references / "bus_match_summary.json"
+    bus_match_summary = json.loads(bus_match_path.read_text(encoding="utf-8")) if bus_match_path.exists() else None
     status = "api_and_reference_validated" if api_summary and api_summary.get("status_code") == "INFO-000" else "reference_only_api_pending"
     result = {
         "status": status,
@@ -71,13 +75,15 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
             "live_calls_made": False,
             "seoul_api_summary": api_summary,
             "tago_api_summary": tago_summary,
-            "note": "Seoul station-line response was called and cached; TAGO calls failed authentication.",
+            "bus_match_summary": bus_match_summary,
+            "note": "Seoul station-line and TAGO bus reference responses were called and cached; bus coordinates were joined from the supplied national file.",
         },
         "tables": tables,
+        "bus_coordinate_match": bus_match_summary,
         "unmatched_station_keys": tables["subway_station_unmatched"]["rows"],
         "limitations": [
             "TAGO references are currently limited to the requested 광주 서구 sample scope.",
-            "BusStop and route-stop responses do not provide latitude/longitude, so spatial bus proximity is unavailable until a coordinate source is supplied.",
+            "TAGO BusStop and route-stop responses do not provide latitude/longitude; matched coordinates come only from the supplied national bus stop file.",
             "Seoul line API response was validated; coordinate coverage remains limited to the supplied 1-8 line file.",
             "GeoLife is not joined to Korean transit networks.",
             "Korail source has no line/subtype field; rail subtype remains unknown unless stronger evidence exists.",
@@ -96,6 +102,17 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
         lines.append(f"- {name}: {table['rows']:,} rows, duplicate {table['duplicate_rows']:,}, invalid coordinate {table['invalid_coordinate_rows']}")
     lines.append(f"- Seoul API response: {api_summary.get('status_code') if api_summary else 'not called'}")
     lines.append(f"- TAGO live/bus reference response: {tago_summary.get('status') if tago_summary else 'not called'}")
+    if bus_match_summary:
+        lines.extend([
+            f"- BusStop API rows: {bus_match_summary.get('api_row_count', 0):,}",
+            f"- National location file rows: {bus_match_summary.get('national_file_row_count', 0):,}",
+            f"- Exact ID matches: {bus_match_summary.get('exact_id_match_count', 0):,}",
+            f"- Name/region matches: {bus_match_summary.get('name_region_match_count', 0):,}",
+            f"- Unmatched stops: {bus_match_summary.get('unmatched_count', 0):,}",
+            f"- Stop coordinate match rate: {bus_match_summary.get('match_rate', 0.0):.3%}",
+            f"- Route rows with coordinates: {bus_match_summary.get('route_coordinate_available_count', 0):,}",
+            f"- Route rows without coordinates: {bus_match_summary.get('route_coordinate_missing_count', 0):,}",
+        ])
     lines.extend(["", "## API 상태", "", f"- DATA_GO_KR_SERVICE_KEY: {result['api']['data_go_kr_service_key']}", f"- SEOUL_OPENAPI_KEY: {result['api']['seoul_openapi_key']}", f"- Seoul API response: {api_summary.get('status_code') if api_summary else 'not called'}", f"- TAGO live/bus reference response: {tago_summary.get('status') if tago_summary else 'not called'}", "", "## 한계", ""])
     lines.extend(f"- {item}" for item in result["limitations"])
     (reports / "final_validation.md").write_text("\n".join(lines) + "\n", encoding="utf-8")

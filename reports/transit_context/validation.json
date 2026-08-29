@@ -94,8 +94,47 @@
           "sgg_cd": "29140"
         }
       },
+      "national_bus_stop_file": "C:\\Users\\user\\Downloads\\개인통행실태조사(2021년기준)\\data\\raw\\transit\\국토교통부_전국 버스정류장 위치정보_20251031.csv",
+      "bus_coordinate_match": {
+        "api_row_count": 377,
+        "exact_id_match_count": 0,
+        "name_region_match_count": 31,
+        "matched_count": 31,
+        "unmatched_count": 346,
+        "coordinate_available_count": 31,
+        "coordinate_missing_count": 346,
+        "match_rate": 0.08222811671087533,
+        "region_code_map": {
+          "29": "24"
+        },
+        "matching_policy": "ID exact first; unique normalized name plus region second; ambiguous candidates remain unmatched",
+        "national_file_row_count": 227065,
+        "route_api_row_count": 1845,
+        "route_coordinate_available_count": 130,
+        "route_coordinate_missing_count": 1715,
+        "route_match_rate": 0.07046070460704607
+      },
       "cache_path": "data/cache/transit/tago_city_codes.json",
       "refresh": true
+    },
+    "bus_match_summary": {
+      "api_row_count": 377,
+      "exact_id_match_count": 0,
+      "name_region_match_count": 31,
+      "matched_count": 31,
+      "unmatched_count": 346,
+      "coordinate_available_count": 31,
+      "coordinate_missing_count": 346,
+      "match_rate": 0.08222811671087533,
+      "region_code_map": {
+        "29": "24"
+      },
+      "matching_policy": "ID exact first; unique normalized name plus region second; ambiguous candidates remain unmatched",
+      "national_file_row_count": 227065,
+      "route_api_row_count": 1845,
+      "route_coordinate_available_count": 130,
+      "route_coordinate_missing_count": 1715,
+      "route_match_rate": 0.07046070460704607
     },
     "note": "Seoul station-line response was called and cached; TAGO calls failed authentication."
   },
@@ -168,7 +207,7 @@
     },
     "bus_stops": {
       "path": "data\\processed\\transit_context\\bus_stops.csv",
-      "rows": 377,
+      "rows": 31,
       "columns": [
         "opr_ymd",
         "stop_id",
@@ -183,16 +222,21 @@
         "latitude",
         "longitude",
         "source",
-        "coordinate_status"
+        "coordinate_status",
+        "coordinate_source",
+        "national_stop_id",
+        "national_stop_name",
+        "national_city_code",
+        "match_type"
       ],
       "missing_required_columns": [],
       "duplicate_rows": 0,
-      "invalid_coordinate_rows": 377,
-      "coordinates_valid": false
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
     },
     "bus_route_stops": {
       "path": "data\\processed\\transit_context\\bus_route_stops.csv",
-      "rows": 1845,
+      "rows": 130,
       "columns": [
         "opr_ymd",
         "route_id",
@@ -211,11 +255,73 @@
         "latitude",
         "longitude",
         "source",
-        "coordinate_status"
+        "coordinate_status",
+        "latitude_resolved",
+        "longitude_resolved",
+        "coordinate_source",
+        "match_type"
       ],
       "missing_required_columns": [],
       "duplicate_rows": 0,
-      "invalid_coordinate_rows": 1845,
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
+    },
+    "bus_stop_unmatched": {
+      "path": "data\\processed\\transit_context\\bus_stop_unmatched.csv",
+      "rows": 346,
+      "columns": [
+        "opr_ymd",
+        "stop_id",
+        "stop_name",
+        "sttn_ars_no",
+        "city_code",
+        "sgg_cd",
+        "emd_cd",
+        "ctpv_nm",
+        "sgg_nm",
+        "emd_nm",
+        "latitude",
+        "longitude",
+        "source",
+        "coordinate_status",
+        "match_type",
+        "region_code_used"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 346,
+      "coordinates_valid": false
+    },
+    "bus_route_stop_unmatched": {
+      "path": "data\\processed\\transit_context\\bus_route_stop_unmatched.csv",
+      "rows": 1715,
+      "columns": [
+        "opr_ymd",
+        "route_id",
+        "route_no",
+        "route_name",
+        "stop_sequence",
+        "stop_id",
+        "stop_name",
+        "city_code",
+        "sgg_cd",
+        "emd_cd",
+        "ctpv_nm",
+        "sgg_nm",
+        "emd_nm",
+        "trfc_mns_se_cd",
+        "latitude",
+        "longitude",
+        "source",
+        "coordinate_status",
+        "latitude_resolved",
+        "longitude_resolved",
+        "coordinate_source",
+        "match_type"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 1715,
       "coordinates_valid": false
     },
     "seoul_station_lines": {
@@ -268,10 +374,29 @@
       "coordinates_valid": true
     }
   },
+  "bus_coordinate_match": {
+    "api_row_count": 377,
+    "exact_id_match_count": 0,
+    "name_region_match_count": 31,
+    "matched_count": 31,
+    "unmatched_count": 346,
+    "coordinate_available_count": 31,
+    "coordinate_missing_count": 346,
+    "match_rate": 0.08222811671087533,
+    "region_code_map": {
+      "29": "24"
+    },
+    "matching_policy": "ID exact first; unique normalized name plus region second; ambiguous candidates remain unmatched",
+    "national_file_row_count": 227065,
+    "route_api_row_count": 1845,
+    "route_coordinate_available_count": 130,
+    "route_coordinate_missing_count": 1715,
+    "route_match_rate": 0.07046070460704607
+  },
   "unmatched_station_keys": 185,
   "limitations": [
     "TAGO references are currently limited to the requested 광주 서구 sample scope.",
-    "BusStop and route-stop responses do not provide latitude/longitude, so spatial bus proximity is unavailable until a coordinate source is supplied.",
+    "TAGO BusStop and route-stop responses do not provide latitude/longitude; matched coordinates come only from the supplied national bus stop file.",
     "Seoul line API response was validated; coordinate coverage remains limited to the supplied 1-8 line file.",
     "GeoLife is not joined to Korean transit networks.",
     "Korail source has no line/subtype field; rail subtype remains unknown unless stronger evidence exists."
