@@ -408,7 +408,12 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", f"{content_type}; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionAbortedError):
+            # 브라우저 새로고침이나 요청 취소로 소켓이 먼저 닫힐 수 있다.
+            # 해당 상황은 서버 오류가 아니므로 traceback 없이 응답만 종료한다.
+            return
 
     def do_GET(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
