@@ -141,10 +141,6 @@ def build_population_dataset(
     all_lookup_path = output_dir / ALL_LOOKUP_OUTPUT.name
     commute_lookup_path = output_dir / COMMUTE_LOOKUP_OUTPUT.name
     summary_path = output_dir / SUMMARY_OUTPUT.name
-    for path in (all_path, commute_path, all_lookup_path, commute_lookup_path, summary_path):
-        if path.exists():
-            path.unlink()
-
     person_path = raw_dir / KTDB_RAW_FILES["person"]
     trip_path = raw_dir / KTDB_RAW_FILES["trip"]
     codebook = load_codebook(raw_dir / KTDB_RAW_FILES["codebook"])
@@ -162,6 +158,9 @@ def build_population_dataset(
     KTDB_SGIS_MAPPING_PATH.parent.mkdir(parents=True, exist_ok=True)
     mapping.to_csv(KTDB_SGIS_MAPPING_PATH, index=False, encoding="utf-8-sig")
     logger.info("SGIS centroid reference loaded: %s", centroid_path)
+    for path in (all_path, commute_path, all_lookup_path, commute_lookup_path, summary_path):
+        if path.exists():
+            path.unlink()
     build_mode_mapping(codebook).to_csv(mapping_path, index=False, encoding="utf-8-sig")
 
     raw_rows = 0
