@@ -36,3 +36,19 @@ def test_ui_accepts_repository_mock_input_without_ground_truth():
     rows = module.read_replay_csv(path)
     assert len(rows) == 433
     assert "ground_truth_mode" not in rows[0]
+
+
+def test_ui_runs_existing_pipeline_for_repository_mock():
+    module = _module()
+    runtime = module.Runtime()
+    runtime.start("mock/canopy_iphone_mock_yeongdeungpo_to_microsoft.csv", "instant")
+    for _ in range(300):
+        if runtime.thread and not runtime.thread.is_alive():
+            break
+        time.sleep(0.02)
+
+    snapshot = runtime.snapshot()
+    assert snapshot["status"] == "PASS"
+    assert snapshot["raw_debug"]["accepted_count"] == 433
+    assert len(snapshot["window_predictions"]) == 18
+    assert snapshot["pipeline"]["status"] == "PASS"
