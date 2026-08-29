@@ -66,3 +66,5 @@ def test_full_pipeline_uses_real_adapters_and_preserves_negative_reduction(tmp_p
     assert result["status"] == "PASS"
     assert result["actual_behaviour"]["final_mode"] == "bus"
     assert "increase" in result["co2"]
+    segment_distance = sum(item["distance_km"] for item in result["actual_behaviour"]["segments"])
+    assert abs(segment_distance - result["distance_km"]) < 1e-9

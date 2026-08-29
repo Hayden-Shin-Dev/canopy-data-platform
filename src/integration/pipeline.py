@@ -138,14 +138,13 @@ def run_full_pipeline(
     ready = [window for window in windows if window.status == "READY"]
     if not ready:
         return {"status": "COLLECTING", "windows": [window.__dict__ for window in windows]}
-    first_timestamp = events[0].timestamp
     station_history: list[tuple[str, str]] = []
     window_records: list[dict[str, object]] = []
     for index, window in enumerate(ready):
         window_events = [
             event for event in events
             if window.window_start <= event.timestamp < window.window_end
-            or (index == len(ready) - 1 and event.timestamp == window.window_end)
+            or (index == len(ready) - 1 and event.timestamp >= window.window_end)
         ]
         transit = build_transit_context(window_events, window.probabilities, references, station_history=station_history)
         decision = resolve_mode(window.probabilities, context=transit)
@@ -194,6 +193,10 @@ def run_full_pipeline(
         segment_end = segment_index
         segment_windows = window_records[segment_start:segment_end + 1]
         segment_events = [event for record in segment_windows for event in record["events"]]
+        if segment_start > 0 and segment_events:
+            previous_events = window_records[segment_start - 1]["events"]
+            if previous_events:
+                segment_events.insert(0, previous_events[-1])
         deduped_events = list(dict.fromkeys(segment_events))
         if deduped_events:
             segment_distance = trajectory_distance_km(deduped_events)
