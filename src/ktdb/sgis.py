@@ -224,7 +224,14 @@ class SgisClient:
 
         for refresh_attempt in range(2):
             self._wait_for_boundary_interval()
-            payload = self._get_json(BOUNDARY_URL, params)
+            try:
+                payload = self._get_json(BOUNDARY_URL, params)
+            except SgisApiError as error:
+                if error.code != TOKEN_EXPIRED_CODE or refresh_attempt == 1:
+                    raise
+                token = self.authenticate(force=True)
+                params["accessToken"] = token.access_token
+                continue
             try:
                 ensure_sgis_success(payload)
                 return payload
