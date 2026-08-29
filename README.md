@@ -30,6 +30,17 @@ GPS Window → 정류장·역 근접성 → route/line·순서·시간표 증거
 - Seoul station-line API: `INFO-000`, 799 rows
 - TAGO bus APIs: all three endpoints respond successfully; BusStop/route responses contain no latitude/longitude
 
+## Seoul POC reference
+
+실제 GPS 검증은 서울 공식 노선별 정류소 파일을 사용합니다. 이 파일은 `ROUTE_ID`, `NODE_ID`, 정류장 순번, 정류장명, X/Y 좌표를 같은 행에 제공하므로 `NODE_ID` exact 연결로 route-stop 순서와 좌표를 함께 보존합니다.
+
+```powershell
+python scripts/build_seoul_bus_reference.py `
+  data/raw/transit/서울시버스노선별정류소정보_20260804.xlsx
+```
+
+현재 서울 POC 결과는 718개 노선, 12,898개 정류장, 41,676개 route-stop 행이며 좌표 coverage는 모두 100%입니다. 상세 수치는 `data/processed/transit_context/seoul_bus_match_summary.json`에 기록됩니다.
+
 ## Bus coordinate matching
 
 TAGO BusStop와 BusRoutespecificStopInformation 응답을 국토교통부 전국 버스정류장 위치정보 파일과 결합합니다. 정류장번호 exact match를 먼저 시도하고, 지역명이 확인된 뒤 유일한 정류장명+지역 match만 좌표를 붙입니다. 중복 후보는 추측하지 않고 unmatched 파일에 남깁니다.
