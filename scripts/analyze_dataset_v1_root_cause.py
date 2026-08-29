@@ -93,6 +93,26 @@ def _stage_rows(predictions: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return rows
 
 
+def _journey_scope_metrics(predictions: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for journey in predictions:
+        scope = "multimodal" if len(set(journey.get("labels") or [])) > 1 else "single_mode"
+        groups[scope].append(journey)
+    return [{
+        "scope": scope,
+        "journey_count": len(rows),
+        "raw_journey_accuracy": sum(bool(row.get("correct_raw")) for row in rows) / len(rows),
+        "final_journey_accuracy": sum(bool(row.get("correct_final")) for row in rows) / len(rows),
+    } for scope, rows in sorted(groups.items())]
+
+
+def _first_stage_rows(predictions: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    counts = Counter(first_error_stage(journey) for journey in predictions)
+    total = len(predictions) or 1
+    return [{"stage": stage, "journey_count": count, "share": count / total}
+            for stage, count in counts.most_common()]
+
+
 def _markdown(
     summary: dict[str, Any],
     transitions: Counter[str],
@@ -102,6 +122,7 @@ def _markdown(
     multimodal_rows: list[dict[str, Any]],
     hard_rows: list[dict[str, Any]],
     pareto_rows: list[dict[str, Any]],
+    scope_rows: list[dict[str, Any]],
 ) -> str:
     total = sum(transitions.values()) or 1
     lines = [
@@ -152,7 +173,10 @@ def _markdown(
     lines.extend(["", "## Scenario별 성능", "", "| Scenario | Windows | Raw accuracy | Final accuracy | Difference |", "|---|---:|---:|---:|---:|"])
     for row in scenario_rows:
         lines.append(f"| {row['scenario']} | {row['window_count']} | {row['raw_accuracy']:.4f} | {row['final_accuracy']:.4f} | {row['difference']:.4f} |")
-    lines.extend(["", "## Multimodal", "", f"- Multimodal journeys: {len(multimodal_rows)}", "- Exact sequence and failure categories are in `multimodal_failure_analysis.csv`.", "- Sequence matching is evaluated without changing the production segmenter.", ""])
+    lines.extend(["", "## Single-mode vs multimodal", "", "| Scope | Journeys | Raw journey accuracy | Final journey accuracy |", "|---|---:|---:|---:|"])
+    for row in scope_rows:
+        lines.append(f"| {row['scope']} | {row['journey_count']} | {row['raw_journey_accuracy']:.4f} | {row['final_journey_accuracy']:.4f} |")
+    lines.extend(["", f"Multimodal journeys: {len(multimodal_rows)}", "- Exact sequence and failure categories are in `multimodal_failure_analysis.csv`.", "- Sequence matching is evaluated without changing the production segmenter.", ""])
     failure_counts = Counter(row["failure_type"] for row in multimodal_rows)
     lines.append("| Failure type | Count |")
     lines.append("|---|---:|")
@@ -166,6 +190,7 @@ def _markdown(
         "", "## Transit / confidence observations", "",
         "Transit evidence levels are descriptive bins over stored trace scores (none < 0.25, weak 0.25–0.55, strong ≥ 0.55); they are not production thresholds.",
         "False activation, missing evidence, and resolver changes are recorded in `transit_error_analysis.csv`.",
+        "Raw confidence analysis is NOT_AVAILABLE because the frozen trace stores only the selected raw mode, not class probabilities.",
         "",
         "## Code locations (read-only mapping)",
         "",
@@ -202,6 +227,8 @@ def analyze(run_dir: Path, output_dir: Path) -> None:
     _write_csv(output_dir / "mode_regression_analysis.csv", mode_rows, list(mode_rows[0]))
     intervention = hybrid_interventions(predictions)
     _write_json(output_dir / "hybrid_interventions.json", dict(intervention))
+    _write_csv(output_dir / "hybrid_interventions.csv",
+               [{"category": key, "count": value} for key, value in intervention.items()], ["category", "count"])
     transit = transit_error_counts(predictions)
     _write_csv(output_dir / "transit_error_analysis.csv",
                [{"metric": key, "count": value} for key, value in sorted(transit.items())], ["metric", "count"])
@@ -226,8 +253,38 @@ def analyze(run_dir: Path, output_dir: Path) -> None:
     _write_csv(output_dir / "root_cause_pareto.csv", pareto_rows, ["root_cause", "affected_mode", "count", "share"])
     _write_json(output_dir / "representative_failures.json", representative_failures(predictions))
     _write_json(output_dir / "raw_final_transition_summary.json", {"matrix": matrix, "interventions": dict(intervention), "transit": dict(transit)})
+    _write_csv(output_dir / "single_vs_multimodal.csv", _journey_scope_metrics(predictions),
+               ["scope", "journey_count", "raw_journey_accuracy", "final_journey_accuracy"])
+    _write_csv(output_dir / "first_error_stage.csv", _first_stage_rows(predictions), ["stage", "journey_count", "share"])
+    _write_json(output_dir / "confidence_analysis.json", {
+        "status": "NOT_AVAILABLE",
+        "reason": "prediction_traces.jsonl stores selected raw_mode but not raw class probabilities/confidence.",
+        "required_for": ["high-confidence raw correctness", "confidence vs resolver override"],
+    })
+    (output_dir / "improvement_priorities.md").write_text(
+        "# Improvement priorities\n\n"
+        "이 파일은 진단 결과에 따른 제안만 담으며 Production 코드를 변경하지 않습니다.\n\n"
+        "## P0\n\n"
+        "- walk/bike/car를 rail로 바꾸는 false transit activation을 trace 단위로 재현하고 resolver 입력을 점검합니다.\n\n"
+        "## P1\n\n"
+        "- bus evidence coverage와 Raw bus recall을 먼저 보강합니다.\n"
+        "- car/bus/rail 분리를 위한 독립 실험을 별도 branch에서 수행합니다.\n\n"
+        "## P2\n\n"
+        "- transition timing과 segmentation 개선을 ablation으로 검증합니다.\n",
+        encoding="utf-8",
+    )
+    _write_json(output_dir / "analysis_manifest.json", {
+        "input_run": str(run_dir),
+        "output_dir": str(output_dir),
+        "production_logic_modified": False,
+        "dataset_modified": False,
+        "ground_truth_used_only_after_inference": True,
+        "confidence_analysis": "NOT_AVAILABLE",
+        "distance_weighted_metrics": "NOT_AVAILABLE",
+    })
+    scope_rows = _journey_scope_metrics(predictions)
     (output_dir / "ROOT_CAUSE_ANALYSIS.md").write_text(
-        _markdown(summary, transitions, intervention, mode_rows, scenario_rows, multimodal_rows, hard_rows, pareto_rows),
+        _markdown(summary, transitions, intervention, mode_rows, scenario_rows, multimodal_rows, hard_rows, pareto_rows, scope_rows),
         encoding="utf-8",
     )
 
