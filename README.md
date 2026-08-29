@@ -59,3 +59,17 @@ Integration: 예정
 ## 개발 순서
 
 KTDB → GeoLife → Emission Factors → 필요 시 Transit Context → Realtime GPS → Canopy Integration
+
+## KTDB SGIS 거리 Feature
+
+KTDB의 10자리 행정동 코드를 SGIS 2021 읍면동(7자리) reference와 전체 행정구역명으로 매칭합니다. SGIS가 제공한 EPSG:5179 대표좌표를 WGS84로 변환한 뒤 Haversine 직선거리를 계산하며, Polygon을 평균내지 않습니다.
+
+SGIS 키는 환경변수로만 전달합니다.
+
+```powershell
+$env:SGIS_CONSUMER_KEY = "발급받은 키"
+$env:SGIS_CONSUMER_SECRET = "발급받은 시크릿"
+py -3.13 -m src.build_population_dataset
+```
+
+기존 `data/reference/admin_dong_centroids_2021.csv`가 있으면 재사용하고, 다시 수집할 때는 `--refresh-sgis`를 붙입니다. API 원본 응답은 `data/reference/sgis/raw/2021/`에 로컬 cache로 저장되며 Git에는 올리지 않습니다.
