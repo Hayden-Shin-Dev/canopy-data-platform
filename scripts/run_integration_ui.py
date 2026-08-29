@@ -143,6 +143,40 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "renderModeVisual(activeMode);document.getElementById('activeStatus').textContent=modeText(activeMode,activeTransit);",
 )
 
+# Result 이후에는 실제 감축량을 Token으로 환산해 보상 화면까지 이어간다.
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "</style></head>",
+    "</style><style>.reward-card{text-align:center;padding:28px 18px}.token-burst{font-size:54px;animation:tokenPop .7s ease-out}.token-earned{font-size:30px;color:#177950;margin:8px 0}.token-balance{font-size:13px;color:#63756c}.reward-note{font-size:12px;color:#718078;margin:8px 0 18px}@keyframes tokenPop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}</style></head>",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<section id="developer" class="screen developer">',
+    '<section id="reward" class="screen"><div class="sheet reward-card"><div class="eyebrow">CANOPY TOKEN</div><div class="token-burst" aria-hidden="true">✦</div><div class="token-earned" id="tokenEarned">+0 Token</div><div class="reward-note" id="rewardNote">이번 이동의 CO2 감축량을 기준으로 계산했습니다.</div><div class="token-balance">현재 보유 <strong id="tokenBalance">0</strong> Token</div><button class="cta" onclick="showScreen(\'home\')">홈으로</button></div></section><section id="developer" class="screen developer">',
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<div class="eyebrow">?ㅻ뒛??異쒓렐</div>',
+    '<div class="eyebrow">?ㅻ뒛??異쒓렐</div><div class="token-balance">Canopy Token <strong id="homeTokenBalance">0</strong></div>',
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "const maps={},layers={},route={};let pollTimer=null,currentScreen='home';",
+    "const maps={},layers={},route={};let pollTimer=null,currentScreen='home';let rewardShown=false;const TOKEN_GRAMS_PER_TOKEN=10;let tokenBalance=Number(localStorage.getItem('canopyTokenBalance')||0);",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function showScreen(name){currentScreen=name;",
+    "function showScreen(name){currentScreen=name;document.getElementById('homeTokenBalance').textContent=tokenBalance;document.getElementById('tokenBalance').textContent=tokenBalance;",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function formatTime(seconds){",
+    "function showReward(p){if(rewardShown||!p.co2)return;rewardShown=true;const reduction=Math.max(0,Number(p.co2.reduction_co2e_g||0));const earned=Math.floor(reduction/TOKEN_GRAMS_PER_TOKEN);const previous=tokenBalance;tokenBalance+=earned;localStorage.setItem('canopyTokenBalance',String(tokenBalance));document.getElementById('tokenEarned').textContent='+'+earned+' Token';document.getElementById('rewardNote').textContent='CO2 감축량 '+reduction.toFixed(1)+' g 기준 · 10 g당 1 Token';document.getElementById('tokenBalance').textContent=previous;showScreen('reward');let current=previous;const started=performance.now();const tick=(now)=>{const progress=Math.min(1,(now-started)/800);current=Math.round(previous+(tokenBalance-previous)*progress);document.getElementById('tokenBalance').textContent=current;if(progress<1)requestAnimationFrame(tick)};requestAnimationFrame(tick)}function formatTime(seconds){",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "if(currentScreen==='active')showScreen('result')}",
+    "if(currentScreen==='active'){showScreen('result');setTimeout(()=>showReward(p),650)}}",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "async function startTrip(){showScreen('active');",
+    "async function startTrip(){rewardShown=false;showScreen('active');",
+)
+
 
 class Runtime:
     def __init__(self) -> None:
