@@ -136,7 +136,7 @@
       "route_coordinate_missing_count": 1715,
       "route_match_rate": 0.07046070460704607
     },
-    "note": "Seoul station-line response was called and cached; TAGO calls failed authentication."
+    "note": "Seoul station-line and TAGO bus reference responses were called and cached; bus coordinates were joined from the supplied national file."
   },
   "tables": {
     "subway_stations": {
