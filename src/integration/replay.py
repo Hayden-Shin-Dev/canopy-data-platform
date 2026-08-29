@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+from itertools import chain
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -62,15 +63,17 @@ class ReplayEngine:
         *,
         on_update: Callable[[ReplayUpdate], None] | None = None,
     ) -> ReplayResult:
-        rows = list(payloads)
-        if not rows:
+        iterator = iter(payloads)
+        try:
+            first = next(iterator)
+        except StopIteration:
             raise ValueError("replay requires at least one GPS event")
-        trip_id = str(rows[0].get("trip_id", ""))
-        device_id = str(rows[0].get("device_id", ""))
+        trip_id = str(first.get("trip_id", ""))
+        device_id = str(first.get("device_id", ""))
         session = self.ingestor.start_trip(trip_id, device_id)
         updates: list[ReplayUpdate] = []
         previous_timestamp = None
-        for index, payload in enumerate(rows):
+        for index, payload in enumerate(chain((first,), iterator)):
             if self._stop.is_set():
                 break
             self._pause.wait()
