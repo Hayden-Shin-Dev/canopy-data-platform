@@ -1,0 +1,5 @@
+schema_version,trip_id,device_id,sequence,timestamp,latitude,longitude,horizontal_accuracy_m,altitude_m,vertical_accuracy_m,speed_mps,course_deg,source,is_simulated
+1.0,fixture-walk-bike,fixture-device,0,2026-08-29T15:00:00Z,37.566500,126.978000,6,30,4,1.2,90,walk_bike_fixture,true
+1.0,fixture-walk-bike,fixture-device,1,2026-08-29T15:01:00Z,37.566900,126.978400,6,30,4,1.2,45,walk_bike_fixture,true
+1.0,fixture-walk-bike,fixture-device,2,2026-08-29T15:02:00Z,37.567300,126.978800,6,30,4,1.2,45,walk_bike_fixture,true
+1.0,fixture-walk-bike,fixture-device,3,2026-08-29T15:03:00Z,37.567700,126.979200,6,30,4,1.2,45,walk_bike_fixture,true

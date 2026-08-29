@@ -1,0 +1,5 @@
+schema_version,trip_id,device_id,sequence,timestamp,latitude,longitude,horizontal_accuracy_m,altitude_m,vertical_accuracy_m,speed_mps,course_deg,source,is_simulated
+1.0,fixture-seoul-bus,fixture-device,0,2026-08-29T12:00:00Z,37.484755,127.015601,8,40,5,0,90,seoul_official_bus_route_fixture,true
+1.0,fixture-seoul-bus,fixture-device,1,2026-08-29T12:01:00Z,37.4819795068,127.0169521013,8,40,5,0,90,seoul_official_bus_route_fixture,true
+1.0,fixture-seoul-bus,fixture-device,2,2026-08-29T12:02:00Z,37.4811103218,127.0140414058,8,40,5,0,180,seoul_official_bus_route_fixture,true
+1.0,fixture-seoul-bus,fixture-device,3,2026-08-29T12:03:00Z,37.479771,127.010826,8,40,5,0,180,seoul_official_bus_route_fixture,true

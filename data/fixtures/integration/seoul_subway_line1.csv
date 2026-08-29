@@ -1,0 +1,5 @@
+schema_version,trip_id,device_id,sequence,timestamp,latitude,longitude,horizontal_accuracy_m,altitude_m,vertical_accuracy_m,speed_mps,course_deg,source,is_simulated
+1.0,fixture-seoul-subway,fixture-device,0,2026-08-29T13:00:00Z,37.55315,126.972533,8,35,5,0,90,seoul_subway_station_reference,true
+1.0,fixture-seoul-subway,fixture-device,1,2026-08-29T13:01:00Z,37.56359,126.975407,8,35,5,0,20,seoul_subway_station_reference,true
+1.0,fixture-seoul-subway,fixture-device,2,2026-08-29T13:02:00Z,37.570203,126.983116,8,35,5,0,40,seoul_subway_station_reference,true
+1.0,fixture-seoul-subway,fixture-device,3,2026-08-29T13:03:00Z,37.57179,127.011383,8,35,5,0,80,seoul_subway_station_reference,true

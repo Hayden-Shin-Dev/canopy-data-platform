@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canopy.example/schemas/gps-event-v1.json",
+  "title": "Canopy GPS Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "trip_id",
+    "device_id",
+    "sequence",
+    "timestamp",
+    "latitude",
+    "longitude",
+    "horizontal_accuracy_m",
+    "altitude_m",
+    "vertical_accuracy_m",
+    "speed_mps",
+    "course_deg"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "minLength": 1},
+    "trip_id": {"type": "string", "minLength": 1},
+    "device_id": {"type": "string", "minLength": 1},
+    "sequence": {"type": "integer", "minimum": 0},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "latitude": {"type": "number", "minimum": -90, "maximum": 90},
+    "longitude": {"type": "number", "minimum": -180, "maximum": 180},
+    "horizontal_accuracy_m": {"type": "number", "minimum": -1},
+    "altitude_m": {"type": "number"},
+    "vertical_accuracy_m": {"type": "number", "minimum": -1},
+    "speed_mps": {"type": "number", "minimum": -1},
+    "course_deg": {"type": "number", "minimum": -1, "exclusiveMaximum": 360},
+    "source": {"type": "string"},
+    "is_simulated": {"type": "boolean"}
+  }
+}
