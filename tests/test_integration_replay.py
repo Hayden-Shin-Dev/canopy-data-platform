@@ -45,3 +45,16 @@ def test_replay_reads_utf8_csv(tmp_path: Path):
 def test_replay_rejects_unknown_speed():
     with pytest.raises(ValueError):
         ReplayEngine(speed=2)
+
+
+def test_replay_rejects_ground_truth_columns(tmp_path: Path):
+    csv_path = tmp_path / "labelled.csv"
+    csv_path.write_text(
+        "schema_version,trip_id,device_id,sequence,timestamp,latitude,longitude,"
+        "horizontal_accuracy_m,altitude_m,vertical_accuracy_m,speed_mps,course_deg,ground_truth_mode\n"
+        "1.0,t,d,0,2026-08-29T12:00:00Z,1,2,3,4,5,6,7,walk\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="evaluation fields"):
+        read_replay_csv(csv_path)
