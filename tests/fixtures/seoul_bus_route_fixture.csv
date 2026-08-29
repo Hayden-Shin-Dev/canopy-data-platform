@@ -1,0 +1,5 @@
+route_id,route_no,route_name,stop_sequence,stop_id,stop_name,latitude,longitude,source,coordinate_source,coordinate_status
+121900014,서초22,서초22,1,121000081,남부터미널,37.484755,127.015601,seoul_official_fixture,seoul_official_route_stop_file,provided_by_source
+121900014,서초22,서초22,2,121900230,남부터미널.기쁨병원,37.4819795068,127.0169521013,seoul_official_fixture,seoul_official_route_stop_file,provided_by_source
+121900014,서초22,서초22,3,121900231,예술의전당,37.4811103218,127.0140414058,seoul_official_fixture,seoul_official_route_stop_file,provided_by_source
+121900014,서초22,서초22,4,121900232,신중초등학교,37.479771,127.010826,seoul_official_fixture,seoul_official_route_stop_file,provided_by_source
