@@ -124,5 +124,11 @@
       "unexpected_statuses": []
     }
   },
-  "overall_status": "COMPLETE"
+  "overall_status": "COMPLETE",
+  "production_readiness": "NOT_READY",
+  "readiness_blockers": [
+    "KTDB probability calibration is not measured",
+    "Transit labelled precision/recall is not measured",
+    "Long-duration real iPhone GPS validation is not measured"
+  ]
 }

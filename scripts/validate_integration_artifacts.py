@@ -85,6 +85,13 @@ def validate() -> dict[str, object]:
         checks["full_pipeline_production_replay"] = {"status": "FAIL", "reason": f"required checks not ready: {missing}"}
     required_statuses = ("gps_contract", "replay_fixtures", "iphone_mock_replay", "ktdb_model", "geolife_model", "emission_factors", "seoul_transit_references", "full_pipeline_production_replay")
     result["overall_status"] = "COMPLETE" if all(checks[name]["status"] == "PASS" for name in required_statuses) else "INCOMPLETE"  # type: ignore[index]
+    # 계약·산출물 검증 통과와 운영 준비 완료는 분리해서 기록한다.
+    result["production_readiness"] = "NOT_READY"
+    result["readiness_blockers"] = [
+        "KTDB probability calibration is not measured",
+        "Transit labelled precision/recall is not measured",
+        "Long-duration real iPhone GPS validation is not measured",
+    ]
     return result
 
 
