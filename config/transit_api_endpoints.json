@@ -1,0 +1,11 @@
+{
+  "data_go_kr": [
+    {"api_id": "15098533", "purpose": "TAGO live bus positions", "key_env": "DATA_GO_KR_SERVICE_KEY"},
+    {"api_id": "15142031", "purpose": "bus route stops", "key_env": "DATA_GO_KR_SERVICE_KEY"},
+    {"api_id": "15142032", "purpose": "bus stops", "key_env": "DATA_GO_KR_SERVICE_KEY"}
+  ],
+  "seoul_openapi": [
+    {"api_id": "15058404", "purpose": "Seoul subway line information", "key_env": "SEOUL_OPENAPI_KEY"}
+  ],
+  "policy": "API response fields are inspected before normalization; no field names are guessed."
+}

@@ -16,6 +16,9 @@ if str(PROJECT_ROOT) not in sys.path:
 from src.transit_context.api import load_transit_credentials
 
 
+API_ENDPOINT_CONFIG = PROJECT_ROOT / "config" / "transit_api_endpoints.json"
+
+
 def _table_stats(path: Path, required: set[str]) -> dict[str, object]:
     frame = pd.read_csv(path, encoding="utf-8-sig")
     coords = all(frame[column].between(-90, 90).all() for column in ["latitude"] if column in frame)
@@ -43,9 +46,11 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
         "subway_station_unmatched": _table_stats(references / "subway_station_unmatched.csv", {"line", "normalized_station_name"}),
     }
     credentials = load_transit_credentials()
+    api_endpoints = json.loads(API_ENDPOINT_CONFIG.read_text(encoding="utf-8"))
     result = {
         "status": "reference_only_api_pending",
         "api": {
+            "configured_endpoints": api_endpoints,
             "data_go_kr_service_key": "configured" if credentials["data_go_kr_service_key"] else "API key unavailable",
             "seoul_openapi_key": "configured" if credentials["seoul_openapi_key"] else "API key unavailable",
             "live_calls_made": False,
