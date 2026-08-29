@@ -56,7 +56,11 @@ def resolve_mode(
         # window into rail. Keep rail only when ordered subway evidence or a
         # strong KORAIL context is present.
         non_rail_modes = {mode: value for mode, value in probs.items() if mode != "rail"}
-        final_mode = max(non_rail_modes, key=non_rail_modes.get)
+        strongest_non_rail = max(non_rail_modes, key=non_rail_modes.get)
+        if bus_score >= minimum and bus_score > non_rail_modes[strongest_non_rail] + margin:
+            final_mode = "bus"
+        else:
+            final_mode = strongest_non_rail
         correction_applied = final_mode != ml_mode
         decision_status = "insufficient_context"
         correction_reason = "rail prediction requires structured transit evidence"

@@ -32,3 +32,11 @@ def test_rail_prediction_needs_structured_evidence() -> None:
     )
     assert result["final_mode"] == "car"
     assert result["decision_status"] == "insufficient_context"
+
+
+def test_bus_evidence_can_replace_unsupported_rail_prediction() -> None:
+    result = resolve_mode(
+        {"walk": 0.02, "bike": 0.02, "car": 0.10, "bus": 0.06, "rail": 0.80},
+        context={"bus_context_score": 0.45, "subway_context_score": 0.55, "subway_line_score": 1.0, "subway_sequence_score": 0.0, "subway_observed_station_count": 1},
+    )
+    assert result["final_mode"] == "bus"
