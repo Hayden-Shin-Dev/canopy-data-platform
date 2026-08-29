@@ -1,17 +1,34 @@
-# Integration mock 입력
+# Mock GPS 입력
 
-`canopy_iphone_mock_yeongdeungpo_to_microsoft.csv`는 iPhone CoreLocation에 맞춘
-label-free GPS event 입력입니다. production replay는 이 CSV의 GPS 필드만 읽습니다.
+이 폴더에는 Local Integration을 확인하기 위한 iPhone 형식의 GPS 입력이 있습니다.
 
-`canopy_iphone_mock_yeongdeungpo_to_microsoft_ground_truth.txt`는 개발자용 평가
-메타데이터입니다. 모델 inference, Transit Context, UI의 입력으로 사용하지 않습니다.
-Replay 종료 후 prediction timeline과 비교할 때만 별도로 읽습니다.
+## 파일
 
-CSV에는 mode, segment, ground truth, expected mode 같은 정답 필드가 없어야 하며,
-필수 canonical GPS 필드는 `schemas/gps_event.schema.json`과 동일해야 합니다.
+- `canopy_iphone_mock_yeongdeungpo_to_microsoft.csv`: 실제 Replay 입력입니다. mode나 정답 label을 넣지 않은 GPS Event만 포함합니다.
+- `canopy_iphone_mock_yeongdeungpo_to_microsoft_ground_truth.txt`: 개발 평가용 정답 기록입니다. 모델 inference 입력으로 사용하지 않습니다.
 
-실행 예:
+CSV의 필드와 형식은 `schemas/gps_event.schema.json`을 따릅니다. 원본 Mock 파일은 수정하지 말고, 새로운 입력이 필요하면 별도 파일로 추가합니다.
+
+## 실행
+
+저장소 루트에서 실행합니다.
 
 ```powershell
 python scripts/replay_integration.py mock/canopy_iphone_mock_yeongdeungpo_to_microsoft.csv --speed instant --pipeline
 ```
+
+속도를 늦춰 Event 흐름을 보려면 `--speed 1`, `--speed 5`, `--speed 10`, `--speed 30` 중 하나를 사용합니다.
+
+Local User Mode에서 같은 입력을 사용하려면 다음을 실행합니다.
+
+```powershell
+python scripts/run_integration_ui.py
+```
+
+브라우저에서 `http://127.0.0.1:8765`를 열고 Home의 `출근 시작하기`를 누릅니다.
+
+## 평가 결과
+
+Ground Truth 비교는 `python scripts/evaluate_mock_trip.py`로 별도 실행합니다. 비교 결과는 `reports/integration/mock_trip_evaluation.json`에 저장됩니다.
+
+Ground Truth는 결과를 맞추기 위한 보정에 사용하지 않습니다. 현재 Mock에서 확인된 기존 모델 결과는 `walk`, `bike`, `walk`입니다.
