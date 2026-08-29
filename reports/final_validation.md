@@ -3,6 +3,7 @@
 ## 코드 검증
 
 - `py -3 -m pytest -q` 결과: 125 passed, 20 warnings
+- `py -3 -m src.validate_dataset --dataset data/processed/population_baseline/ktdb/01_population_model_training_all.csv` 결과: 331,189행 valid
 - 모든 새 커밋은 SSH signing을 사용했고 GitHub API의 `verification.verified`가 true임.
 - `data/raw/ktdb/` 원본 파일은 처리 과정에서 수정하지 않음.
 - 생성 CSV에는 사람 단위 group split을 적용하고, 모델 입력에서는 식별자와 원시 응답 코드를 제외함.
