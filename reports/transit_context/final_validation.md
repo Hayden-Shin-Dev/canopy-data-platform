@@ -1,6 +1,6 @@
 # Transit Context validation
 
-상태: `api_and_reference_validated`
+상태: `INCOMPLETE_PENDING_FINAL_CHECKLIST`
 
 ## Reference 결과
 
@@ -12,6 +12,8 @@
 - bus_route_stops: 130 rows, duplicate 0, invalid coordinate 0
 - bus_stop_unmatched: 346 rows, duplicate 0, invalid coordinate 346
 - bus_route_stop_unmatched: 1,715 rows, duplicate 0, invalid coordinate 1715
+- seoul_bus_stops: 12,898 rows, duplicate 0, invalid coordinate 0
+- seoul_bus_route_stops: 41,676 rows, duplicate 0, invalid coordinate 0
 - seoul_station_lines: 799 rows, duplicate 0, invalid coordinate None
 - subway_station_line_enrichment: 273 rows, duplicate 0, invalid coordinate 0
 - seoul_station_unmatched: 526 rows, duplicate 0, invalid coordinate None
@@ -25,6 +27,14 @@
 - Stop coordinate match rate: 8.223%
 - Route rows with coordinates: 130
 - Route rows without coordinates: 1,715
+- Seoul bus total stops: 12,898
+- Seoul bus coordinate stops: 12,898
+- Seoul bus coordinate coverage: 100.000%
+- Seoul bus routes: 718
+- Seoul route-stop rows: 41,676
+- Seoul route-stop coordinate coverage: 100.000%
+- Seoul invalid coordinate rows: 0
+- Seoul duplicate route-stop rows removed: 0
 
 ## API 상태
 

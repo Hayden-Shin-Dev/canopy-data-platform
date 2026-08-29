@@ -13,4 +13,6 @@ def test_validate_reference_tables_writes_report(tmp_path: Path) -> None:
     (reference / "subway_station_unmatched.csv").write_text("line,normalized_station_name\n", encoding="utf-8-sig")
     result = validate(reference, tmp_path / "reports")
     assert result["tables"]["subway_stations"]["rows"] == 1
-    assert json.loads((tmp_path / "reports" / "validation.json").read_text(encoding="utf-8"))["status"] == "reference_only_api_pending"
+    report = json.loads((tmp_path / "reports" / "validation.json").read_text(encoding="utf-8"))
+    assert report["status"] == "INCOMPLETE_PENDING_FINAL_CHECKLIST"
+    assert report["completion_status"] == "INCOMPLETE"

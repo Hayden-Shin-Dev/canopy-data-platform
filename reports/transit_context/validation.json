@@ -1,5 +1,6 @@
 {
-  "status": "api_and_reference_validated",
+  "status": "INCOMPLETE_PENDING_FINAL_CHECKLIST",
+  "completion_status": "INCOMPLETE",
   "api": {
     "configured_endpoints": {
       "data_go_kr": [
@@ -135,6 +136,20 @@
       "route_coordinate_available_count": 130,
       "route_coordinate_missing_count": 1715,
       "route_match_rate": 0.07046070460704607
+    },
+    "seoul_bus_match_summary": {
+      "source_file": "C:\\Users\\user\\Downloads\\개인통행실태조사(2021년기준)\\data\\raw\\transit\\서울시버스노선별정류소정보_20260804.xlsx",
+      "raw_route_stop_rows": 41676,
+      "route_stop_rows": 41676,
+      "route_count": 718,
+      "stop_count": 12898,
+      "coordinate_available_stop_count": 12898,
+      "invalid_coordinate_rows": 0,
+      "duplicate_route_stop_rows_removed": 0,
+      "duplicate_stop_id_count": 28778,
+      "route_stop_coordinate_coverage": 1.0,
+      "join_key": "NODE_ID",
+      "coordinate_system": "observed longitude/latitude values; WGS84 geographic coordinates"
     },
     "note": "Seoul station-line and TAGO bus reference responses were called and cached; bus coordinates were joined from the supplied national file."
   },
@@ -324,6 +339,46 @@
       "invalid_coordinate_rows": 1715,
       "coordinates_valid": false
     },
+    "seoul_bus_stops": {
+      "path": "data\\processed\\transit_context\\seoul_bus_stops.csv",
+      "rows": 12898,
+      "columns": [
+        "stop_id",
+        "stop_name",
+        "ars_id",
+        "latitude",
+        "longitude",
+        "source",
+        "coordinate_source",
+        "coordinate_status"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
+    },
+    "seoul_bus_route_stops": {
+      "path": "data\\processed\\transit_context\\seoul_bus_route_stops.csv",
+      "rows": 41676,
+      "columns": [
+        "route_id",
+        "route_no",
+        "route_name",
+        "stop_sequence",
+        "stop_id",
+        "stop_name",
+        "ars_id",
+        "longitude",
+        "latitude",
+        "source",
+        "coordinate_source",
+        "coordinate_status"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
+    },
     "seoul_station_lines": {
       "path": "data\\processed\\transit_context\\seoul_station_lines.csv",
       "rows": 799,
@@ -392,6 +447,20 @@
     "route_coordinate_available_count": 130,
     "route_coordinate_missing_count": 1715,
     "route_match_rate": 0.07046070460704607
+  },
+  "seoul_bus_reference": {
+    "source_file": "C:\\Users\\user\\Downloads\\개인통행실태조사(2021년기준)\\data\\raw\\transit\\서울시버스노선별정류소정보_20260804.xlsx",
+    "raw_route_stop_rows": 41676,
+    "route_stop_rows": 41676,
+    "route_count": 718,
+    "stop_count": 12898,
+    "coordinate_available_stop_count": 12898,
+    "invalid_coordinate_rows": 0,
+    "duplicate_route_stop_rows_removed": 0,
+    "duplicate_stop_id_count": 28778,
+    "route_stop_coordinate_coverage": 1.0,
+    "join_key": "NODE_ID",
+    "coordinate_system": "observed longitude/latitude values; WGS84 geographic coordinates"
   },
   "unmatched_station_keys": 185,
   "limitations": [
