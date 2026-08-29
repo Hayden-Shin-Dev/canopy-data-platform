@@ -22,6 +22,10 @@ def _valid_frame() -> pd.DataFrame:
         {
             "departure_hour": 8,
             "departure_minute_bin": 2,
+            "origin_x": 953808.5,
+            "origin_y": 1952441.25,
+            "destination_x": 954100.0,
+            "destination_y": 1953000.0,
             "od_straight_distance_km": None,
             "distance_band": None,
         }
@@ -32,7 +36,7 @@ def _valid_frame() -> pd.DataFrame:
 def test_validate_feature_frame_accepts_schema_conformant_row() -> None:
     result = validate_feature_frame(_valid_frame())
 
-    assert result == {"row_count": 1, "columns": 22, "status": "valid"}
+    assert result == {"row_count": 1, "columns": 26, "status": "valid"}
 
 
 def test_validate_feature_frame_rejects_unknown_mode() -> None:
