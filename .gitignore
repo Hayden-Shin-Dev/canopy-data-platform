@@ -31,6 +31,7 @@ models/**/*.pkl
 models/**/*.joblib
 reports/**/runs/*
 !reports/**/runs/**/README.md
+reports/evaluation/dataset_v1/smoke_*/
 
 # Frozen evaluation datasets are supplied locally and remain read-only.
 data/evaluation/**
