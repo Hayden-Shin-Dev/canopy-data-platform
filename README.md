@@ -5,32 +5,27 @@
 ## 구성
 
 - GPS Event Contract와 품질 검증
-- 120초 GeoLife Window adapter와 기존 model 호출
+- 120초 GeoLife Window와 실제 model inference
 - 서울 Bus/Subway/KORAIL Transit Context
 - KTDB Expected Behaviour 확률
 - Emission Factor 기반 Expected/Actual CO2와 Reduction
-- event-by-event Replay Engine과 dependency-free Local Test UI
+- event-by-event Replay Engine과 Local Test UI
+
+## 현재 상태
+
+**INTEGRATION COMPLETE / LOCAL REPLAY READY**
+
+Desktop 저장소의 실제 model, KTDB 재생성 dataset, 서울 Transit reference로 6개 fixture를 검증했습니다. 부족한 GPS는 `COLLECTING`으로 남기며 임의 결과를 만들지 않습니다.
 
 ## 실행
 
 ```powershell
 python scripts/validate_integration_artifacts.py
-python scripts/replay_integration.py data/fixtures/integration/seoul_bus_route.csv --speed instant
+python scripts/replay_integration.py data/fixtures/integration/seoul_bus_route.csv --speed instant --pipeline
 python scripts/run_integration_ui.py
 pytest -q
 ```
 
-브라우저 UI는 `http://127.0.0.1:8765`에서 확인합니다. KTDB Expected Behaviour를 실행하려면 `src/ktdb/schema.py`의 `MODEL_FEATURES`를 모두 포함한 JSON 입력이 필요합니다.
+UI: `http://127.0.0.1:8765`
 
-## 현재 상태
-
-**INCOMPLETE / LOCAL REPLAY READY**
-
-Contract, ingestion, replay, 서울 reference loader, GeoLife model adapter, Emission 계산과 테스트는 준비되어 있습니다. KTDB model은 존재하지만 복원된 processed sample이 `origin_x/destination_x` 컬럼을 포함하지 않아 실제 full production pipeline은 아직 PASS가 아닙니다. 상세 근거는 [FINAL_INTEGRATION_VALIDATION.md](reports/integration/FINAL_INTEGRATION_VALIDATION.md)를 확인합니다.
-
-## 문서
-
-- [GPS Event Contract](docs/integration/GPS_EVENT_CONTRACT.md)
-- [iPhone handoff](docs/integration/IPHONE_HANDOFF.md)
-- [Manual test guide](reports/integration/MANUAL_TEST_GUIDE.md)
-- [Final validation](reports/integration/FINAL_INTEGRATION_VALIDATION.md)
+자세한 결과는 [FINAL_INTEGRATION_VALIDATION.md](reports/integration/FINAL_INTEGRATION_VALIDATION.md), 계약은 [GPS_EVENT_CONTRACT.md](docs/integration/GPS_EVENT_CONTRACT.md), iPhone 연동은 [IPHONE_HANDOFF.md](docs/integration/IPHONE_HANDOFF.md)를 확인합니다.
