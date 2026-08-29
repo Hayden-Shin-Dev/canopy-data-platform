@@ -28,9 +28,12 @@ def validate() -> dict[str, object]:
     checks["replay_fixtures"] = {"status": "PASS", "fixture_count": len(list((ROOT / "data/fixtures/integration").glob("*.csv")))}
     checks["ktdb_model"] = {"status": "FAIL", "path": "models/expected_behaviour/ktdb_population_baseline.pkl"}
     if ktdb_model.is_file() and ktdb_sample.is_file():
-        sample = pd.read_csv(ktdb_sample, nrows=1, encoding="utf-8-sig")
-        prediction = predict_expected_behaviour(sample, model_path=ktdb_model).iloc[0]
-        checks["ktdb_model"] = {"status": "PASS", "path": "models/expected_behaviour/ktdb_population_baseline.pkl", "predicted_mode": str(prediction["predicted_mode"]), "probabilities": {mode: float(prediction[f"{mode}_probability"]) for mode in ("walk", "bike", "car", "bus", "rail")}}
+        try:
+            sample = pd.read_csv(ktdb_sample, nrows=1, encoding="utf-8-sig")
+            prediction = predict_expected_behaviour(sample, model_path=ktdb_model).iloc[0]
+            checks["ktdb_model"] = {"status": "PASS", "path": "models/expected_behaviour/ktdb_population_baseline.pkl", "predicted_mode": str(prediction["predicted_mode"]), "probabilities": {mode: float(prediction[f"{mode}_probability"]) for mode in ("walk", "bike", "car", "bus", "rail")}}
+        except Exception as error:
+            checks["ktdb_model"] = {"status": "FAIL", "path": "models/expected_behaviour/ktdb_population_baseline.pkl", "reason": f"model/sample contract mismatch: {error}"}
     checks["geolife_model"] = {"status": "PASS" if geolife_model.is_file() else "FAIL", "path": "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"}
     try:
         resolver = load_factor_resolver(factors)
@@ -42,10 +45,12 @@ def validate() -> dict[str, object]:
         checks["seoul_transit_references"] = {"status": "PASS", "bus_stops": len(refs.bus_stops), "bus_route_stops": len(refs.bus_route_stops), "subway_stations": len(refs.subway_stations), "korail_stations": len(refs.korail_stations)}
     except Exception as error:
         checks["seoul_transit_references"] = {"status": "FAIL", "error": str(error)}
-    if checks["geolife_model"]["status"] == "PASS" and checks["ktdb_model"]["status"] == "PASS" and checks["emission_factors"]["status"] == "PASS" and checks["seoul_transit_references"]["status"] == "PASS":  # type: ignore[index]
+    required_checks = ("geolife_model", "ktdb_model", "emission_factors", "seoul_transit_references")
+    if all(checks[name]["status"] == "PASS" for name in required_checks):  # type: ignore[index]
         checks["full_pipeline_production_artifacts"] = {"status": "NOT_TESTED", "reason": "run with a real canonical GPS trip and expected KTDB conditions"}
     else:
-        checks["full_pipeline_production_artifacts"] = {"status": "FAIL", "reason": "GeoLife model artifact is unavailable locally"}
+        missing = [name for name in required_checks if checks[name]["status"] != "PASS"]  # type: ignore[index]
+        checks["full_pipeline_production_artifacts"] = {"status": "FAIL", "reason": f"required checks not ready: {missing}"}
     return result
 
 
