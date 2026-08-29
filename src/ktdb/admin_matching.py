@@ -59,7 +59,7 @@ def build_admin_centroid_mapping(
         raise ValueError(f"KTDB 행정동 lookup에 필요한 컬럼이 없습니다: {missing}")
     validate_centroid_reference(centroids)
 
-    ktdb = admin_lookup[list(required)].copy()
+    ktdb = admin_lookup[["admin_code", "sido", "sigungu", "admin_name"]].copy()
     ktdb["ktdb_admin_code"] = ktdb["admin_code"].astype("string").fillna("").str.strip()
     ktdb["ktdb_full_name"] = ktdb.apply(_full_admin_name, axis=1)
 
