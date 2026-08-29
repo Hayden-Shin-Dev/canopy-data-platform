@@ -351,13 +351,13 @@
       },
       {
         "mode": "bike",
-        "start_time": "2026-08-28T23:08:00+00:00",
+        "start_time": "2026-08-28T23:07:55+00:00",
         "end_time": "2026-08-28T23:11:55+00:00",
-        "duration_sec": 235.0,
-        "distance_km": 1.6340334844398747,
+        "duration_sec": 240.0,
+        "distance_km": 1.637982749037369,
         "start_coordinate": [
-          37.5222725,
-          126.9171267
+          37.5222971,
+          126.917159
         ],
         "end_coordinate": [
           37.5206331,
@@ -455,13 +455,13 @@
       },
       {
         "mode": "rail",
-        "start_time": "2026-08-28T23:12:00+00:00",
+        "start_time": "2026-08-28T23:11:55+00:00",
         "end_time": "2026-08-28T23:29:55+00:00",
-        "duration_sec": 1075.0,
-        "distance_km": 7.482080958415452,
+        "duration_sec": 1080.0,
+        "distance_km": 7.51483073908691,
         "start_coordinate": [
-          37.5208526,
-          126.9256165
+          37.5206331,
+          126.9258641
         ],
         "end_coordinate": [
           37.5715811,
@@ -866,18 +866,18 @@
         "subtype": "national_rail",
         "factor": 30.92,
         "unit": "gCO2e/passenger.km",
-        "co2e_g": 231.34594323420578,
+        "co2e_g": 232.35856645256726,
         "fallback_used": true
       },
       {
         "mode": "walk",
-        "start_time": "2026-08-28T23:30:00+00:00",
+        "start_time": "2026-08-28T23:29:55+00:00",
         "end_time": "2026-08-28T23:36:00+00:00",
-        "duration_sec": 360.0,
-        "distance_km": 0.3900925547642154,
+        "duration_sec": 365.0,
+        "distance_km": 0.3932302235937111,
         "start_coordinate": [
-          37.5715554,
-          126.9768449
+          37.5715811,
+          126.9768302
         ],
         "end_coordinate": [
           37.5743465,
@@ -2766,8 +2766,8 @@
     ],
     "distance_km": 10.179588320609643,
     "expected_co2e_g": 667.9549579558366,
-    "actual_co2e_g": 231.34594323420578,
-    "reduction_co2e_g": 436.6090147216308
+    "actual_co2e_g": 232.35856645256726,
+    "reduction_co2e_g": 435.5963915032693
   },
   "comparison": {
     "initial_walk": true,
