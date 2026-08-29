@@ -8,24 +8,26 @@ def test_real_seoul_subway_line_one_endpoint_pair() -> None:
     # Coordinates and IDs are copied from the generated official-reference rows.
     stations = pd.DataFrame(
         {
-            "station_id": ["159", "158"],
-            "station_name": ["동묘앞", "청량리"],
-            "line": ["1", "1"],
-            "latitude": [37.573265, 37.580148],
-            "longitude": [127.016459, 127.045063],
+            "station_id": ["159", "158", "157"],
+            "station_name": ["동묘앞", "청량리", "제기동"],
+            "line": ["1", "1", "1"],
+            "latitude": [37.573265, 37.580148, 37.578116],
+            "longitude": [127.016459, 127.045063, 127.034902],
         }
     )
+    timetable = pd.DataFrame({"line": ["1", "1", "1"], "station_id": ["159", "158", "157"], "service_type": ["weekday"] * 3})
+    endpoint_rows = timetable[timetable["station_id"].isin(["159", "157"])]
     context = subway_context(
         start_latitude=37.573265,
         start_longitude=127.016459,
-        end_latitude=37.580148,
-        end_longitude=127.045063,
+        end_latitude=37.578116,
+        end_longitude=127.034902,
         station_index=GeoPointIndex.from_frame(stations),
         stations=stations,
-        timetable_compatible=True,
+        timetable_compatible=(len(endpoint_rows) == 2 and set(endpoint_rows["line"]) == {"1"}),
     )
     assert context["subway_start_station_id"] == "159"
-    assert context["subway_end_station_id"] == "158"
+    assert context["subway_end_station_id"] == "157"
     assert context["matched_subway_line"] == "1"
     assert context["subway_timetable_score"] == 1.0
 
