@@ -22,6 +22,8 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     assert "openstreetmap.org" in module.MOBILE_APP_HTML
     assert "startTrip()" in module.MOBILE_APP_HTML
     assert 'class="screen active"' in module.MOBILE_APP_HTML
+    assert "resultSegments" in module.MOBILE_APP_HTML
+    assert "renderSegments" in module.MOBILE_APP_HTML
 
     assert module._fixture_path("insufficient_gps.csv").is_file()
     runtime.start("insufficient_gps.csv", "instant")
@@ -73,3 +75,6 @@ def test_ui_runs_existing_pipeline_for_repository_mock():
     assert snapshot["raw_debug"]["accepted_count"] == 433
     assert len(snapshot["window_predictions"]) == 18
     assert snapshot["pipeline"]["status"] == "PASS"
+    assert snapshot["pipeline"]["actual_behaviour"]["mode_sequence"]
+    assert snapshot["pipeline"]["actual_behaviour"]["segments"]
+    assert snapshot["pipeline"]["co2"]["actual_co2e_g"] > 0

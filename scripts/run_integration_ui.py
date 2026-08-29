@@ -101,6 +101,27 @@ async function init(){const r=await api('/api/route'),b=await api('/api/baseline
 </script></body></html>"""
 
 
+# Result 화면은 backend segment 배열을 그대로 노출한다.
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "</style></head>",
+    "</style><style>.segments{display:grid;gap:6px;margin:12px 0}.segment{display:flex;justify-content:space-between;align-items:center;background:#f0f5f2;border-radius:10px;padding:8px 10px;font-size:11px}.segment strong{display:block;font-size:13px}.segment small{color:#718078}</style></head>",
+).replace(
+    '<div class="compare"><div class="compare-row"><span>비슷한 조건의 이동 · Expected CO2</span>',
+    '<div class="segments" id="resultSegments"></div><div class="compare"><div class="compare-row"><span>비슷한 조건의 이동 · Expected CO2</span>',
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function updateFromStatus(s){",
+    "function renderSegments(segments){const el=document.getElementById('resultSegments');if(!el)return;const names={walk:'도보',bike:'자전거',car:'자동차',bus:'버스',rail:'철도'};el.innerHTML=(segments||[]).map(x=>'<div class=segment><strong>'+(x.matched_subway_line?x.matched_subway_line+'호선':names[x.mode]||x.mode)+'</strong><span><b>'+Number(x.distance_km||0).toFixed(2)+' km</b><small> · '+Number(x.co2e_g||0).toFixed(1)+' g</small></span></div>').join('')}\nfunction updateFromStatus(s){",
+).replace(
+    "document.getElementById('resultMode').textContent=p.actual_behaviour?.final_mode||'-';",
+    "document.getElementById('resultMode').textContent=(p.actual_behaviour?.mode_sequence||[]).filter((x,i,a)=>i===0||x!==a[i-1]).join(' → ')||p.actual_behaviour?.final_mode||'-';renderSegments(p.actual_behaviour?.segments||[]);",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "if(latest){document.getElementById('activeMode').textContent=modeText(latest.predicted_mode,p.transit_context);document.getElementById('activeStatus').textContent=modeText(latest.predicted_mode,p.transit_context);",
+    "if(latest){const resolvedLatest=[...(p.window_results||[])].reverse().find(w=>w.window_start===latest.window_start);const activeMode=resolvedLatest?.final_mode||latest.predicted_mode;const activeTransit=resolvedLatest?.transit_context||p.transit_context;document.getElementById('activeMode').textContent=modeText(activeMode,activeTransit);document.getElementById('activeStatus').textContent=modeText(activeMode,activeTransit);",
+)
+
+
 class Runtime:
     def __init__(self) -> None:
         self.lock = Lock()
@@ -113,6 +134,8 @@ class Runtime:
         self.pipeline: dict[str, Any] = {}
         self.expected_features: dict[str, object] | None = None
         self.window_predictions: list[dict[str, Any]] = []
+        self._last_window_bucket = -1
+        self._live_inference_enabled = False
         self.view_mode = "user"
 
     def start(self, fixture: str, speed: str, expected_features: dict[str, object] | None = None, view_mode: str = "user") -> None:
@@ -134,6 +157,8 @@ class Runtime:
                 else (_default_expected_features() if path == DEFAULT_MOCK else None)
             )
             self.window_predictions = []
+            self._last_window_bucket = -1
+            self._live_inference_enabled = speed != "instant"
             self.thread = Thread(target=self._run, args=(rows,), daemon=True)
             self.thread.start()
 
@@ -204,8 +229,39 @@ class Runtime:
         item = {"index": update.index, "accepted": update.decision.accepted, "reasons": list(update.decision.reasons), "warnings": list(update.decision.warnings)}
         if event is not None:
             item.update(event.as_dict())
+        inference_events = None
         with self.lock:
             self.events.append(item)
+            if self._live_inference_enabled and event is not None and update.decision.accepted and self.engine is not None:
+                session = self.engine.ingestor.sessions.get(event.trip_id)
+                if session and len(session.events) >= 2:
+                    elapsed_bucket = int((event.timestamp - session.events[0].timestamp).total_seconds() // 120)
+                    if elapsed_bucket > self._last_window_bucket:
+                        self._last_window_bucket = elapsed_bucket
+                        inference_events = list(session.events)
+        if inference_events is not None:
+            try:
+                windows = infer_windows(
+                    inference_events,
+                    model_path=ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib",
+                    window_seconds=120,
+                )
+                payload = [
+                    {
+                        "window_start": window.window_start.isoformat(),
+                        "window_end": window.window_end.isoformat(),
+                        "status": window.status,
+                        "predicted_mode": window.predicted_mode,
+                        "confidence": window.confidence,
+                        "probabilities": window.probabilities,
+                        "features": window.features,
+                    }
+                    for window in windows
+                ]
+                with self.lock:
+                    self.window_predictions = payload
+            except Exception:
+                pass
 
     def snapshot(self) -> dict[str, Any]:
         with self.lock:
