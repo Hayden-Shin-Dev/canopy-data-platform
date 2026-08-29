@@ -44,3 +44,11 @@ def test_route_join_keeps_only_coordinate_resolved_stops() -> None:
     joined, unmatched = join_route_stops(routes, matched)
     assert joined["stop_id"].tolist() == ["s1"]
     assert unmatched["stop_id"].tolist() == ["s2"]
+
+
+def test_route_join_replaces_api_coordinate_columns() -> None:
+    matched = pd.DataFrame({"stop_id": ["s1"], "latitude": [37.1], "longitude": [127.1], "coordinate_source": ["national_bus_stop_file"], "match_type": ["id_exact"]})
+    routes = pd.DataFrame({"route_id": ["r1"], "stop_id": ["s1"], "latitude": [pd.NA], "longitude": [pd.NA]})
+    joined, unmatched = join_route_stops(routes, matched)
+    assert len(unmatched) == 0
+    assert joined.loc[0, "latitude"] == 37.1

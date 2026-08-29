@@ -139,6 +139,11 @@ def join_route_stops(api_routes: pd.DataFrame, matched_stops: pd.DataFrame) -> t
     coordinate_columns = ["stop_id", "latitude", "longitude", "coordinate_source", "match_type"]
     lookup = matched_stops[coordinate_columns].drop_duplicates("stop_id") if not matched_stops.empty else matched_stops.reindex(columns=coordinate_columns)
     joined = api_routes.merge(lookup, on="stop_id", how="left", suffixes=("", "_resolved"))
+    if "latitude_resolved" in joined:
+        joined["latitude"] = joined["latitude_resolved"]
+        joined["longitude"] = joined["longitude_resolved"]
+        joined["coordinate_source"] = joined["coordinate_source_resolved"]
+        joined["match_type"] = joined["match_type_resolved"]
     valid = joined["latitude"].notna() & joined["longitude"].notna()
     return joined[valid].reset_index(drop=True), joined[~valid].reset_index(drop=True)
 
