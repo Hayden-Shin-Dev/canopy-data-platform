@@ -29,3 +29,16 @@ pytest -q
 UI: `http://127.0.0.1:8765`
 
 자세한 결과는 [FINAL_INTEGRATION_VALIDATION.md](reports/integration/FINAL_INTEGRATION_VALIDATION.md), 계약은 [GPS_EVENT_CONTRACT.md](docs/integration/GPS_EVENT_CONTRACT.md), iPhone 연동은 [IPHONE_HANDOFF.md](docs/integration/IPHONE_HANDOFF.md)를 확인합니다.
+
+## Mock replay
+
+새 iPhone mock 입력은 `mock/canopy_iphone_mock_yeongdeungpo_to_microsoft.csv`입니다.
+기존 Replay Engine과 production pipeline을 그대로 실행합니다.
+
+```powershell
+python scripts/replay_integration.py --speed instant --pipeline
+python scripts/evaluate_mock_trip.py
+run_canopy_app.bat
+```
+
+`mock/*ground_truth.txt`는 평가 전용 파일이며 inference 입력으로 읽지 않습니다.
