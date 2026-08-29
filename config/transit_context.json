@@ -23,6 +23,8 @@
     "strong_context_score": 0.70,
     "minimum_context_score": 0.35,
     "minimum_ml_confidence": 0.55,
-    "ambiguity_margin": 0.10
+    "ambiguity_margin": 0.10,
+    "pre_transit_bike_max_windows": 2,
+    "pre_transit_bike_max_confidence": 0.75
   }
 }

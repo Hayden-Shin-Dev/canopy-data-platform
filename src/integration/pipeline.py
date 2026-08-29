@@ -167,6 +167,8 @@ def run_full_pipeline(
         window_records,
         minimum_context_score=settings.resolver["minimum_context_score"],
         minimum_ml_confidence=settings.resolver["minimum_ml_confidence"],
+        pre_transit_bike_max_windows=int(settings.resolver.get("pre_transit_bike_max_windows", 2)),
+        pre_transit_bike_max_confidence=settings.resolver.get("pre_transit_bike_max_confidence", 0.75),
     )
     for record, mode in zip(window_records, smoothed_modes):
         decision = dict(record["decision"])
