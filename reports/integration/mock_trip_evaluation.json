@@ -186,22 +186,8 @@
     "final_mode": "walk",
     "mode_sequence": [
       "walk",
-      "walk",
-      "walk",
-      "walk",
-      "bike",
       "bike",
       "rail",
-      "rail",
-      "rail",
-      "rail",
-      "rail",
-      "rail",
-      "rail",
-      "rail",
-      "rail",
-      "walk",
-      "walk",
       "walk"
     ],
     "segments": [
@@ -2785,10 +2771,10 @@
   },
   "comparison": {
     "initial_walk": true,
-    "rail_present": false,
+    "rail_present": true,
     "final_walk": true,
-    "walk_to_rail": false,
-    "rail_to_walk": false,
+    "walk_to_rail": true,
+    "rail_to_walk": true,
     "note": "Comparison is evaluation-only; no ground-truth correction is applied."
   },
   "label_leakage": {
