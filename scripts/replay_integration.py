@@ -15,6 +15,8 @@ if str(ROOT) not in sys.path:
 
 from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
 from src.integration.replay import ReplayEngine, read_replay_csv
+from src.integration.gps_contract import validate_gps_event
+from src.integration.ktdb_context import build_expected_features
 from src.ktdb.schema import MODEL_FEATURES
 
 
@@ -22,7 +24,7 @@ DEFAULT_MOCK = ROOT / "mock/canopy_iphone_mock_yeongdeungpo_to_microsoft.csv"
 DEFAULT_KTDB_SAMPLE = ROOT / "data/processed/population_baseline/ktdb/01_population_model_training_all.csv"
 
 
-def _load_expected_features(path: Path | None) -> dict[str, object]:
+def _load_expected_features(path: Path | None, *, fixture: Path | None = None, events=None) -> dict[str, object]:
     """Load existing KTDB feature values for local replay; do not invent labels."""
 
     if path is not None:
@@ -30,6 +32,9 @@ def _load_expected_features(path: Path | None) -> dict[str, object]:
         if not isinstance(payload, dict):
             raise ValueError("KTDB feature input must be a JSON object")
         return payload
+    if fixture is not None and fixture.resolve() == DEFAULT_MOCK.resolve() and events is not None:
+        scenario = build_expected_features(events)
+        return scenario.features
     if not DEFAULT_KTDB_SAMPLE.is_file():
         raise FileNotFoundError(
             "KTDB sample is required for --pipeline; provide --ktdb-features"
@@ -63,7 +68,7 @@ def main() -> int:
     if args.pipeline:
         try:
             references = TransitRuntimeReferences.from_directory()
-            expected_features = _load_expected_features(args.ktdb_features)
+            expected_features = _load_expected_features(args.ktdb_features, fixture=args.fixture, events=result.session.events)
             pipeline = run_full_pipeline(result.session.events, expected_features, references=references, geolife_model_path=args.geolife_model, ktdb_model_path=args.ktdb_model, factors_csv=args.factors)
         except Exception as error:  # CLI reports an explicit FAIL instead of hiding unavailable local artifacts.
             pipeline = {"status": "FAIL", "error": str(error)}

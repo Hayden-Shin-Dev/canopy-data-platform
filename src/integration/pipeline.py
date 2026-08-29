@@ -96,6 +96,7 @@ def build_transit_context(events: Sequence[GpsEvent], probabilities: dict[str, f
         station_index=references.subway_index,
         stations=references.subway_stations,
         ml_rail_probability=probabilities.get("rail", 0.0),
+        trajectory=[(event.latitude, event.longitude) for event in events],
     )
     korail = korail_context(
         start_latitude=start.latitude,

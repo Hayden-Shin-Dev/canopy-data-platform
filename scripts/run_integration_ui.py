@@ -18,6 +18,8 @@ if str(ROOT) not in sys.path:
 
 from src.integration.geolife_adapter import infer_windows
 from src.integration.distance import trajectory_distance_km
+from src.integration.gps_contract import validate_gps_event
+from src.integration.ktdb_context import build_expected_features
 from src.predict_expected_behaviour import predict_expected_behaviour
 from src.integration.emissions import calculate_expected_emission, load_factor_resolver
 from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
@@ -236,10 +238,12 @@ def _fixture_path(name: str) -> Path:
 
 
 def _default_expected_features() -> dict[str, object] | None:
-    if not DEFAULT_KTDB_SAMPLE.is_file():
+    if not DEFAULT_MOCK.is_file():
         return None
-    sample = pd.read_csv(DEFAULT_KTDB_SAMPLE, nrows=1, encoding="utf-8-sig").iloc[0]
-    return {name: sample[name] for name in MODEL_FEATURES}
+    rows = read_replay_csv(DEFAULT_MOCK)
+    events = [validate_gps_event(row).event for row in rows]
+    valid_events = [event for event in events if event is not None]
+    return build_expected_features(valid_events).features
 
 
 def _baseline_payload() -> dict[str, object]:
@@ -250,13 +254,18 @@ def _baseline_payload() -> dict[str, object]:
     model = ROOT / "models/expected_behaviour/ktdb_population_baseline.pkl"
     if not model.is_file():
         return {"status": "WAITING", "reason": "existing KTDB model artifact is unavailable"}
-    sample = pd.read_csv(DEFAULT_KTDB_SAMPLE, nrows=1, encoding="utf-8-sig")
-    prediction = predict_expected_behaviour(sample, model_path=model).iloc[0]
+    rows = read_replay_csv(DEFAULT_MOCK)
+    events = [validate_gps_event(row).event for row in rows]
+    valid_events = [event for event in events if event is not None]
+    scenario = build_expected_features(valid_events)
+    prediction = predict_expected_behaviour(pd.DataFrame([scenario.features]), model_path=model).iloc[0]
     return {
         "status": "READY",
         "predicted_mode": str(prediction["predicted_mode"]),
         "probabilities": {mode: float(prediction[f"{mode}_probability"]) for mode in ("walk", "bike", "car", "bus", "rail")},
         "source": "existing KTDB population baseline model",
+        "features": scenario.features,
+        "provenance": scenario.provenance,
     }
 
 

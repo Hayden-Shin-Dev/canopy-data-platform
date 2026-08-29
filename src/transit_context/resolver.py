@@ -35,13 +35,27 @@ def resolve_mode(
     margin = settings.resolver["ambiguity_margin"]
     candidates = {"bus": bus_score, "rail": rail_score}
     evidence_mode, evidence_score = max(candidates.items(), key=lambda item: item[1])
+    subway_sequence = float(context.get("subway_sequence_score", 0.0) or 0.0)
+    subway_line = float(context.get("subway_line_score", 0.0) or 0.0)
+    subway_station_count = int(context.get("subway_observed_station_count", 0) or 0)
+    structured_subway = (
+        subway_station_count >= 2
+        and subway_line >= 1.0
+        and subway_sequence >= 0.5
+        and subway_score >= minimum
+    )
     final_mode = ml_mode
     correction_applied = False
     correction_reason = "ML prediction retained"
     decision_status = "unchanged"
     rail_subtype = None
 
-    if evidence_score >= strong and evidence_score > probs[evidence_mode] + margin:
+    if structured_subway and probs["rail"] < probs[ml_mode] + margin:
+        final_mode = "rail"
+        correction_applied = final_mode != ml_mode
+        decision_status = "corrected" if correction_applied else "confirmed"
+        correction_reason = "trajectory showed ordered stations on one subway line"
+    elif evidence_score >= strong and evidence_score > probs[evidence_mode] + margin:
         final_mode = evidence_mode
         correction_applied = final_mode != ml_mode
         decision_status = "corrected" if correction_applied else "confirmed"
