@@ -120,6 +120,10 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "if(latest){document.getElementById('activeMode').textContent=modeText(latest.predicted_mode,p.transit_context);document.getElementById('activeStatus').textContent=modeText(latest.predicted_mode,p.transit_context);",
     "if(latest){const resolvedLatest=[...(p.window_results||[])].reverse().find(w=>w.window_start===latest.window_start);const activeMode=resolvedLatest?.final_mode||latest.predicted_mode;const activeTransit=resolvedLatest?.transit_context||p.transit_context;document.getElementById('activeMode').textContent=modeText(activeMode,activeTransit);document.getElementById('activeStatus').textContent=modeText(activeMode,activeTransit);",
 )
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function modeText(mode,transit){if(transit&&transit.matched_subway_line)return",
+    "function modeText(mode,transit){if(mode==='rail'&&transit&&transit.matched_subway_line)return",
+)
 
 
 class Runtime:
