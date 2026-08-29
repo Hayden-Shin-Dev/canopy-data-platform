@@ -1,0 +1,10 @@
+{
+  "candidate": "A_strict_score",
+  "accuracy": 0.7995263469508584,
+  "macro_precision": 0.4664872766681987,
+  "macro_recall": 0.47160153489852413,
+  "macro_f1": 0.4473390937963185,
+  "weighted_f1": 0.8138915093800098,
+  "false_rail_activation": 1948,
+  "journeys": 700
+}
