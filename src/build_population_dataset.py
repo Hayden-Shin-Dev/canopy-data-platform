@@ -121,7 +121,11 @@ def build_population_dataset(
     output_dir: Path = OUTPUT_DIR,
     chunksize: int = 50_000,
     lookup_min_samples: int = 30,
-    centroid_path: Path | None = None,
+    centroid_path: Path = SGIS_CENTROID_PATH,
+    refresh_sgis: bool = False,
+    sgis_timeout_seconds: float = 20.0,
+    sgis_max_retries: int = 3,
+    sgis_request_interval_seconds: float = 0.2,
 ) -> dict[str, object]:
     """전체 원본을 순회해 all/commute 학습 CSV를 만든다."""
 
@@ -146,13 +150,18 @@ def build_population_dataset(
     codebook = load_codebook(raw_dir / KTDB_RAW_FILES["codebook"])
     admin_lookup = load_admin_lookup(raw_dir / KTDB_RAW_FILES["admin_area"])
     persons = load_person_table(person_path)
-    centroids = None
-    if centroid_path is not None:
-        if centroid_path.suffix.lower() in {".xlsx", ".xls"}:
-            centroids = pd.read_excel(centroid_path)
-        else:
-            centroids = pd.read_csv(centroid_path, encoding="utf-8-sig")
-        logger.info("centroid file loaded: %s", centroid_path)
+    centroids = _load_sgis_reference(
+        centroid_path,
+        refresh_sgis=refresh_sgis,
+        sgis_timeout_seconds=sgis_timeout_seconds,
+        sgis_max_retries=sgis_max_retries,
+        sgis_request_interval_seconds=sgis_request_interval_seconds,
+    )
+    code_system = inspect_code_systems(admin_lookup, centroids)
+    mapping = build_admin_centroid_mapping(admin_lookup, centroids)
+    mapping_path = output_dir / KTDB_SGIS_MAPPING_PATH.name
+    mapping.to_csv(mapping_path, index=False, encoding="utf-8-sig")
+    logger.info("SGIS centroid reference loaded: %s", centroid_path)
     build_mode_mapping(codebook).to_csv(mapping_path, index=False, encoding="utf-8-sig")
 
     raw_rows = 0
@@ -166,8 +175,9 @@ def build_population_dataset(
     for number, chunk in enumerate(iter_trip_chunks(trip_path, chunksize=chunksize), start=1):
         raw_rows += len(chunk)
         features = build_feature_frame(chunk, persons, codebook, admin_lookup)
-        if centroids is not None and not features.empty:
-            features = add_od_distance(features, centroids)
+        if not features.empty:
+            features = attach_admin_centroids(features, mapping)
+            features = add_projected_od_distance(features)
             features = add_distance_band(features)
         excluded_rows += len(chunk) - len(features)
         if features.empty:
