@@ -70,7 +70,7 @@ def _fit_catboost(train, validation, *, iterations: int, depth: int, learning_ra
     return model
 
 
-def experiment(dataset_csv: str | Path, baseline_model: str | Path, output_json: str | Path) -> dict[str, object]:
+def experiment(dataset_csv: str | Path, baseline_model: str | Path, output_json: str | Path, selected_model_path: str | Path | None = None) -> dict[str, object]:
     frame = pd.read_csv(dataset_csv, encoding="utf-8-sig")
     splits = split_model_data(frame)
     train, validation, test = splits["train"], splits["validation"], splits["test"]
@@ -78,6 +78,7 @@ def experiment(dataset_csv: str | Path, baseline_model: str | Path, output_json:
     output.parent.mkdir(parents=True, exist_ok=True)
     baseline, backend = _load_model(baseline_model)
     candidates: list[dict[str, object]] = []
+    candidate_models: dict[str, object] = {"existing_catboost": baseline}
     candidates.append({
         "name": "existing_catboost",
         "config": {"source": str(baseline_model)},
@@ -87,6 +88,7 @@ def experiment(dataset_csv: str | Path, baseline_model: str | Path, output_json:
         candidate_specs = (("catboost_depth6", {"iterations": 250, "depth": 6, "learning_rate": 0.08}), ("catboost_depth10", {"iterations": 250, "depth": 10, "learning_rate": 0.05}))
         for name, config in candidate_specs:
             model = _fit_catboost(train, validation, seed=2021, **config)
+            candidate_models[name] = model
             candidates.append({"name": name, "config": config, "metrics": {split: _evaluate(model, data, split=split) for split, data in (("validation", validation), ("test", test))}})
     else:
         from sklearn.compose import ColumnTransformer
@@ -99,8 +101,19 @@ def experiment(dataset_csv: str | Path, baseline_model: str | Path, output_json:
             preprocessor = ColumnTransformer([("categorical", OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1), list(train.categorical_features)), ("numeric", SimpleImputer(strategy="constant", fill_value=0.0, keep_empty_features=True), list(train.numeric_features))])
             model = Pipeline([("preprocessor", preprocessor), ("classifier", HistGradientBoostingClassifier(learning_rate=0.08, random_state=2021, **config))])
             model.fit(train.features, train.target)
+            candidate_models[name] = model
             candidates.append({"name": name, "config": config, "metrics": {split: _evaluate(model, data, split=split) for split, data in (("validation", validation), ("test", test))}})
     selected = max(candidates, key=lambda item: float(item["metrics"]["validation"]["macro_f1"]))
+    if selected_model_path is not None:
+        import joblib
+
+        selected_path = Path(selected_model_path)
+        selected_path.parent.mkdir(parents=True, exist_ok=True)
+        selected_model = candidate_models[selected["name"]]
+        if backend == "catboost":
+            selected_model.save_model(str(selected_path))
+        else:
+            joblib.dump({"backend": "sklearn", "model": selected_model}, selected_path)
     result = {
         "dataset_csv": str(dataset_csv),
         "baseline_backend": backend,
@@ -108,6 +121,7 @@ def experiment(dataset_csv: str | Path, baseline_model: str | Path, output_json:
         "classes": list(CLASSES),
         "selected_by": "validation.macro_f1",
         "selected": selected["name"],
+        "selected_model_path": str(selected_model_path) if selected_model_path is not None else None,
         "candidates": candidates,
     }
     output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -119,8 +133,9 @@ def main() -> int:
     parser.add_argument("dataset_csv", type=Path)
     parser.add_argument("baseline_model", type=Path)
     parser.add_argument("output_json", type=Path)
+    parser.add_argument("--selected-model", type=Path)
     args = parser.parse_args()
-    print(json.dumps(experiment(args.dataset_csv, args.baseline_model, args.output_json), ensure_ascii=False, indent=2))
+    print(json.dumps(experiment(args.dataset_csv, args.baseline_model, args.output_json, args.selected_model), ensure_ascii=False, indent=2))
     return 0
 
 
