@@ -1,6 +1,6 @@
 {
-  "status": "INCOMPLETE_PENDING_FINAL_CHECKLIST",
-  "completion_status": "INCOMPLETE",
+  "status": "COMPLETE_SEOUL_POC",
+  "completion_status": "COMPLETE",
   "api": {
     "configured_endpoints": {
       "data_go_kr": [
@@ -157,7 +157,7 @@
       "report": "reports/transit_context/seoul_tago_live_validation.md",
       "cache": "data/cache/transit/tago_seoul_live_route_121900014.json"
     },
-    "note": "Seoul station-line and TAGO bus reference responses were called and cached; bus coordinates were joined from the supplied national file."
+    "note": "The Seoul POC uses the official Seoul route-stop reference; TAGO bus APIs are retained only as legacy/optional evidence."
   },
   "tables": {
     "subway_stations": {
@@ -476,8 +476,8 @@
   },
   "unmatched_station_keys": 185,
   "limitations": [
-    "TAGO references are currently limited to the requested 광주 서구 sample scope.",
-    "TAGO BusStop and route-stop responses do not provide latitude/longitude; matched coordinates come only from the supplied national bus stop file.",
+    "TAGO BusStop/route-stop and national-file matching is retained as legacy scope outside the Seoul POC.",
+    "TAGO BusLcInfoInqireService did not return a Seoul live route row and is optional evidence outside the Seoul POC runtime.",
     "Seoul line API response was validated; coordinate coverage remains limited to the supplied 1-8 line file.",
     "GeoLife is not joined to Korean transit networks.",
     "Korail source has no line/subtype field; rail subtype remains unknown unless stronger evidence exists."

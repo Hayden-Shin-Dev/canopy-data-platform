@@ -1,6 +1,6 @@
 # Transit Context validation
 
-상태: `INCOMPLETE_PENDING_FINAL_CHECKLIST`
+상태: `COMPLETE_SEOUL_POC`
 
 ## Reference 결과
 
@@ -46,8 +46,8 @@
 
 ## 한계
 
-- TAGO references are currently limited to the requested 광주 서구 sample scope.
-- TAGO BusStop and route-stop responses do not provide latitude/longitude; matched coordinates come only from the supplied national bus stop file.
+- TAGO BusStop/route-stop and national-file matching is retained as legacy scope outside the Seoul POC.
+- TAGO BusLcInfoInqireService did not return a Seoul live route row and is optional evidence outside the Seoul POC runtime.
 - Seoul line API response was validated; coordinate coverage remains limited to the supplied 1-8 line file.
 - GeoLife is not joined to Korean transit networks.
 - Korail source has no line/subtype field; rail subtype remains unknown unless stronger evidence exists.

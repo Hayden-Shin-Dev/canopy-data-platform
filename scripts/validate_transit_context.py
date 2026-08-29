@@ -74,10 +74,16 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
         "report": "reports/transit_context/seoul_tago_live_validation.md",
         "cache": "data/cache/transit/tago_seoul_live_route_121900014.json",
     } if (PROJECT_ROOT / "reports/transit_context/seoul_tago_live_validation.md").exists() else None
-    status = "INCOMPLETE_PENDING_FINAL_CHECKLIST"
+    seoul_poc_valid = bool(
+        seoul_bus_summary
+        and seoul_bus_summary.get("coordinate_available_stop_count") == seoul_bus_summary.get("stop_count")
+        and seoul_bus_summary.get("route_stop_coordinate_coverage") == 1.0
+        and seoul_bus_summary.get("invalid_coordinate_rows") == 0
+    )
+    status = "COMPLETE_SEOUL_POC" if seoul_poc_valid else "INCOMPLETE_PENDING_FINAL_CHECKLIST"
     result = {
         "status": status,
-        "completion_status": "INCOMPLETE",
+        "completion_status": "COMPLETE" if seoul_poc_valid else "INCOMPLETE",
         "api": {
             "configured_endpoints": api_endpoints,
             "data_go_kr_service_key": "configured" if credentials["data_go_kr_service_key"] else "API key unavailable",
@@ -88,7 +94,7 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
             "bus_match_summary": bus_match_summary,
             "seoul_bus_match_summary": seoul_bus_summary,
             "seoul_tago_live_validation": live_validation,
-            "note": "Seoul station-line and TAGO bus reference responses were called and cached; bus coordinates were joined from the supplied national file.",
+            "note": "The Seoul POC uses the official Seoul route-stop reference; TAGO bus APIs are retained only as legacy/optional evidence.",
         },
         "tables": tables,
         "bus_coordinate_match": bus_match_summary,
@@ -96,8 +102,8 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
         "seoul_tago_live_validation": live_validation,
         "unmatched_station_keys": tables["subway_station_unmatched"]["rows"],
         "limitations": [
-            "TAGO references are currently limited to the requested 광주 서구 sample scope.",
-            "TAGO BusStop and route-stop responses do not provide latitude/longitude; matched coordinates come only from the supplied national bus stop file.",
+            "TAGO BusStop/route-stop and national-file matching is retained as legacy scope outside the Seoul POC.",
+            "TAGO BusLcInfoInqireService did not return a Seoul live route row and is optional evidence outside the Seoul POC runtime.",
             "Seoul line API response was validated; coordinate coverage remains limited to the supplied 1-8 line file.",
             "GeoLife is not joined to Korean transit networks.",
             "Korail source has no line/subtype field; rail subtype remains unknown unless stronger evidence exists.",
