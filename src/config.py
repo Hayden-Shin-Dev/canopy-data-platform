@@ -14,8 +14,12 @@ RAW_DIR = DATA_DIR / "raw"
 KTDB_RAW_DIR = RAW_DIR / "ktdb"
 INTERIM_DIR = DATA_DIR / "interim"
 PROCESSED_DIR = DATA_DIR / "processed"
+REFERENCE_DIR = DATA_DIR / "reference"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 MODELS_DIR = PROJECT_ROOT / "models"
+
+SGIS_CENTROID_PATH = REFERENCE_DIR / "admin_dong_centroids_2021.csv"
+SGIS_RAW_RESPONSE_DIR = REFERENCE_DIR / "sgis" / "raw" / "2021"
 
 # KTDB 파일명은 원본에서 받은 이름을 그대로 사용해야 하므로 여기서 한 번만 관리함.
 KTDB_RAW_FILES = {
