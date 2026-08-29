@@ -105,6 +105,19 @@ def test_client_refreshes_expired_token_and_repeats_boundary_request() -> None:
     assert final_params["adm_cd"] == "11"
 
 
+def test_client_refreshes_token_on_http_401() -> None:
+    session = Mock()
+    session.get.side_effect = [
+        _response({"errCd": 0, "result": {"accessToken": "old"}}),
+        _response({}, status_code=401),
+        _response({"errCd": 0, "result": {"accessToken": "new"}}),
+        _response({"errCd": 0, "features": []}),
+    ]
+    client = SgisClient("key", "secret", session=session, request_interval_seconds=0)
+
+    assert client.request_boundary()["features"] == []
+
+
 def test_parse_boundary_response_reads_representative_coordinates() -> None:
     records = parse_boundary_response(
         {
