@@ -13,13 +13,27 @@ from src.common.logging_utils import configure_logging, get_logger
 from src.config import (
     KTDB_RAW_DIR,
     KTDB_RAW_FILES,
+    KTDB_SGIS_MAPPING_PATH,
+    KTDB_UNMATCHED_REPORT_PATH,
     PROCESSED_DIR,
+    REFERENCE_DIR,
     RANDOM_SEED,
+    SGIS_CENTROID_PATH,
+    SGIS_RAW_RESPONSE_DIR,
 )
 from src.ktdb.admin_area import load_admin_lookup
+from src.ktdb.admin_centroids import load_or_collect_centroids
+from src.ktdb.admin_matching import (
+    attach_admin_centroids,
+    build_admin_centroid_mapping,
+    build_unmatched_report,
+    inspect_code_systems,
+)
 from src.ktdb.codebook import load_codebook
-from src.ktdb.distance import add_distance_band, add_od_distance
+from src.ktdb.distance import add_distance_band, add_projected_od_distance
+from src.ktdb.distance_report import summarize_distance_coverage
 from src.ktdb.loader import iter_trip_chunks, load_person_table
+from src.ktdb.sgis import SgisClient, load_sgis_credentials
 from src.ktdb.lookup import build_population_lookup
 from src.ktdb.modes import build_mode_mapping
 from src.ktdb.purpose import filter_commute
@@ -72,6 +86,32 @@ def _append_csv(frame: pd.DataFrame, path: Path, first_write: bool) -> None:
         header=first_write,
         index=False,
         encoding="utf-8-sig",
+    )
+
+
+def _load_sgis_reference(
+    centroid_path: Path,
+    *,
+    refresh_sgis: bool,
+    sgis_timeout_seconds: float,
+    sgis_max_retries: int,
+    sgis_request_interval_seconds: float,
+) -> pd.DataFrame:
+    client = None
+    if refresh_sgis or not centroid_path.is_file():
+        key, secret = load_sgis_credentials()
+        client = SgisClient(
+            key,
+            secret,
+            timeout_seconds=sgis_timeout_seconds,
+            max_retries=sgis_max_retries,
+            request_interval_seconds=sgis_request_interval_seconds,
+        )
+    return load_or_collect_centroids(
+        centroid_path,
+        client=client,
+        raw_response_dir=SGIS_RAW_RESPONSE_DIR,
+        refresh=refresh_sgis,
     )
 
 
