@@ -287,7 +287,7 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
         if path == "/":
-            self._send(200, IPHONE_HTML, "text/html")
+            self._send(200, MOBILE_APP_HTML, "text/html")
         elif path == "/api/fixtures":
             fixture_names = sorted(path.name for path in FIXTURE_DIR.glob("*.csv"))
             if DEFAULT_MOCK.is_file():
