@@ -74,7 +74,13 @@ def _observed_bus_stops(events: Sequence[GpsEvent], references: TransitRuntimeRe
     return observed
 
 
-def build_transit_context(events: Sequence[GpsEvent], probabilities: dict[str, float], references: TransitRuntimeReferences) -> dict[str, object]:
+def build_transit_context(
+    events: Sequence[GpsEvent],
+    probabilities: dict[str, float],
+    references: TransitRuntimeReferences,
+    *,
+    station_history: Sequence[tuple[str, str]] = (),
+) -> dict[str, object]:
     if len(events) < 2:
         return {"bus_context_score": 0.0, "subway_context_score": 0.0, "train_context_score": 0.0, "context_status": "INSUFFICIENT_GPS"}
     start, end = events[0], events[-1]
@@ -97,6 +103,7 @@ def build_transit_context(events: Sequence[GpsEvent], probabilities: dict[str, f
         stations=references.subway_stations,
         ml_rail_probability=probabilities.get("rail", 0.0),
         trajectory=[(event.latitude, event.longitude) for event in events],
+        station_history=station_history,
     )
     korail = korail_context(
         start_latitude=start.latitude,
