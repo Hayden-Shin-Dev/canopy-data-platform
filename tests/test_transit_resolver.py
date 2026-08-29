@@ -40,3 +40,17 @@ def test_bus_evidence_can_replace_unsupported_rail_prediction() -> None:
         context={"bus_context_score": 0.45, "subway_context_score": 0.55, "subway_line_score": 1.0, "subway_sequence_score": 0.0, "subway_observed_station_count": 1},
     )
     assert result["final_mode"] == "bus"
+
+
+def test_non_rail_prediction_requires_strong_rail_confirmation() -> None:
+    result = resolve_mode(
+        {"walk": 0.10, "bike": 0.05, "car": 0.60, "bus": 0.10, "rail": 0.15},
+        context={
+            "subway_context_score": 0.55,
+            "subway_line_score": 1.0,
+            "subway_sequence_score": 1.0,
+            "subway_observed_station_count": 3,
+        },
+    )
+    assert result["final_mode"] == "car"
+    assert result["decision_status"] == "insufficient_context"
