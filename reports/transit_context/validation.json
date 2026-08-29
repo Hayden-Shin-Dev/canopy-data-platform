@@ -139,6 +139,7 @@
     },
     "seoul_bus_match_summary": {
       "source_file": "C:\\Users\\user\\Downloads\\개인통행실태조사(2021년기준)\\data\\raw\\transit\\서울시버스노선별정류소정보_20260804.xlsx",
+      "source_catalog_url": "https://data.seoul.go.kr/dataList/OA-1095/S/1/datasetView.do",
       "raw_route_stop_rows": 41676,
       "route_stop_rows": 41676,
       "route_count": 718,
@@ -450,6 +451,7 @@
   },
   "seoul_bus_reference": {
     "source_file": "C:\\Users\\user\\Downloads\\개인통행실태조사(2021년기준)\\data\\raw\\transit\\서울시버스노선별정류소정보_20260804.xlsx",
+    "source_catalog_url": "https://data.seoul.go.kr/dataList/OA-1095/S/1/datasetView.do",
     "raw_route_stop_rows": 41676,
     "route_stop_rows": 41676,
     "route_count": 718,

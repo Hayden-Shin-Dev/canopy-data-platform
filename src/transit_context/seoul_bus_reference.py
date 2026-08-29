@@ -22,6 +22,7 @@ SOURCE_COLUMNS = {
     "longitude": "X\uc88c\ud45c",
     "latitude": "Y\uc88c\ud45c",
 }
+SOURCE_CATALOG_URL = "https://data.seoul.go.kr/dataList/OA-1095/S/1/datasetView.do"
 
 
 def read_seoul_bus_route_stops(path: str | Path) -> tuple[pd.DataFrame, dict[str, Any]]:
@@ -69,6 +70,7 @@ def read_seoul_bus_route_stops(path: str | Path) -> tuple[pd.DataFrame, dict[str
     ).reset_index()
     summary = {
         "source_file": str(source),
+        "source_catalog_url": SOURCE_CATALOG_URL,
         "raw_route_stop_rows": int(len(raw)),
         "route_stop_rows": int(len(clean)),
         "route_count": int(clean["route_id"].nunique()),
