@@ -81,6 +81,16 @@ def resolve_mode(
         decision_status = "insufficient_context"
         correction_reason = "ML confidence and transit evidence are both low"
 
+    # A non-rail model prediction must not be promoted to rail on a marginal
+    # station/trajectory score.  The threshold is versioned in transit config.
+    rail_confirmation_score = settings.resolver.get("rail_confirmation_score", strong)
+    if final_mode == "rail" and ml_mode != "rail" and rail_score < rail_confirmation_score:
+        non_rail_modes = {mode: value for mode, value in probs.items() if mode != "rail"}
+        final_mode = max(non_rail_modes, key=non_rail_modes.get)
+        correction_applied = True
+        decision_status = "insufficient_context"
+        correction_reason = "non-rail prediction requires stronger rail confirmation"
+
     if final_mode == "rail":
         if train_score > subway_score and train_score >= strong:
             rail_subtype = "train"
