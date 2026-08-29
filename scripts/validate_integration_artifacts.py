@@ -13,8 +13,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.integration.emissions import load_factor_resolver
-from src.integration.pipeline import TransitRuntimeReferences
+from src.integration.gps_contract import validate_gps_event
+from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
+from src.integration.replay import ReplayEngine, read_replay_csv
 from src.predict_expected_behaviour import predict_expected_behaviour
+from src.ktdb.schema import MODEL_FEATURES
 
 
 def validate() -> dict[str, object]:
@@ -47,10 +50,25 @@ def validate() -> dict[str, object]:
         checks["seoul_transit_references"] = {"status": "FAIL", "error": str(error)}
     required_checks = ("geolife_model", "ktdb_model", "emission_factors", "seoul_transit_references")
     if all(checks[name]["status"] == "PASS" for name in required_checks):  # type: ignore[index]
-        checks["full_pipeline_production_artifacts"] = {"status": "NOT_TESTED", "reason": "run with a real canonical GPS trip and expected KTDB conditions"}
+        try:
+            sample = pd.read_csv(ktdb_sample, nrows=1, encoding="utf-8-sig").iloc[0]
+            expected_features = {name: sample[name] for name in MODEL_FEATURES}
+            references = TransitRuntimeReferences.from_directory()
+            fixture_results: dict[str, object] = {}
+            for fixture in sorted((ROOT / "data/fixtures/integration").glob("*.csv")):
+                replay = ReplayEngine(speed="instant").stream(read_replay_csv(fixture))
+                pipeline = run_full_pipeline(replay.session.events, expected_features, references=references, geolife_model_path=geolife_model, ktdb_model_path=ktdb_model, factors_csv=factors)
+                fixture_results[fixture.name] = {"status": pipeline.get("status"), "accepted_event_count": len(replay.session.events), "rejected_event_count": replay.session.rejected_count, "actual_mode": pipeline.get("actual_behaviour", {}).get("final_mode"), "distance_km": pipeline.get("distance_km")}
+            expected_collecting = {"insufficient_gps.csv", "quality_edge_cases.csv"}
+            unexpected = [name for name, item in fixture_results.items() if name in expected_collecting and item["status"] not in {"COLLECTING", "PASS"} or name not in expected_collecting and item["status"] != "PASS"]
+            checks["full_pipeline_production_replay"] = {"status": "PASS" if not unexpected else "FAIL", "fixtures": fixture_results, "unexpected_statuses": unexpected}
+        except Exception as error:
+            checks["full_pipeline_production_replay"] = {"status": "FAIL", "reason": str(error)}
     else:
         missing = [name for name in required_checks if checks[name]["status"] != "PASS"]  # type: ignore[index]
-        checks["full_pipeline_production_artifacts"] = {"status": "FAIL", "reason": f"required checks not ready: {missing}"}
+        checks["full_pipeline_production_replay"] = {"status": "FAIL", "reason": f"required checks not ready: {missing}"}
+    required_statuses = ("gps_contract", "replay_fixtures", "ktdb_model", "geolife_model", "emission_factors", "seoul_transit_references", "full_pipeline_production_replay")
+    result["overall_status"] = "COMPLETE" if all(checks[name]["status"] == "PASS" for name in required_statuses) else "INCOMPLETE"  # type: ignore[index]
     return result
 
 
