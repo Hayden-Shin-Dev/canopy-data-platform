@@ -25,7 +25,8 @@ GPS Window → 정류장·역 근접성 → route/line·순서·시간표 증거
 - subway_timetable.csv: 424,264 rows
 - korail_stations.csv: 202 rows
 - subway station unmatched keys: 185
-- API 상태: `DATA_GO_KR_SERVICE_KEY`, `SEOUL_OPENAPI_KEY` 미설정
+- Seoul station-line API: `INFO-000`, 799 rows
+- TAGO bus API: 403 `SERVICE_KEY_IS_NOT_REGISTERED_ERROR`
 
 ## 실행
 
@@ -36,6 +37,8 @@ python scripts/build_transit_references.py `
   --korail-stations data/raw/transit/한국철도공사_역 위치 정보_20240401.csv
 
 python scripts/validate_transit_context.py
+python scripts/fetch_seoul_reference.py --refresh-seoul
+python scripts/fetch_tago_reference.py --refresh-tago
 ```
 
 `reports/transit_context/final_validation.md`와 `validation.json`에 실제 처리 수치와 미검증 항목을 기록합니다.
