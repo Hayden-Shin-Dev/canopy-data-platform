@@ -9,19 +9,12 @@
       "fixture_count": 6
     },
     "ktdb_model": {
-      "status": "PASS",
+      "status": "FAIL",
       "path": "models/expected_behaviour/ktdb_population_baseline.pkl",
-      "predicted_mode": "walk",
-      "probabilities": {
-        "walk": 0.8698466307099824,
-        "bike": 0.024061279528974452,
-        "car": 0.07921779430886734,
-        "bus": 0.02161257956588083,
-        "rail": 0.005261715886295013
-      }
+      "reason": "model/sample contract mismatch: 예측 입력에 필요한 feature 컬럼이 없습니다: ['destination_x', 'destination_y', 'origin_x', 'origin_y']"
     },
     "geolife_model": {
-      "status": "FAIL",
+      "status": "PASS",
       "path": "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"
     },
     "emission_factors": {
@@ -37,7 +30,7 @@
     },
     "full_pipeline_production_artifacts": {
       "status": "FAIL",
-      "reason": "GeoLife model artifact is unavailable locally"
+      "reason": "required checks not ready: ['ktdb_model']"
     }
   },
   "overall_status": "INCOMPLETE"
