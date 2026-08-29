@@ -1,0 +1,25 @@
+from src.transit_context.resolver import resolve_mode
+
+
+def test_weak_context_retains_ml_prediction() -> None:
+    result = resolve_mode({"walk": 0.05, "bike": 0.05, "car": 0.8, "bus": 0.05, "rail": 0.05})
+    assert result["final_mode"] == "car"
+    assert result["decision_status"] == "unchanged"
+
+
+def test_strong_bus_context_can_correct_low_ml_bus_probability() -> None:
+    result = resolve_mode({"walk": 0.1, "bike": 0.1, "car": 0.55, "bus": 0.1, "rail": 0.15}, context={"bus_context_score": 0.95})
+    assert result["final_mode"] == "bus"
+    assert result["correction_applied"] is True
+    assert result["decision_status"] == "corrected"
+
+
+def test_missing_context_is_reported_for_low_confidence() -> None:
+    result = resolve_mode({"walk": 0.21, "bike": 0.2, "car": 0.2, "bus": 0.19, "rail": 0.2})
+    assert result["decision_status"] == "insufficient_context"
+
+
+def test_strong_train_evidence_marks_train_subtype() -> None:
+    result = resolve_mode({"walk": 0.05, "bike": 0.05, "car": 0.1, "bus": 0.1, "rail": 0.7}, context={"train_context_score": 0.9})
+    assert result["final_mode"] == "rail"
+    assert result["rail_subtype"] == "train"

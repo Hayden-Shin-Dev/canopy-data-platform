@@ -1,82 +1,53 @@
-# Canopy Data Platform
+# Transit Context
 
-## 프로젝트 목적
+서울 POC에서 GPS 이동을 Bus, Subway, Train Context와 비교해 ML mode 판단을 보조하는 evidence layer입니다.
 
-Canopy는 친환경 이동 자체를 보상하는 것이 아니라, 일반적으로 예상되는 이동행동과 실제 이동행동의 차이를 비교해서 저탄소 방향의 Behaviour Shift가 발생했는지를 측정하고 탄소배출량과 리워드를 제공하는 서비스
+## 현재 상태
 
-## 전체 구조
+**COMPLETE (SEOUL POC)**
 
-KTDB — Expected Behaviour / Population Baseline
+- Bus: 서울 공식 노선별 정류소 reference
+- Subway: 역사 좌표, station-line, timetable
+- Train: KORAIL 역 좌표
+- 전체 테스트: 169 passed
 
-GeoLife — Mobility Recognition Model 학습
+## ACTIVE reference
 
-Emission Factors — 교통수단별 CO2 환산 기준
+- `seoul_bus_stops.csv`: 12,898개 정류장 좌표
+- `seoul_bus_route_stops.csv`: 41,676개 노선-정류장 행, 718개 노선
+- `subway_station_line_enrichment.csv`: 서울 station-line 연결 결과
+- `subway_timetable.csv`: 열차운행시각표
+- `korail_stations.csv`: KORAIL 역 좌표
 
-Transit Context — GPS만으로 구분이 어려운 bus/car 등의 판단 보조
+버스 POC는 서울시 공식 노선별 정류소 파일의 `ROUTE_ID`, `NODE_ID`,
+정류장 순번, 정류장명, X/Y를 그대로 사용합니다. 모든 버스 정류장과
+route-stop 행의 좌표 coverage는 100%이며, fuzzy matching을 사용하지 않습니다.
 
-Realtime GPS — iOS에서 실제 사용자 GPS 수집 및 Streaming
+## POC 검증
 
-Integration — Expected Behaviour와 Actual Behaviour를 비교하고 CO2 Reduction 및 Reward 계산
+실제 서울 노선 `121900014`의 정류장 4개를 사용한 Bus Context integration,
+1호선 역 endpoint와 timetable 확인, KORAIL 서울–용산 endpoint를 검증했습니다.
 
-## 현재 진행 상태
+- [DATA_USAGE_README.md](reports/transit_context/DATA_USAGE_README.md)
+- [FINAL_TEST_RESULT.md](reports/transit_context/FINAL_TEST_RESULT.md)
+- [FINAL_CHECKLIST.md](reports/transit_context/FINAL_CHECKLIST.md)
 
-KTDB v1 완료
+## POC 범위 밖
 
-- Raw trips: 356,899
-- Valid features: 331,189
-- Commute trips: 86,561
-- Test Accuracy: 약 0.677
-- Macro F1: 약 0.411
-- Tag: `ktdb-v1.0.0`, `ktdb-v1.1.0`
+TAGO BusStop/BusRoutespecificStopInformation과 전국 정류장 파일 매칭,
+TAGO 서울 live bus-position evidence, 전국 버스 coverage는 LEGACY 또는
+OPTIONAL 확장 과제입니다. 현재 서울 POC runtime dependency가 아닙니다.
 
-GeoLife v1 완료
-
-- 120초 Window + GPS quality + purity filtering
-- Test Accuracy: 0.6942
-- Test Macro F1: 0.5330
-- Tag: `geolife-v1.0.0`, `geolife-v1.1.0`
-
-Emission Factors v1 완료
-
-- GOV.UK 2026 source audit 및 5개 canonical mode reference
-- Tag: `emission-factors-v1.0.0`
-
-Transit Context: 필요 여부 검증 예정
-
-Realtime GPS: 예정
-
-Integration: 예정
-
-## Branch
-
-- `main`
-- `dev/ktdb-v1`
-- `dev/geolife-v1`
-- `dev/emission-factors-v1`
-
-나머지 dev Branch는 실제 작업을 시작할 때 생성합니다.
-
-## 개발 순서
-
-KTDB → GeoLife → Emission Factors → 필요 시 Transit Context → Realtime GPS → Canopy Integration
-
-## KTDB SGIS 거리 Feature
-
-KTDB의 10자리 행정동 코드를 SGIS 2021 읍면동(7자리) reference와 전체 행정구역명으로 매칭합니다. SGIS가 제공한 EPSG:5179 대표좌표를 WGS84로 변환한 뒤 Haversine 직선거리를 계산하며, Polygon을 평균내지 않습니다.
-
-SGIS 키는 코드에 하드코딩하지 않고 환경변수 또는 프로젝트 루트 `.env`로 전달합니다.
-
-PowerShell을 매번 설정하기 어렵다면 프로젝트 루트에 `.env` 파일을 만들고 아래처럼 입력해도 됩니다. `.env`는 Git에서 자동으로 제외됩니다.
-
-```dotenv
-SGIS_CONSUMER_KEY=발급받은 키
-SGIS_CONSUMER_SECRET=발급받은 시크릿
-```
+## 재생성
 
 ```powershell
-$env:SGIS_CONSUMER_KEY = "발급받은 키"
-$env:SGIS_CONSUMER_SECRET = "발급받은 시크릿"
-py -3.13 -m src.build_population_dataset
-```
+python scripts/build_transit_references.py `
+  --subway-coordinates data/raw/transit/서울교통공사_1_8호선 역사 좌표(위경도) 정보_20250814.csv `
+  --subway-timetable data/raw/transit/서울교통공사_서울 도시철도 열차운행시각표_20260616.csv `
+  --korail-stations data/raw/transit/한국철도공사_역 위치 정보_20240401.csv
 
-기존 `data/reference/admin_dong_centroids_2021.csv`가 있으면 재사용하고, 다시 수집할 때는 `--refresh-sgis`를 붙입니다. API 원본 응답은 `data/reference/sgis/raw/2021/`에 로컬 cache로 저장되며 Git에는 올리지 않습니다.
+python scripts/build_seoul_bus_reference.py `
+  data/raw/transit/서울시버스노선별정류소정보_20260804.xlsx
+
+python -m pytest -q
+```

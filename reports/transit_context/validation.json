@@ -1,0 +1,485 @@
+{
+  "status": "COMPLETE_SEOUL_POC",
+  "completion_status": "COMPLETE",
+  "api": {
+    "configured_endpoints": {
+      "data_go_kr": [
+        {
+          "api_id": "15098533",
+          "purpose": "TAGO live bus positions",
+          "key_env": "DATA_GO_KR_SERVICE_KEY"
+        },
+        {
+          "api_id": "15142031",
+          "purpose": "bus route stops",
+          "key_env": "DATA_GO_KR_SERVICE_KEY"
+        },
+        {
+          "api_id": "15142032",
+          "purpose": "bus stops",
+          "key_env": "DATA_GO_KR_SERVICE_KEY"
+        }
+      ],
+      "seoul_openapi": [
+        {
+          "api_id": "15058404",
+          "purpose": "Seoul subway line information",
+          "key_env": "SEOUL_OPENAPI_KEY"
+        }
+      ],
+      "policy": "API response fields are inspected before normalization; no field names are guessed."
+    },
+    "data_go_kr_service_key": "configured",
+    "seoul_openapi_key": "configured",
+    "live_calls_made": false,
+    "seoul_api_summary": {
+      "endpoint": "SearchSTNBySubwayLineInfo",
+      "status_code": "INFO-000",
+      "message": "정상 처리되었습니다",
+      "list_total_count": 799,
+      "row_count": 799,
+      "from_cache": true,
+      "fields": [
+        "FR_CODE",
+        "LINE_NUM",
+        "STATION_CD",
+        "STATION_NM",
+        "STATION_NM_CHN",
+        "STATION_NM_ENG",
+        "STATION_NM_JPN"
+      ],
+      "cache_path": "data/cache/transit/seoul_station_lines.json",
+      "output_csv": "data\\processed\\transit_context\\seoul_station_lines.csv",
+      "refresh": false
+    },
+    "tago_api_summary": {
+      "endpoint": "https://apis.data.go.kr/1613000/BusLcInfoInqireService/getCtyCodeList",
+      "status": "success",
+      "from_cache": false,
+      "service_probes": {
+        "bus_stops": {
+          "endpoint": "https://apis.data.go.kr/1613000/BusStop/getBusStop",
+          "status": "success",
+          "from_cache": false
+        },
+        "bus_routes": {
+          "endpoint": "https://apis.data.go.kr/1613000/BusRoutespecificStopInformation/getBusRoutespecificStopInformation",
+          "status": "success",
+          "from_cache": false
+        },
+        "bus_locations": {
+          "endpoint": "https://apis.data.go.kr/1613000/BusLcInfoInqireService/getCtyCodeList",
+          "status": "success",
+          "from_cache": false
+        }
+      },
+      "bus_stops_sample": {
+        "status": "success",
+        "rows": 377,
+        "pages": 1,
+        "coordinate_status": "not_provided_by_api",
+        "scope": {
+          "opr_ymd": "20250801",
+          "ctpv_cd": "29",
+          "sgg_cd": "29140"
+        }
+      },
+      "bus_routes_sample": {
+        "status": "success",
+        "rows": 1845,
+        "pages": 2,
+        "coordinate_status": "not_provided_by_api",
+        "scope": {
+          "opr_ymd": "20250801",
+          "ctpv_cd": "29",
+          "sgg_cd": "29140"
+        }
+      },
+      "national_bus_stop_file": "C:\\Users\\user\\Downloads\\개인통행실태조사(2021년기준)\\data\\raw\\transit\\국토교통부_전국 버스정류장 위치정보_20251031.csv",
+      "bus_coordinate_match": {
+        "api_row_count": 377,
+        "exact_id_match_count": 0,
+        "name_region_match_count": 31,
+        "matched_count": 31,
+        "unmatched_count": 346,
+        "coordinate_available_count": 31,
+        "coordinate_missing_count": 346,
+        "match_rate": 0.08222811671087533,
+        "region_code_map": {
+          "29": "24"
+        },
+        "matching_policy": "ID exact first; unique normalized name plus region second; ambiguous candidates remain unmatched",
+        "national_file_row_count": 227065,
+        "route_api_row_count": 1845,
+        "route_coordinate_available_count": 130,
+        "route_coordinate_missing_count": 1715,
+        "route_match_rate": 0.07046070460704607
+      },
+      "cache_path": "data/cache/transit/tago_city_codes.json",
+      "refresh": true
+    },
+    "bus_match_summary": {
+      "api_row_count": 377,
+      "exact_id_match_count": 0,
+      "name_region_match_count": 31,
+      "matched_count": 31,
+      "unmatched_count": 346,
+      "coordinate_available_count": 31,
+      "coordinate_missing_count": 346,
+      "match_rate": 0.08222811671087533,
+      "region_code_map": {
+        "29": "24"
+      },
+      "matching_policy": "ID exact first; unique normalized name plus region second; ambiguous candidates remain unmatched",
+      "national_file_row_count": 227065,
+      "route_api_row_count": 1845,
+      "route_coordinate_available_count": 130,
+      "route_coordinate_missing_count": 1715,
+      "route_match_rate": 0.07046070460704607
+    },
+    "seoul_bus_match_summary": {
+      "source_file": "C:\\Users\\user\\Downloads\\개인통행실태조사(2021년기준)\\data\\raw\\transit\\서울시버스노선별정류소정보_20260804.xlsx",
+      "source_catalog_url": "https://data.seoul.go.kr/dataList/OA-1095/S/1/datasetView.do",
+      "raw_route_stop_rows": 41676,
+      "route_stop_rows": 41676,
+      "route_count": 718,
+      "stop_count": 12898,
+      "coordinate_available_stop_count": 12898,
+      "invalid_coordinate_rows": 0,
+      "duplicate_route_stop_rows_removed": 0,
+      "duplicate_stop_id_count": 28778,
+      "route_stop_coordinate_coverage": 1.0,
+      "join_key": "NODE_ID",
+      "coordinate_system": "observed longitude/latitude values; WGS84 geographic coordinates"
+    },
+    "seoul_tago_live_validation": {
+      "status": "NOT_CONNECTED",
+      "report": "reports/transit_context/seoul_tago_live_validation.md",
+      "cache": "data/cache/transit/tago_seoul_live_route_121900014.json"
+    },
+    "note": "The Seoul POC uses the official Seoul route-stop reference; TAGO bus APIs are retained only as legacy/optional evidence."
+  },
+  "tables": {
+    "subway_stations": {
+      "path": "data\\processed\\transit_context\\subway_stations.csv",
+      "rows": 276,
+      "columns": [
+        "station_id",
+        "station_name",
+        "normalized_station_name",
+        "line",
+        "latitude",
+        "longitude",
+        "source"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
+    },
+    "subway_timetable": {
+      "path": "data\\processed\\transit_context\\subway_timetable.csv",
+      "rows": 424264,
+      "columns": [
+        "line",
+        "station_id",
+        "station_name",
+        "normalized_station_name",
+        "direction",
+        "service_type",
+        "service_type_raw",
+        "arrival_time",
+        "departure_time",
+        "source"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 496,
+      "invalid_coordinate_rows": null,
+      "coordinates_valid": true
+    },
+    "korail_stations": {
+      "path": "data\\processed\\transit_context\\korail_stations.csv",
+      "rows": 202,
+      "columns": [
+        "station_id",
+        "station_name",
+        "normalized_station_name",
+        "latitude",
+        "longitude",
+        "source",
+        "region"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
+    },
+    "subway_station_unmatched": {
+      "path": "data\\processed\\transit_context\\subway_station_unmatched.csv",
+      "rows": 185,
+      "columns": [
+        "line",
+        "normalized_station_name"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": null,
+      "coordinates_valid": true
+    },
+    "bus_stops": {
+      "path": "data\\processed\\transit_context\\bus_stops.csv",
+      "rows": 31,
+      "columns": [
+        "opr_ymd",
+        "stop_id",
+        "stop_name",
+        "sttn_ars_no",
+        "city_code",
+        "sgg_cd",
+        "emd_cd",
+        "ctpv_nm",
+        "sgg_nm",
+        "emd_nm",
+        "latitude",
+        "longitude",
+        "source",
+        "coordinate_status",
+        "coordinate_source",
+        "national_stop_id",
+        "national_stop_name",
+        "national_city_code",
+        "match_type"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
+    },
+    "bus_route_stops": {
+      "path": "data\\processed\\transit_context\\bus_route_stops.csv",
+      "rows": 130,
+      "columns": [
+        "opr_ymd",
+        "route_id",
+        "route_no",
+        "route_name",
+        "stop_sequence",
+        "stop_id",
+        "stop_name",
+        "city_code",
+        "sgg_cd",
+        "emd_cd",
+        "ctpv_nm",
+        "sgg_nm",
+        "emd_nm",
+        "trfc_mns_se_cd",
+        "latitude",
+        "longitude",
+        "source",
+        "coordinate_status",
+        "latitude_resolved",
+        "longitude_resolved",
+        "coordinate_source",
+        "match_type"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
+    },
+    "bus_stop_unmatched": {
+      "path": "data\\processed\\transit_context\\bus_stop_unmatched.csv",
+      "rows": 346,
+      "columns": [
+        "opr_ymd",
+        "stop_id",
+        "stop_name",
+        "sttn_ars_no",
+        "city_code",
+        "sgg_cd",
+        "emd_cd",
+        "ctpv_nm",
+        "sgg_nm",
+        "emd_nm",
+        "latitude",
+        "longitude",
+        "source",
+        "coordinate_status",
+        "match_type",
+        "region_code_used"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 346,
+      "coordinates_valid": false
+    },
+    "bus_route_stop_unmatched": {
+      "path": "data\\processed\\transit_context\\bus_route_stop_unmatched.csv",
+      "rows": 1715,
+      "columns": [
+        "opr_ymd",
+        "route_id",
+        "route_no",
+        "route_name",
+        "stop_sequence",
+        "stop_id",
+        "stop_name",
+        "city_code",
+        "sgg_cd",
+        "emd_cd",
+        "ctpv_nm",
+        "sgg_nm",
+        "emd_nm",
+        "trfc_mns_se_cd",
+        "latitude",
+        "longitude",
+        "source",
+        "coordinate_status",
+        "latitude_resolved",
+        "longitude_resolved",
+        "coordinate_source",
+        "match_type"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 1715,
+      "coordinates_valid": false
+    },
+    "seoul_bus_stops": {
+      "path": "data\\processed\\transit_context\\seoul_bus_stops.csv",
+      "rows": 12898,
+      "columns": [
+        "stop_id",
+        "stop_name",
+        "ars_id",
+        "latitude",
+        "longitude",
+        "source",
+        "coordinate_source",
+        "coordinate_status"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
+    },
+    "seoul_bus_route_stops": {
+      "path": "data\\processed\\transit_context\\seoul_bus_route_stops.csv",
+      "rows": 41676,
+      "columns": [
+        "route_id",
+        "route_no",
+        "route_name",
+        "stop_sequence",
+        "stop_id",
+        "stop_name",
+        "ars_id",
+        "longitude",
+        "latitude",
+        "source",
+        "coordinate_source",
+        "coordinate_status"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
+    },
+    "seoul_station_lines": {
+      "path": "data\\processed\\transit_context\\seoul_station_lines.csv",
+      "rows": 799,
+      "columns": [
+        "station_id",
+        "station_name",
+        "normalized_station_name",
+        "line",
+        "external_code",
+        "source"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": null,
+      "coordinates_valid": true
+    },
+    "subway_station_line_enrichment": {
+      "path": "data\\processed\\transit_context\\subway_station_line_enrichment.csv",
+      "rows": 273,
+      "columns": [
+        "coordinate_station_id",
+        "coordinate_station_name",
+        "normalized_station_name",
+        "line",
+        "latitude",
+        "longitude",
+        "api_station_id",
+        "external_code",
+        "source"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 0,
+      "coordinates_valid": true
+    },
+    "seoul_station_unmatched": {
+      "path": "data\\processed\\transit_context\\seoul_station_unmatched.csv",
+      "rows": 526,
+      "columns": [
+        "line",
+        "station_id",
+        "station_name",
+        "normalized_station_name"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": null,
+      "coordinates_valid": true
+    }
+  },
+  "bus_coordinate_match": {
+    "api_row_count": 377,
+    "exact_id_match_count": 0,
+    "name_region_match_count": 31,
+    "matched_count": 31,
+    "unmatched_count": 346,
+    "coordinate_available_count": 31,
+    "coordinate_missing_count": 346,
+    "match_rate": 0.08222811671087533,
+    "region_code_map": {
+      "29": "24"
+    },
+    "matching_policy": "ID exact first; unique normalized name plus region second; ambiguous candidates remain unmatched",
+    "national_file_row_count": 227065,
+    "route_api_row_count": 1845,
+    "route_coordinate_available_count": 130,
+    "route_coordinate_missing_count": 1715,
+    "route_match_rate": 0.07046070460704607
+  },
+  "seoul_bus_reference": {
+    "source_file": "C:\\Users\\user\\Downloads\\개인통행실태조사(2021년기준)\\data\\raw\\transit\\서울시버스노선별정류소정보_20260804.xlsx",
+    "source_catalog_url": "https://data.seoul.go.kr/dataList/OA-1095/S/1/datasetView.do",
+    "raw_route_stop_rows": 41676,
+    "route_stop_rows": 41676,
+    "route_count": 718,
+    "stop_count": 12898,
+    "coordinate_available_stop_count": 12898,
+    "invalid_coordinate_rows": 0,
+    "duplicate_route_stop_rows_removed": 0,
+    "duplicate_stop_id_count": 28778,
+    "route_stop_coordinate_coverage": 1.0,
+    "join_key": "NODE_ID",
+    "coordinate_system": "observed longitude/latitude values; WGS84 geographic coordinates"
+  },
+  "seoul_tago_live_validation": {
+    "status": "NOT_CONNECTED",
+    "report": "reports/transit_context/seoul_tago_live_validation.md",
+    "cache": "data/cache/transit/tago_seoul_live_route_121900014.json"
+  },
+  "unmatched_station_keys": 185,
+  "limitations": [
+    "TAGO BusStop/route-stop and national-file matching is retained as legacy scope outside the Seoul POC.",
+    "TAGO BusLcInfoInqireService did not return a Seoul live route row and is optional evidence outside the Seoul POC runtime.",
+    "Seoul line API response was validated; coordinate coverage remains limited to the supplied 1-8 line file.",
+    "GeoLife is not joined to Korean transit networks.",
+    "Korail source has no line/subtype field; rail subtype remains unknown unless stronger evidence exists."
+  ]
+}
