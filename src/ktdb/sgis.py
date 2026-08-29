@@ -30,6 +30,14 @@ class SgisToken:
     expires_at: int | None
 
 
+@dataclass(frozen=True)
+class SgisBoundaryRecord:
+    adm_cd: str
+    adm_nm: str
+    x: float | None
+    y: float | None
+
+
 def _error_code(payload: Mapping[str, Any]) -> int | None:
     value = payload.get("errCd")
     if value is None:
@@ -66,6 +74,44 @@ def parse_authentication_response(payload: Mapping[str, Any]) -> SgisToken:
     except (TypeError, ValueError) as error:
         raise SgisApiError("SGIS accessTimeout 형식이 올바르지 않습니다") from error
     return SgisToken(access_token=access_token, expires_at=expires_at)
+
+
+def _optional_coordinate(value: object, field_name: str) -> float | None:
+    if value in (None, ""):
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError) as error:
+        raise SgisApiError(f"SGIS {field_name} 좌표 형식이 올바르지 않습니다") from error
+
+
+def parse_boundary_response(payload: Mapping[str, Any]) -> list[SgisBoundaryRecord]:
+    """GeoJSON properties만 읽고 polygon으로 대표점을 만들지 않는다."""
+
+    ensure_sgis_success(payload)
+    features = payload.get("features")
+    if not isinstance(features, list):
+        raise SgisApiError("SGIS 경계 응답에 features 목록이 없습니다")
+    records: list[SgisBoundaryRecord] = []
+    for feature in features:
+        if not isinstance(feature, Mapping):
+            raise SgisApiError("SGIS 경계 feature 형식이 올바르지 않습니다")
+        properties = feature.get("properties")
+        if not isinstance(properties, Mapping):
+            raise SgisApiError("SGIS 경계 feature에 properties가 없습니다")
+        adm_cd = str(properties.get("adm_cd") or "").strip()
+        adm_nm = str(properties.get("adm_nm") or "").strip()
+        if not adm_cd or not adm_nm:
+            raise SgisApiError("SGIS 경계 properties에 adm_cd 또는 adm_nm이 없습니다")
+        records.append(
+            SgisBoundaryRecord(
+                adm_cd=adm_cd,
+                adm_nm=adm_nm,
+                x=_optional_coordinate(properties.get("x"), "x"),
+                y=_optional_coordinate(properties.get("y"), "y"),
+            )
+        )
+    return records
 
 
 def load_sgis_credentials() -> tuple[str, str]:
