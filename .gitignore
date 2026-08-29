@@ -21,6 +21,8 @@ data/interim/*
 data/processed/**
 !data/processed/**/
 !data/processed/**/README.md
+data/reference/sgis/raw/**
+!data/reference/sgis/raw/README.md
 models/**/*.cbm
 models/**/*.pkl
 models/**/*.joblib
