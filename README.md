@@ -26,7 +26,7 @@ pytest -q
 
 **INCOMPLETE / LOCAL REPLAY READY**
 
-Contract, ingestion, replay, 서울 reference loader, KTDB sample inference, Emission 계산과 테스트는 준비되어 있습니다. GeoLife hardened model artifact가 로컬에 없어 실제 full production pipeline은 아직 PASS가 아닙니다. 상세 근거는 [FINAL_INTEGRATION_VALIDATION.md](reports/integration/FINAL_INTEGRATION_VALIDATION.md)를 확인합니다.
+Contract, ingestion, replay, 서울 reference loader, GeoLife model adapter, Emission 계산과 테스트는 준비되어 있습니다. KTDB model은 존재하지만 복원된 processed sample이 `origin_x/destination_x` 컬럼을 포함하지 않아 실제 full production pipeline은 아직 PASS가 아닙니다. 상세 근거는 [FINAL_INTEGRATION_VALIDATION.md](reports/integration/FINAL_INTEGRATION_VALIDATION.md)를 확인합니다.
 
 ## 문서
 
