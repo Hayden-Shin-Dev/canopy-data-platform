@@ -3,14 +3,31 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from functools import lru_cache
 
 import pandas as pd
+from pyproj import Transformer
 
 from src.common.geo import haversine_distance_km
 from src.config import DISTANCE_BANDS
+from src.ktdb.admin_centroids import SGIS_SOURCE_CRS
 
 
 CENTROID_COLUMNS = ("admin_dong", "latitude", "longitude")
+PROJECTED_OD_COLUMNS = ("origin_x", "origin_y", "destination_x", "destination_y")
+
+
+@lru_cache(maxsize=4)
+def _wgs84_transformer(source_crs: str) -> Transformer:
+    return Transformer.from_crs(source_crs, "EPSG:4326", always_xy=True)
+
+
+def transform_to_wgs84(x: float, y: float, *, source_crs: str = SGIS_SOURCE_CRS) -> tuple[float, float]:
+    """SGIS 원 좌표를 Haversine에 사용할 longitude, latitude로 변환한다."""
+
+    longitude, latitude = _wgs84_transformer(source_crs).transform(float(x), float(y))
+    haversine_distance_km(latitude, longitude, latitude, longitude)
+    return longitude, latitude
 
 
 def validate_centroid_table(centroids: pd.DataFrame) -> None:
@@ -63,6 +80,45 @@ def add_od_distance(
             continue
         distances.append(haversine_distance_km(*(float(value) for value in values)))
     result["od_straight_distance_km"] = pd.array(distances, dtype="Float64")
+    return result
+
+
+def add_projected_od_distance(
+    frame: pd.DataFrame,
+    *,
+    source_crs: str = SGIS_SOURCE_CRS,
+) -> pd.DataFrame:
+    """SGIS x/y를 WGS84로 변환한 뒤 행정동 중심점 간 Haversine 거리를 계산한다."""
+
+    missing = sorted(set(PROJECTED_OD_COLUMNS) - set(frame.columns))
+    if missing:
+        raise ValueError(f"좌표 변환에 필요한 컬럼이 없습니다: {missing}")
+    result = frame.copy()
+    numeric = result[list(PROJECTED_OD_COLUMNS)].apply(pd.to_numeric, errors="coerce")
+    valid = numeric.notna().all(axis=1)
+    distances = pd.Series(pd.NA, index=result.index, dtype="Float64")
+    if valid.any():
+        transformer = _wgs84_transformer(source_crs)
+        origin_lon, origin_lat = transformer.transform(
+            numeric.loc[valid, "origin_x"].to_numpy(),
+            numeric.loc[valid, "origin_y"].to_numpy(),
+        )
+        destination_lon, destination_lat = transformer.transform(
+            numeric.loc[valid, "destination_x"].to_numpy(),
+            numeric.loc[valid, "destination_y"].to_numpy(),
+        )
+        values = [
+            haversine_distance_km(float(olat), float(olon), float(dlat), float(dlon))
+            for olat, olon, dlat, dlon in zip(
+                origin_lat,
+                origin_lon,
+                destination_lat,
+                destination_lon,
+                strict=True,
+            )
+        ]
+        distances.loc[valid] = values
+    result["od_straight_distance_km"] = distances
     return result
 
 
