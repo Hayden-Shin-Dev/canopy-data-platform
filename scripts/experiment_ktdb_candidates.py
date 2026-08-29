@@ -77,27 +77,33 @@ def experiment(dataset_csv: str | Path, baseline_model: str | Path, output_json:
     output = Path(output_json)
     output.parent.mkdir(parents=True, exist_ok=True)
     baseline, backend = _load_model(baseline_model)
-    if backend != "catboost":
-        raise RuntimeError("KTDB 후보 비교는 기존 CatBoost artifact를 기준으로 실행해야 합니다")
     candidates: list[dict[str, object]] = []
     candidates.append({
         "name": "existing_catboost",
         "config": {"source": str(baseline_model)},
         "metrics": {split: _evaluate(baseline, data, split=split) for split, data in (("validation", validation), ("test", test))},
     })
-    for name, config in (
-        ("catboost_depth6", {"iterations": 250, "depth": 6, "learning_rate": 0.08}),
-        ("catboost_depth10", {"iterations": 250, "depth": 10, "learning_rate": 0.05}),
-    ):
-        model = _fit_catboost(train, validation, seed=2021, **config)
-        candidates.append({
-            "name": name,
-            "config": config,
-            "metrics": {split: _evaluate(model, data, split=split) for split, data in (("validation", validation), ("test", test))},
-        })
+    if backend == "catboost":
+        candidate_specs = (("catboost_depth6", {"iterations": 250, "depth": 6, "learning_rate": 0.08}), ("catboost_depth10", {"iterations": 250, "depth": 10, "learning_rate": 0.05}))
+        for name, config in candidate_specs:
+            model = _fit_catboost(train, validation, seed=2021, **config)
+            candidates.append({"name": name, "config": config, "metrics": {split: _evaluate(model, data, split=split) for split, data in (("validation", validation), ("test", test))}})
+    else:
+        from sklearn.compose import ColumnTransformer
+        from sklearn.ensemble import HistGradientBoostingClassifier
+        from sklearn.impute import SimpleImputer
+        from sklearn.pipeline import Pipeline
+        from sklearn.preprocessing import OrdinalEncoder
+
+        for name, config in (("histgradientboosting_leaf31", {"max_iter": 120, "max_leaf_nodes": 31}), ("histgradientboosting_leaf63", {"max_iter": 120, "max_leaf_nodes": 63})):
+            preprocessor = ColumnTransformer([("categorical", OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1), list(train.categorical_features)), ("numeric", SimpleImputer(strategy="constant", fill_value=0.0, keep_empty_features=True), list(train.numeric_features))])
+            model = Pipeline([("preprocessor", preprocessor), ("classifier", HistGradientBoostingClassifier(learning_rate=0.08, random_state=2021, **config))])
+            model.fit(train.features, train.target)
+            candidates.append({"name": name, "config": config, "metrics": {split: _evaluate(model, data, split=split) for split, data in (("validation", validation), ("test", test))}})
     selected = max(candidates, key=lambda item: float(item["metrics"]["validation"]["macro_f1"]))
     result = {
         "dataset_csv": str(dataset_csv),
+        "baseline_backend": backend,
         "split_rule": "existing person-level train/validation/test split; validation selects the candidate",
         "classes": list(CLASSES),
         "selected_by": "validation.macro_f1",
