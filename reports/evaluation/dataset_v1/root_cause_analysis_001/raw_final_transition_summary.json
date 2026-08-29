@@ -1,0 +1,52 @@
+{
+  "matrix": {
+    "walk": {
+      "walk": 47183,
+      "bike": 0,
+      "car": 0,
+      "bus": 0,
+      "rail": 9548
+    },
+    "bike": {
+      "walk": 11,
+      "bike": 580,
+      "car": 20,
+      "bus": 10,
+      "rail": 5019
+    },
+    "car": {
+      "walk": 0,
+      "bike": 0,
+      "car": 1091,
+      "bus": 0,
+      "rail": 8049
+    },
+    "bus": {
+      "walk": 0,
+      "bike": 0,
+      "car": 0,
+      "bus": 436,
+      "rail": 4011
+    },
+    "rail": {
+      "walk": 0,
+      "bike": 0,
+      "car": 0,
+      "bus": 2,
+      "rail": 45
+    }
+  },
+  "interventions": {
+    "neutral_wrong_to_wrong": 9780,
+    "harmful": 14152,
+    "helpful": 2738,
+    "total": 26670
+  },
+  "transit": {
+    "false_rail": 17195,
+    "resolver_or_smoothing_changes": 26670,
+    "false_bus": 294,
+    "missing_bus": 254,
+    "missing_rail": 84
+  }
+}

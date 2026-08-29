@@ -1,0 +1,6 @@
+ground_truth_mode,kept_correct,fixed_by_final,broken_by_final,still_wrong,net_correction
+walk,46397,3,9018,2807,-9015
+bike,351,0,2221,2511,-2221
+car,263,2,855,1608,-853
+bus,107,4,2056,4901,-2052
+rail,45,2729,2,125,2727
