@@ -146,11 +146,19 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
 # Result 이후에는 실제 감축량을 Token으로 환산해 보상 화면까지 이어간다.
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "</style></head>",
-    "</style><style>.reward-card{text-align:center;padding:28px 18px}.token-burst{font-size:54px;animation:tokenPop .7s ease-out}.token-earned{font-size:30px;color:#177950;margin:8px 0}.token-balance{font-size:13px;color:#63756c}.reward-note{font-size:12px;color:#718078;margin:8px 0 18px}.text-button{border:0;background:none;color:#5c7469;font-size:13px;margin-top:10px;padding:8px 16px}@keyframes tokenPop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}</style></head>",
+    "</style><style>.reward-card{text-align:center;padding:28px 18px}.token-burst{font-size:54px;animation:tokenPop .7s ease-out}.token-earned{font-size:30px;color:#177950;margin:8px 0}.token-balance{font-size:13px;color:#63756c}.reward-note{font-size:12px;color:#718078;margin:8px 0 18px}.text-button{border:0;background:none;color:#5c7469;font-size:13px;margin-top:10px;padding:8px 16px}.home-distance{display:flex;justify-content:space-between;align-items:center;background:#f0f5f2;border-radius:12px;padding:10px 12px;margin:10px 0;font-size:12px}.profile-screen{overflow:auto;padding:82px 16px 92px}.profile-screen h2{font-size:24px;margin:0 0 6px}.profile-screen .profile-card{background:#fff;border-radius:18px;padding:18px;margin-top:14px;box-shadow:0 5px 18px #17352a12}.profile-screen .profile-token{font-size:34px;color:#177950;font-weight:750}.profile-screen .history-row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #edf1ee;font-size:12px}.profile-screen .history-row:last-child{border-bottom:0}.bottom-nav{position:absolute;z-index:30;left:10px;right:10px;bottom:10px;height:58px;display:flex;align-items:stretch;justify-content:space-around;background:#fffffff2;border:1px solid #e2e9e4;border-radius:18px;box-shadow:0 8px 24px #17352a24;backdrop-filter:blur(14px)}.bottom-nav button{flex:1;border:0;background:none;color:#77857e;font-size:11px;font-weight:600}.bottom-nav button.active{color:#177950}.bottom-nav button span{display:block;font-size:18px;line-height:20px;margin-bottom:2px}@keyframes tokenPop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}</style></head>",
 )
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     '<section id="developer" class="screen developer">',
     '<section id="reward" class="screen"><div class="sheet reward-card"><div class="eyebrow">CANOPY TOKEN</div><div class="token-burst" aria-hidden="true">✦</div><div class="token-earned" id="tokenEarned">+0 Token</div><div class="reward-note" id="rewardNote">이번 이동의 CO2 감축량을 기준으로 계산했습니다.</div><div class="token-balance">현재 보유 <strong id="tokenBalance">0</strong> Token</div><button class="cta" onclick="showScreen(\'result\')">결과 확인</button><button class="text-button" onclick="showScreen(\'home\')">홈으로</button></div></section><section id="developer" class="screen developer">',
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<div class="baseline"><div class="eyebrow">Population baseline</div>',
+    '<div class="home-distance"><span>집에서 직장까지</span><strong id="homeRouteDistance">거리 계산 중</strong></div><div class="baseline"><div class="eyebrow">Population baseline</div>',
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<section id="active" class="screen">',
+    '<section id="journey" class="screen"><div id="journeyMap" class="map"></div><div class="sheet"><div class="eyebrow">여정</div><div class="status">오늘의 출근 여정</div><div class="route"><div><span class="dot"></span><div><b>서울 영등포구 버드나루로10길 7</b><div class="muted">집</div></div></div><div><span class="dot end"></span><div><b>Microsoft Korea</b><div class="muted">직장</div></div></div></div><div class="home-distance"><span>예상 이동 거리</span><strong id="journeyDistance">-</strong></div><button class="cta" onclick="startTrip()">출근 시작하기</button></div></section><section id="active" class="screen">',
 )
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     '<div class="eyebrow">?ㅻ뒛??異쒓렐</div>',
@@ -167,11 +175,27 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
 )
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "function showScreen(name){currentScreen=name;",
-    "function showScreen(name){currentScreen=name;const homeToken=document.getElementById('homeTokenBalance');const rewardToken=document.getElementById('tokenBalance');if(homeToken)homeToken.textContent=tokenBalance;if(rewardToken)rewardToken.textContent=tokenBalance;",
+    "function showScreen(name){currentScreen=name;const homeToken=document.getElementById('homeTokenBalance');const rewardToken=document.getElementById('tokenBalance');if(homeToken)homeToken.textContent=tokenBalance;if(rewardToken)rewardToken.textContent=tokenBalance;const myToken=document.getElementById('myTokenBalance');if(myToken)myToken.textContent=tokenBalance+' Token';if(name==='mypage')renderMyPage();document.querySelectorAll('.bottom-nav button').forEach(button=>button.classList.toggle('active',button.dataset.tab===(name==='active'||name==='result'||name==='reward'?'journey':name)));document.querySelectorAll('.bottom-nav').forEach(nav=>nav.style.display=name==='developer'?'none':'flex');",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function openDeveloper(){showScreen('developer')}",
+    "function renderMyPage(){const balance=document.getElementById('myTokenBalance');if(balance)balance.textContent=tokenBalance+' Token';const target=document.getElementById('myRewardHistory');if(!target)return;let history=[];try{history=JSON.parse(localStorage.getItem('canopyTokenHistory')||'[]')}catch(e){history=[]}target.innerHTML=history.length?history.map(item=>'<div class=history-row><span>'+item.date+'</span><strong>+'+item.earned+' Token</strong></div>').join(''):'<p class=muted>아직 받은 Token이 없어요.</p>'}function navigateTab(tab){if(tab==='home')return showScreen('home');if(tab==='mypage')return showScreen('mypage');if(currentScreen==='active'||currentScreen==='result'||currentScreen==='reward')return showScreen(currentScreen==='reward'?'result':currentScreen);showScreen('journey')}function openDeveloper(){showScreen('developer')}",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function drawMaps(events=[]){",
+    "function updateRouteDistance(){if(!route.origin||!route.destination)return;const rad=Math.PI/180,a=route.origin.latitude*rad,b=route.destination.latitude*rad,c=(route.destination.latitude-route.origin.latitude)*rad,d=(route.destination.longitude-route.origin.longitude)*rad;const km=6371*2*Math.asin(Math.sqrt(Math.sin(c/2)**2+Math.cos(a)*Math.cos(b)*Math.sin(d/2)**2));['homeRouteDistance','journeyDistance'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=km.toFixed(1)+' km'})}function drawMaps(events=[]){",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "Object.assign(route,r);",
+    "Object.assign(route,r);updateRouteDistance();",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "setupMap('homeMap');setupMap('activeMap');setupMap('resultMap');",
+    "setupMap('homeMap');setupMap('journeyMap');setupMap('activeMap');setupMap('resultMap');",
 )
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "function formatTime(seconds){",
-    "function showReward(p){if(rewardShown||!p.co2)return;rewardShown=true;const reduction=Math.max(0,Number(p.co2.reduction_co2e_g||0));const earned=Math.floor(reduction/TOKEN_GRAMS_PER_TOKEN);const previous=tokenBalance;tokenBalance+=earned;localStorage.setItem('canopyTokenBalance',String(tokenBalance));document.getElementById('tokenEarned').textContent='+'+earned+' Token';document.getElementById('rewardNote').textContent='CO2 감축량 '+reduction.toFixed(1)+' g 기준 · 10 g당 1 Token';document.getElementById('tokenBalance').textContent=previous;showScreen('reward');let current=previous;const started=performance.now();const tick=(now)=>{const progress=Math.min(1,(now-started)/800);current=Math.round(previous+(tokenBalance-previous)*progress);document.getElementById('tokenBalance').textContent=current;if(progress<1)requestAnimationFrame(tick)};requestAnimationFrame(tick)}function formatTime(seconds){",
+    "function showReward(p){if(rewardShown||!p.co2)return;rewardShown=true;const reduction=Math.max(0,Number(p.co2.reduction_co2e_g||0));const earned=Math.floor(reduction/TOKEN_GRAMS_PER_TOKEN);const previous=tokenBalance;tokenBalance+=earned;localStorage.setItem('canopyTokenBalance',String(tokenBalance));let history=[];try{history=JSON.parse(localStorage.getItem('canopyTokenHistory')||'[]')}catch(e){history=[]}history.unshift({earned,reduction,date:new Date().toLocaleString('ko-KR')});localStorage.setItem('canopyTokenHistory',JSON.stringify(history.slice(0,20)));document.getElementById('tokenEarned').textContent='+'+earned+' Token';document.getElementById('rewardNote').textContent='CO2 감축량 '+reduction.toFixed(1)+' g 기준 · 10 g당 1 Token';document.getElementById('tokenBalance').textContent=previous;showScreen('reward');let current=previous;const started=performance.now();const tick=(now)=>{const progress=Math.min(1,(now-started)/800);current=Math.round(previous+(tokenBalance-previous)*progress);document.getElementById('tokenBalance').textContent=current;if(progress<1)requestAnimationFrame(tick)};requestAnimationFrame(tick)}function formatTime(seconds){",
 )
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "if(currentScreen==='active')showScreen('result')}",
@@ -180,6 +204,10 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     "async function startTrip(){showScreen('active');",
     "async function startTrip(){rewardShown=false;showScreen('active');",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '</section>\n</div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"',
+    '</section><section id="mypage" class="screen profile-screen"><h2>마이페이지</h2><p class="muted">이번 데모에서 쌓은 Canopy Token을 확인할 수 있어요.</p><div class="profile-card"><div class="eyebrow">현재 보유 Token</div><div class="profile-token" id="myTokenBalance">0 Token</div></div><div class="profile-card"><div class="eyebrow">Token 받은 내역</div><div id="myRewardHistory"><p class="muted">아직 받은 Token이 없어요.</p></div></div></section><nav class="bottom-nav" aria-label="앱 메뉴"><button data-tab="home" onclick="navigateTab(\'home\')"><span>⌂</span>홈</button><button data-tab="journey" onclick="navigateTab(\'journey\')"><span>●</span>여정</button><button data-tab="mypage" onclick="navigateTab(\'mypage\')"><span>○</span>마이페이지</button></nav></div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"',
 )
 
 
