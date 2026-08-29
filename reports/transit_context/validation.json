@@ -52,26 +52,46 @@
       "refresh": false
     },
     "tago_api_summary": {
-      "endpoint": "http://apis.data.go.kr/1613000/BusLcInfoInqireService/getCtyCodeList",
+      "endpoint": "https://apis.data.go.kr/1613000/BusLcInfoInqireService/getCtyCodeList",
       "status": "success",
       "from_cache": false,
       "service_probes": {
         "bus_stops": {
-          "endpoint": "http://apis.data.go.kr/1613000/BusSttnInfoInqireService/getCtyCodeList",
-          "status": "http_error",
-          "status_code": 403,
-          "response_body": "{\n  \"OpenAPI_ServiceResponse\": {\n    \"cmmMsgHeader\": {\n      \"errMsg\": \"SERVICE_KEY_IS_NOT_REGISTERED_ERROR\",\n      \"returnAuthMsg\": \"등록되지 않은 서비스키\",\n      \"returnReasonCode\": \"30\"\n    }\n  }\n}\n"
-        },
-        "bus_routes": {
-          "endpoint": "http://apis.data.go.kr/1613000/BusRouteInfoInqireService/getCtyCodeList",
-          "status": "http_error",
-          "status_code": 403,
-          "response_body": "{\n  \"OpenAPI_ServiceResponse\": {\n    \"cmmMsgHeader\": {\n      \"errMsg\": \"SERVICE_KEY_IS_NOT_REGISTERED_ERROR\",\n      \"returnAuthMsg\": \"등록되지 않은 서비스키\",\n      \"returnReasonCode\": \"30\"\n    }\n  }\n}\n"
-        },
-        "bus_locations": {
-          "endpoint": "http://apis.data.go.kr/1613000/BusLcInfoInqireService/getCtyCodeList",
+          "endpoint": "https://apis.data.go.kr/1613000/BusStop/getBusStop",
           "status": "success",
           "from_cache": false
+        },
+        "bus_routes": {
+          "endpoint": "https://apis.data.go.kr/1613000/BusRoutespecificStopInformation/getBusRoutespecificStopInformation",
+          "status": "success",
+          "from_cache": false
+        },
+        "bus_locations": {
+          "endpoint": "https://apis.data.go.kr/1613000/BusLcInfoInqireService/getCtyCodeList",
+          "status": "success",
+          "from_cache": false
+        }
+      },
+      "bus_stops_sample": {
+        "status": "success",
+        "rows": 377,
+        "pages": 1,
+        "coordinate_status": "not_provided_by_api",
+        "scope": {
+          "opr_ymd": "20250801",
+          "ctpv_cd": "29",
+          "sgg_cd": "29140"
+        }
+      },
+      "bus_routes_sample": {
+        "status": "success",
+        "rows": 1845,
+        "pages": 2,
+        "coordinate_status": "not_provided_by_api",
+        "scope": {
+          "opr_ymd": "20250801",
+          "ctpv_cd": "29",
+          "sgg_cd": "29140"
         }
       },
       "cache_path": "data/cache/transit/tago_city_codes.json",
@@ -146,6 +166,58 @@
       "invalid_coordinate_rows": null,
       "coordinates_valid": true
     },
+    "bus_stops": {
+      "path": "data\\processed\\transit_context\\bus_stops.csv",
+      "rows": 377,
+      "columns": [
+        "opr_ymd",
+        "stop_id",
+        "stop_name",
+        "sttn_ars_no",
+        "city_code",
+        "sgg_cd",
+        "emd_cd",
+        "ctpv_nm",
+        "sgg_nm",
+        "emd_nm",
+        "latitude",
+        "longitude",
+        "source",
+        "coordinate_status"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 377,
+      "coordinates_valid": false
+    },
+    "bus_route_stops": {
+      "path": "data\\processed\\transit_context\\bus_route_stops.csv",
+      "rows": 1845,
+      "columns": [
+        "opr_ymd",
+        "route_id",
+        "route_no",
+        "route_name",
+        "stop_sequence",
+        "stop_id",
+        "stop_name",
+        "city_code",
+        "sgg_cd",
+        "emd_cd",
+        "ctpv_nm",
+        "sgg_nm",
+        "emd_nm",
+        "trfc_mns_se_cd",
+        "latitude",
+        "longitude",
+        "source",
+        "coordinate_status"
+      ],
+      "missing_required_columns": [],
+      "duplicate_rows": 0,
+      "invalid_coordinate_rows": 1845,
+      "coordinates_valid": false
+    },
     "seoul_station_lines": {
       "path": "data\\processed\\transit_context\\seoul_station_lines.csv",
       "rows": 799,
@@ -198,7 +270,8 @@
   },
   "unmatched_station_keys": 185,
   "limitations": [
-    "Bus references and live positions remain pending because TAGO returned an authentication error.",
+    "TAGO references are currently limited to the requested 광주 서구 sample scope.",
+    "BusStop and route-stop responses do not provide latitude/longitude, so spatial bus proximity is unavailable until a coordinate source is supplied.",
     "Seoul line API response was validated; coordinate coverage remains limited to the supplied 1-8 line file.",
     "GeoLife is not joined to Korean transit networks.",
     "Korail source has no line/subtype field; rail subtype remains unknown unless stronger evidence exists."

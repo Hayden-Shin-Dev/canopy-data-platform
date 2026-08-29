@@ -46,6 +46,8 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
         "subway_station_unmatched": _table_stats(references / "subway_station_unmatched.csv", {"line", "normalized_station_name"}),
     }
     optional = {
+        "bus_stops": (references / "bus_stops.csv", {"city_code", "stop_id", "stop_name", "latitude", "longitude", "source", "coordinate_status"}),
+        "bus_route_stops": (references / "bus_route_stops.csv", {"city_code", "route_id", "route_no", "route_name", "stop_id", "stop_name", "stop_sequence", "latitude", "longitude", "source", "coordinate_status"}),
         "seoul_station_lines": (references / "seoul_station_lines.csv", {"station_id", "station_name", "normalized_station_name", "line", "external_code", "source"}),
         "subway_station_line_enrichment": (references / "subway_station_line_enrichment.csv", {"coordinate_station_id", "api_station_id", "line", "latitude", "longitude"}),
         "seoul_station_unmatched": (references / "seoul_station_unmatched.csv", {"line", "station_id", "station_name", "normalized_station_name"}),
@@ -74,7 +76,8 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
         "tables": tables,
         "unmatched_station_keys": tables["subway_station_unmatched"]["rows"],
         "limitations": [
-            "Bus references and live positions remain pending because TAGO returned an authentication error.",
+            "TAGO references are currently limited to the requested 광주 서구 sample scope.",
+            "BusStop and route-stop responses do not provide latitude/longitude, so spatial bus proximity is unavailable until a coordinate source is supplied.",
             "Seoul line API response was validated; coordinate coverage remains limited to the supplied 1-8 line file.",
             "GeoLife is not joined to Korean transit networks.",
             "Korail source has no line/subtype field; rail subtype remains unknown unless stronger evidence exists.",
@@ -93,7 +96,7 @@ def validate(reference_dir: str | Path, report_dir: str | Path) -> dict[str, obj
         lines.append(f"- {name}: {table['rows']:,} rows, duplicate {table['duplicate_rows']:,}, invalid coordinate {table['invalid_coordinate_rows']}")
     lines.append(f"- Seoul API response: {api_summary.get('status_code') if api_summary else 'not called'}")
     lines.append(f"- TAGO live/bus reference response: {tago_summary.get('status') if tago_summary else 'not called'}")
-    lines.extend(["", "## API 상태", "", f"- DATA_GO_KR_SERVICE_KEY: {result['api']['data_go_kr_service_key']}", f"- SEOUL_OPENAPI_KEY: {result['api']['seoul_openapi_key']}", f"- Seoul API response: {api_summary.get('status_code') if api_summary else 'not called'}", "- TAGO live/bus reference response: authentication error", "", "## 한계", ""])
+    lines.extend(["", "## API 상태", "", f"- DATA_GO_KR_SERVICE_KEY: {result['api']['data_go_kr_service_key']}", f"- SEOUL_OPENAPI_KEY: {result['api']['seoul_openapi_key']}", f"- Seoul API response: {api_summary.get('status_code') if api_summary else 'not called'}", f"- TAGO live/bus reference response: {tago_summary.get('status') if tago_summary else 'not called'}", "", "## 한계", ""])
     lines.extend(f"- {item}" for item in result["limitations"])
     (reports / "final_validation.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return result

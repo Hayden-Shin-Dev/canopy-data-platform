@@ -25,8 +25,10 @@ GPS Window → 정류장·역 근접성 → route/line·순서·시간표 증거
 - subway_timetable.csv: 424,264 rows
 - korail_stations.csv: 202 rows
 - subway station unmatched keys: 185
+- bus_stops.csv: 377 rows (광주 서구 샘플, API 좌표 미제공)
+- bus_route_stops.csv: 1,845 rows (광주 서구 샘플, API 좌표 미제공)
 - Seoul station-line API: `INFO-000`, 799 rows
-- TAGO bus API: 403 `SERVICE_KEY_IS_NOT_REGISTERED_ERROR`
+- TAGO bus APIs: all three endpoints respond successfully; BusStop/route responses contain no latitude/longitude
 
 ## 실행
 
