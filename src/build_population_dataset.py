@@ -159,8 +159,8 @@ def build_population_dataset(
     )
     code_system = inspect_code_systems(admin_lookup, centroids)
     mapping = build_admin_centroid_mapping(admin_lookup, centroids)
-    mapping_path = output_dir / KTDB_SGIS_MAPPING_PATH.name
-    mapping.to_csv(mapping_path, index=False, encoding="utf-8-sig")
+    KTDB_SGIS_MAPPING_PATH.parent.mkdir(parents=True, exist_ok=True)
+    mapping.to_csv(KTDB_SGIS_MAPPING_PATH, index=False, encoding="utf-8-sig")
     logger.info("SGIS centroid reference loaded: %s", centroid_path)
     build_mode_mapping(codebook).to_csv(mapping_path, index=False, encoding="utf-8-sig")
 
@@ -194,8 +194,34 @@ def build_population_dataset(
         split_counts.update(prepared["split"].astype(str))
         logger.info("chunk=%s raw=%s valid=%s", number, len(chunk), len(prepared))
 
+    all_frame = pd.DataFrame()
+    unmatched_report = pd.DataFrame(
+        columns=("side", "ktdb_admin_code", "ktdb_full_name", "match_status", "row_count")
+    )
+    distance_summary = summarize_distance_coverage(
+        pd.DataFrame(
+            columns=(
+                "origin_x",
+                "origin_y",
+                "destination_x",
+                "destination_y",
+                "od_straight_distance_km",
+                "distance_band",
+            )
+        ),
+        sgis_admin_dong_count=len(centroids),
+        unmatched=unmatched_report,
+    )
     if valid_rows:
         all_frame = pd.read_csv(all_path, encoding="utf-8-sig")
+        unmatched_report = build_unmatched_report(all_frame, mapping)
+        KTDB_UNMATCHED_REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        unmatched_report.to_csv(KTDB_UNMATCHED_REPORT_PATH, index=False, encoding="utf-8-sig")
+        distance_summary = summarize_distance_coverage(
+            all_frame,
+            sgis_admin_dong_count=len(centroids),
+            unmatched=unmatched_report,
+        )
         build_population_lookup(all_frame, min_samples=lookup_min_samples).to_csv(
             all_lookup_path, index=False, encoding="utf-8-sig"
         )
@@ -207,6 +233,8 @@ def build_population_dataset(
         else:
             pd.DataFrame().to_csv(commute_lookup_path, index=False, encoding="utf-8-sig")
     else:
+        KTDB_UNMATCHED_REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        unmatched_report.to_csv(KTDB_UNMATCHED_REPORT_PATH, index=False, encoding="utf-8-sig")
         pd.DataFrame().to_csv(all_lookup_path, index=False, encoding="utf-8-sig")
         pd.DataFrame().to_csv(commute_lookup_path, index=False, encoding="utf-8-sig")
 
@@ -219,14 +247,20 @@ def build_population_dataset(
         "split_distribution": dict(split_counts),
         "random_seed": RANDOM_SEED,
         "lookup_min_samples": lookup_min_samples,
-        "centroid_path": str(centroid_path) if centroid_path else None,
-        "distance_status": "blocked: no coordinate source in current raw files",
+        "centroid_path": str(centroid_path),
+        "distance_status": "available: SGIS EPSG:5179 to WGS84 Haversine",
+        "sgis": distance_summary,
+        "code_system": code_system,
+        "unmatched_report": str(KTDB_UNMATCHED_REPORT_PATH),
+        "centroid_mapping": str(KTDB_SGIS_MAPPING_PATH),
         "outputs": [
             str(all_path),
             str(commute_path),
             str(all_lookup_path),
             str(commute_lookup_path),
             str(mapping_path),
+            str(KTDB_SGIS_MAPPING_PATH),
+            str(KTDB_UNMATCHED_REPORT_PATH),
         ],
     }
     summary["all_dataset"] = summarize_csv(all_path) if valid_rows else {"row_count": 0}
