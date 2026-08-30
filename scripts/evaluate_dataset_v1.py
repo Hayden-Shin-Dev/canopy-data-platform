@@ -327,7 +327,7 @@ def _artifact_sha256(path: Path) -> str | None:
     return digest.hexdigest()
 
 
-def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_baseline_commit: str, evaluation_commit: str, limit: int | None = None, resume: bool = False, verify_hashes: bool = True, derive_ktdb_features: bool = False, branch: str = "eval/seoul-synthetic-v1") -> dict[str, Any]:
+def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_baseline_commit: str, evaluation_commit: str, limit: int | None = None, offset: int = 0, resume: bool = False, verify_hashes: bool = True, derive_ktdb_features: bool = False, branch: str = "eval/seoul-synthetic-v1") -> dict[str, Any]:
     dataset = discover_dataset(dataset_root)
     frozen_validation = validate_frozen_dataset(dataset, verify_hashes=verify_hashes)
     if frozen_validation["status"] != "PASS":
@@ -344,6 +344,9 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
                 value = json.loads(line)
                 completed[str(value["trip_id"])] = value
     rows = list(iter_manifest_rows(dataset))
+    if offset < 0:
+        raise ValueError("offset must be non-negative")
+    rows = rows[offset:]
     if limit is not None:
         rows = rows[:limit]
     references = TransitRuntimeReferences.from_directory()
@@ -501,11 +504,12 @@ def main() -> int:
     parser.add_argument("--evaluation-commit", required=True)
     parser.add_argument("--branch", default="eval/seoul-synthetic-v1")
     parser.add_argument("--limit", type=int)
+    parser.add_argument("--offset", type=int, default=0)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--skip-hash-verification", action="store_true")
     parser.add_argument("--derive-ktdb-features", action="store_true", help="derive route-specific KTDB features for each journey; slower and not needed for mode metrics")
     args = parser.parse_args()
-    summary = run_evaluation(args.dataset_root, args.run_dir, canopy_baseline_commit=args.canopy_baseline_commit, evaluation_commit=args.evaluation_commit, limit=args.limit, resume=args.resume, verify_hashes=not args.skip_hash_verification, derive_ktdb_features=args.derive_ktdb_features, branch=args.branch)
+    summary = run_evaluation(args.dataset_root, args.run_dir, canopy_baseline_commit=args.canopy_baseline_commit, evaluation_commit=args.evaluation_commit, limit=args.limit, offset=args.offset, resume=args.resume, verify_hashes=not args.skip_hash_verification, derive_ktdb_features=args.derive_ktdb_features, branch=args.branch)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0
 
