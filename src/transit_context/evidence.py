@@ -105,10 +105,17 @@ def bus_context(
             route_id, route_no = str(route_key[0]), str(route_key[1])
             matched_count = int(counts.iloc[0])
             route_score = _bounded(matched_count / 3.0)
-            selected = bus_route_stops[(bus_route_stops["route_id"] == route_id) & (bus_route_stops["route_no"] == route_no)]
+            # CSV readers may infer numeric route/stop IDs while GPS evidence
+            # is normalized to strings. Compare by normalized text so the
+            # ordered route is actually selected instead of silently empty.
+            selected = bus_route_stops[
+                bus_route_stops["route_id"].astype(str).eq(route_id)
+                & bus_route_stops["route_no"].astype(str).eq(route_no)
+            ]
             sequence = sequence_score(observed_stop_ids, selected)
-            route_consistency_count = int(sum(1 for stop_id in observed_stop_ids if stop_id in set(selected["stop_id"].astype(str))))
-            progression_length = int(sum(1 for stop_id in observed_stop_ids if stop_id in set(selected["stop_id"].astype(str))))
+            selected_stop_ids = set(selected["stop_id"].astype(str))
+            route_consistency_count = int(sum(1 for stop_id in observed_stop_ids if str(stop_id) in selected_stop_ids))
+            progression_length = route_consistency_count
     nearest = bus_stop_index.nearest(start_latitude, start_longitude) if bus_stop_index is not None else {}
     endpoint_nearest = bus_stop_index.nearest(end_latitude, end_longitude) if bus_stop_index is not None else {}
     nearest_distance = float(min(nearest.get("distance_m", radius), endpoint_nearest.get("distance_m", radius)))
