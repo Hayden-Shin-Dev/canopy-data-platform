@@ -25,7 +25,7 @@
     "minimum_ml_confidence": 0.55,
     "ambiguity_margin": 0.10,
     "rail_confirmation_score": 0.70,
-    "bus_stateful_enabled": 1,
+    "bus_stateful_enabled": 0,
     "pre_transit_bike_max_windows": 2,
     "pre_transit_bike_max_confidence": 0.75
   }
