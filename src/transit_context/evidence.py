@@ -63,6 +63,8 @@ def bus_context(
         "bus_stop_proximity_score": 0.0,
         "bus_route_match_score": 0.0,
         "bus_sequence_score": 0.0,
+        "bus_route_coverage_score": 0.0,
+        "bus_endpoint_route_consistency": 0.0,
         "live_bus_match_score": _bounded(live_match_score),
         "bus_context_score": 0.0,
         "bus_evidence_reason": "bus reference unavailable",
@@ -79,12 +81,25 @@ def bus_context(
     route_id = route_no = None
     if bus_route_stops is not None and not bus_route_stops.empty and not nearby.empty:
         route_rows = bus_route_stops[bus_route_stops["stop_id"].isin(nearby["stop_id"])]
-        counts = route_rows.groupby(["route_id", "route_no"], dropna=False)["stop_id"].nunique().sort_values(ascending=False)
+        start_ids = set(start["stop_id"].astype(str))
+        end_ids = set(end["stop_id"].astype(str))
+        route_groups = []
+        for route_key, group in route_rows.groupby(["route_id", "route_no"], dropna=False):
+            ids = set(group["stop_id"].astype(str))
+            endpoint = float(bool(ids & start_ids) and bool(ids & end_ids))
+            route_groups.append((endpoint, len(ids), route_key, group))
+        route_groups.sort(key=lambda item: (item[0], item[1]), reverse=True)
+        counts = pd.Series({item[2]: item[1] for item in route_groups}).sort_values(ascending=False) if route_groups else pd.Series(dtype=float)
         if not counts.empty:
-            route_key = counts.index[0]
+            route_key = route_groups[0][2]
             route_id, route_no = str(route_key[0]), str(route_key[1])
             matched_count = int(counts.iloc[0])
-            route_score = _bounded(matched_count / 3.0)
+            endpoint_consistency = route_groups[0][0]
+            route_coverage = _bounded(matched_count / max(1.0, float(len(nearby))))
+            if settings.resolver.get("bus_require_endpoint_route", 0.0) >= 1.0:
+                route_score = _bounded((matched_count / 3.0) * endpoint_consistency)
+            else:
+                route_score = _bounded(matched_count / 3.0)
             selected = bus_route_stops[(bus_route_stops["route_id"] == route_id) & (bus_route_stops["route_no"] == route_no)]
             sequence = sequence_score(observed_stop_ids, selected)
     context_score = _weighted({"bus_proximity": proximity, "bus_route": route_score, "bus_sequence": sequence, "bus_live": live_match_score}, settings.weights)
@@ -98,6 +113,8 @@ def bus_context(
         "bus_stop_proximity_score": proximity,
         "bus_route_match_score": route_score,
         "bus_sequence_score": sequence,
+        "bus_route_coverage_score": route_coverage if route_id is not None else 0.0,
+        "bus_endpoint_route_consistency": endpoint_consistency if route_id is not None else 0.0,
         "bus_context_score": context_score,
         "bus_evidence_reason": reason,
     }

@@ -1,6 +1,7 @@
 import pandas as pd
 
 from src.transit_context.evidence import bus_context, sequence_score, subway_context
+from src.transit_context.settings import load_settings
 from src.transit_context.spatial import GeoPointIndex
 
 
@@ -16,6 +17,17 @@ def test_bus_context_requires_route_evidence_for_high_score() -> None:
     assert result["matched_bus_route_id"] == "r1"
     assert result["bus_sequence_score"] == 1.0
     assert 0 <= result["bus_context_score"] <= 1
+
+
+def test_bus_context_reports_endpoint_route_consistency() -> None:
+    stops = pd.DataFrame({"stop_id": ["a", "b", "c"], "latitude": [37.5, 37.5005, 37.51], "longitude": [127, 127, 127]})
+    routes = pd.DataFrame({"route_id": ["r1", "r1", "r2"], "route_no": ["10", "10", "20"], "stop_id": ["a", "b", "c"], "stop_sequence": [1, 2, 1], "latitude": [37.5, 37.5005, 37.51], "longitude": [127, 127, 127]})
+    settings = load_settings()
+    from src.transit_context.settings import TransitSettings
+    candidate = TransitSettings(settings.version, settings.coordinate_system, settings.radii_m, settings.weights, {**settings.resolver, "bus_require_endpoint_route": 1.0})
+    result = bus_context(start_latitude=37.5, start_longitude=127, end_latitude=37.5005, end_longitude=127, bus_stop_index=GeoPointIndex.from_frame(stops), bus_stops=stops, bus_route_stops=routes, observed_stop_ids=["a", "b"], settings=candidate)
+    assert result["bus_endpoint_route_consistency"] == 1.0
+    assert result["bus_route_coverage_score"] == 1.0
 
 
 def test_subway_same_line_produces_line_evidence() -> None:
