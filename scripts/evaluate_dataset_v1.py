@@ -215,6 +215,22 @@ def _evaluate_trip(
                 "matched_subway_line": transit.get("matched_subway_line"),
                 "bus_context_score": transit.get("bus_context_score"),
                 "subway_context_score": transit.get("subway_context_score"),
+                "nearest_bus_stop_id": transit.get("nearest_bus_stop_id"),
+                "nearest_bus_stop_distance_m": transit.get("nearest_bus_stop_distance_m"),
+                "matched_stop_ids": transit.get("matched_stop_ids", []),
+                "matched_bus_route_id": transit.get("matched_bus_route_id"),
+                "matched_bus_route_no": transit.get("matched_bus_route_no"),
+                "route_candidate_ids": transit.get("route_candidate_ids", []),
+                "route_candidate_count": transit.get("route_candidate_count", 0),
+                "route_consistent": transit.get("route_consistent", False),
+                "route_consistency_count": transit.get("route_consistency_count", 0),
+                "ordered_stop_progression": transit.get("ordered_stop_progression", False),
+                "progression_length": transit.get("progression_length", 0),
+                "direction_consistent": transit.get("direction_consistent", False),
+                "temporal_consistent": transit.get("temporal_consistent", False),
+                "bus_speed_plausible": transit.get("bus_speed_plausible", False),
+                "bus_evidence_present": transit.get("bus_evidence_present", False),
+                "bus_evidence_reason": transit.get("bus_evidence_reason"),
             }
         )
     multimodal = len(truth["segments"]) > 1 or str(truth.get("scenario_category")) == "multimodal"
