@@ -18,6 +18,25 @@ def test_bus_context_requires_route_evidence_for_high_score() -> None:
     assert 0 <= result["bus_context_score"] <= 1
 
 
+def test_bus_context_exposes_observation_trace_without_changing_score() -> None:
+    stops = pd.DataFrame({"stop_id": ["a", "b"], "latitude": [37.5, 37.5005], "longitude": [127, 127]})
+    routes = pd.DataFrame({"route_id": ["r1", "r1"], "route_no": ["10", "10"], "stop_id": ["a", "b"], "stop_sequence": [1, 2], "latitude": [37.5, 37.5005], "longitude": [127, 127]})
+    result = bus_context(
+        start_latitude=37.5,
+        start_longitude=127,
+        end_latitude=37.5005,
+        end_longitude=127,
+        bus_stop_index=GeoPointIndex.from_frame(stops),
+        bus_stops=stops,
+        bus_route_stops=routes,
+        observed_stop_ids=["a", "b"],
+    )
+    assert result["route_candidate_count"] == 1
+    assert result["route_consistent"] is True
+    assert result["ordered_stop_progression"] is True
+    assert result["matched_stop_ids"]
+
+
 def test_subway_same_line_produces_line_evidence() -> None:
     stations = pd.DataFrame({"station_id": ["1", "2"], "line": ["1", "1"], "latitude": [37.5, 37.5005], "longitude": [127, 127], "station_name": ["A", "B"]})
     result = subway_context(start_latitude=37.5, start_longitude=127, end_latitude=37.5005, end_longitude=127, station_index=GeoPointIndex.from_frame(stations), stations=stations, timetable_compatible=True)
