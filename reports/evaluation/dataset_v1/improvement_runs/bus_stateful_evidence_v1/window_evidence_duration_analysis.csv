@@ -1,0 +1,5 @@
+state,transitions_into_state
+UNKNOWN,0
+BUS_CANDIDATE,0
+BUS_PROBABLE,0
+BUS_CONFIRMED,0

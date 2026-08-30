@@ -1,0 +1,5 @@
+state,windows,gt_bus_windows,gt_bus_rate,non_bus_windows
+UNKNOWN,76005,7068,0.092994,68937
+BUS_CANDIDATE,0,0,0.0,0
+BUS_PROBABLE,0,0,0.0,0
+BUS_CONFIRMED,0,0,0.0,0

@@ -1,0 +1,11 @@
+candidate,mode,precision,recall,f1,support
+production_baseline,walk,0.977895,0.939871,0.958506,58225
+production_baseline,bike,0.600927,0.280543,0.382511,5083
+production_baseline,car,0.139709,0.232405,0.174511,2728
+production_baseline,bus,0.352774,0.070175,0.117064,7068
+production_baseline,rail,0.204571,0.826956,0.328001,2901
+stateful_accumulation,walk,0.977895,0.939871,0.958506,58225
+stateful_accumulation,bike,0.600927,0.280543,0.382511,5083
+stateful_accumulation,car,0.139709,0.232405,0.174511,2728
+stateful_accumulation,bus,0.352774,0.070175,0.117064,7068
+stateful_accumulation,rail,0.204571,0.826956,0.328001,2901

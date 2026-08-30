@@ -1,0 +1,3 @@
+candidate,journeys,evaluated,accuracy,macro_f1,bus_precision,bus_recall,bus_f1,false_bus,car_f1,rail_f1,release_gate
+production_baseline,700,700,0.785198,0.392119,0.352774,0.070175,0.117064,910,0.174511,0.328001,REFERENCE
+stateful_accumulation,700,700,0.785198,0.392119,0.352774,0.070175,0.117064,910,0.174511,0.328001,FAIL
