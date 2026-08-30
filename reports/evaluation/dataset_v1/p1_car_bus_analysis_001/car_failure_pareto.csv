@@ -1,0 +1,4 @@
+cause,count,share
+raw_predicts_bus,871,0.4159503342884432
+raw_predicts_walk_or_bike,738,0.3524355300859599
+transit_override_after_raw_correct,485,0.23161413562559693

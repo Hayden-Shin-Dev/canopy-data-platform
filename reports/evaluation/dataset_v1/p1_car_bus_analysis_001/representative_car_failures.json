@@ -1,0 +1,177 @@
+[
+  {
+    "trip_id": "trip_000201",
+    "ground_truth": "car",
+    "raw_prediction": "walk",
+    "final_prediction": "walk",
+    "window_count": 44
+  },
+  {
+    "trip_id": "trip_000203",
+    "ground_truth": "car",
+    "raw_prediction": "bike",
+    "final_prediction": "rail",
+    "window_count": 12
+  },
+  {
+    "trip_id": "trip_000204",
+    "ground_truth": "car",
+    "raw_prediction": "bus",
+    "final_prediction": "bus",
+    "window_count": 10
+  },
+  {
+    "trip_id": "trip_000205",
+    "ground_truth": "car",
+    "raw_prediction": "bus",
+    "final_prediction": "rail",
+    "window_count": 23
+  },
+  {
+    "trip_id": "trip_000206",
+    "ground_truth": "car",
+    "raw_prediction": "car",
+    "final_prediction": "rail",
+    "window_count": 21
+  },
+  {
+    "trip_id": "trip_000207",
+    "ground_truth": "car",
+    "raw_prediction": "bike",
+    "final_prediction": "rail",
+    "window_count": 32
+  },
+  {
+    "trip_id": "trip_000209",
+    "ground_truth": "car",
+    "raw_prediction": "bus",
+    "final_prediction": "rail",
+    "window_count": 13
+  },
+  {
+    "trip_id": "trip_000210",
+    "ground_truth": "car",
+    "raw_prediction": "bus",
+    "final_prediction": "rail",
+    "window_count": 27
+  },
+  {
+    "trip_id": "trip_000211",
+    "ground_truth": "car",
+    "raw_prediction": "bike",
+    "final_prediction": "bike",
+    "window_count": 22
+  },
+  {
+    "trip_id": "trip_000213",
+    "ground_truth": "car",
+    "raw_prediction": "bike",
+    "final_prediction": "bike",
+    "window_count": 35
+  },
+  {
+    "trip_id": "trip_000214",
+    "ground_truth": "car",
+    "raw_prediction": "bus",
+    "final_prediction": "bus",
+    "window_count": 18
+  },
+  {
+    "trip_id": "trip_000216",
+    "ground_truth": "car",
+    "raw_prediction": "bus",
+    "final_prediction": "bus",
+    "window_count": 28
+  },
+  {
+    "trip_id": "trip_000217",
+    "ground_truth": "car",
+    "raw_prediction": "car",
+    "final_prediction": "rail",
+    "window_count": 23
+  },
+  {
+    "trip_id": "trip_000218",
+    "ground_truth": "car",
+    "raw_prediction": "bike",
+    "final_prediction": "rail",
+    "window_count": 14
+  },
+  {
+    "trip_id": "trip_000221",
+    "ground_truth": "car",
+    "raw_prediction": "bus",
+    "final_prediction": "rail",
+    "window_count": 20
+  },
+  {
+    "trip_id": "trip_000222",
+    "ground_truth": "car",
+    "raw_prediction": "car",
+    "final_prediction": "rail",
+    "window_count": 24
+  },
+  {
+    "trip_id": "trip_000223",
+    "ground_truth": "car",
+    "raw_prediction": "car",
+    "final_prediction": "rail",
+    "window_count": 12
+  },
+  {
+    "trip_id": "trip_000224",
+    "ground_truth": "car",
+    "raw_prediction": "bus",
+    "final_prediction": "rail",
+    "window_count": 10
+  },
+  {
+    "trip_id": "trip_000225",
+    "ground_truth": "car",
+    "raw_prediction": "car",
+    "final_prediction": "rail",
+    "window_count": 18
+  },
+  {
+    "trip_id": "trip_000226",
+    "ground_truth": "car",
+    "raw_prediction": "bus",
+    "final_prediction": "bus",
+    "window_count": 3
+  },
+  {
+    "trip_id": "trip_000227",
+    "ground_truth": "car",
+    "raw_prediction": "car",
+    "final_prediction": "rail",
+    "window_count": 10
+  },
+  {
+    "trip_id": "trip_000228",
+    "ground_truth": "car",
+    "raw_prediction": "bike",
+    "final_prediction": "rail",
+    "window_count": 15
+  },
+  {
+    "trip_id": "trip_000233",
+    "ground_truth": "car",
+    "raw_prediction": "car",
+    "final_prediction": "rail",
+    "window_count": 19
+  },
+  {
+    "trip_id": "trip_000235",
+    "ground_truth": "car",
+    "raw_prediction": "bike",
+    "final_prediction": "rail",
+    "window_count": 9
+  },
+  {
+    "trip_id": "trip_000236",
+    "ground_truth": "car",
+    "raw_prediction": "bus",
+    "final_prediction": "rail",
+    "window_count": 10
+  }
+]

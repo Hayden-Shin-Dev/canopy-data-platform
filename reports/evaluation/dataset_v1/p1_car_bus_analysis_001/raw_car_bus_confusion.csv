@@ -1,0 +1,11 @@
+ground_truth,prediction,count
+car,walk,193
+car,bike,546
+car,car,1118
+car,bus,871
+car,rail,0
+bus,walk,151
+bus,bike,2263
+bus,car,2491
+bus,bus,2163
+bus,rail,0

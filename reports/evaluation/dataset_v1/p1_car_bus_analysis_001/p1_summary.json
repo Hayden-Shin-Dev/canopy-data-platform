@@ -1,0 +1,20 @@
+{
+  "dataset": "dataset_v1",
+  "journeys": 700,
+  "bus_ground_truth_windows": 7068,
+  "bus_evidence_present_proxy_windows": 4239,
+  "bus_evidence_proxy_recall": 0.5997453310696095,
+  "bus_evidence_definition": "stored bus_context_score >= 0.25; component-level evidence is not persisted in trace",
+  "false_bus_activation_by_ground_truth": {
+    "walk": 44,
+    "bike": 257,
+    "car": 453,
+    "rail": 156
+  },
+  "car_evidence_groups": {
+    "bus_evidence": 1903,
+    "none": 825
+  },
+  "production_logic_modified": false,
+  "ground_truth_used_to_infer": false
+}
