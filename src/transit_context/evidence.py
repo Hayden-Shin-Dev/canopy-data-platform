@@ -29,8 +29,9 @@ def sequence_score(observed_stop_ids: Sequence[str], route_stops: pd.DataFrame) 
     required = {"stop_id", "stop_sequence"}
     if not required <= set(route_stops.columns):
         raise ValueError(f"노선 순서 계산에 필요한 컬럼이 없습니다: {sorted(required - set(route_stops.columns))}")
-    sequence = route_stops.drop_duplicates("stop_id").set_index("stop_id")["stop_sequence"].to_dict()
-    values = [float(sequence[stop]) for stop in observed_stop_ids if stop in sequence]
+    sequence_frame = route_stops.drop_duplicates("stop_id").copy()
+    sequence = dict(zip(sequence_frame["stop_id"].astype(str), sequence_frame["stop_sequence"], strict=False))
+    values = [float(sequence[str(stop)]) for stop in observed_stop_ids if str(stop) in sequence]
     if len(values) < 2:
         return 0.0
     adjacent = [b - a for a, b in zip(values, values[1:]) if b != a]
