@@ -17,6 +17,7 @@ from src.transit_context.spatial import GeoPointIndex
 from .distance import trajectory_distance_km
 from src.emission_factors.calculator import calculate_multimodal_trip
 from src.transit_context.settings import load_settings
+from src.transit_context.bus_state import BusEvidenceState, update_bus_state
 
 from .emissions import calculate_expected_emission, load_factor_resolver
 from .expected_behaviour import ExpectedBehaviourResult, predict_expected
@@ -139,6 +140,7 @@ def run_full_pipeline(
     if not ready:
         return {"status": "COLLECTING", "windows": [window.__dict__ for window in windows]}
     station_history: list[tuple[str, str]] = []
+    bus_state = BusEvidenceState()
     window_records: list[dict[str, object]] = []
     for index, window in enumerate(ready):
         window_events = [
@@ -147,6 +149,16 @@ def run_full_pipeline(
             or (index == len(ready) - 1 and event.timestamp >= window.window_end)
         ]
         transit = build_transit_context(window_events, window.probabilities, references, station_history=station_history)
+        bus_state = update_bus_state(bus_state, transit, raw_mode=window.predicted_mode)
+        transit = {
+            **transit,
+            "bus_state": bus_state.state,
+            "bus_state_score": bus_state.score,
+            "bus_state_positive_windows": bus_state.positive_windows,
+            "bus_state_weak_windows": bus_state.weak_windows,
+        }
+        if load_settings().resolver.get("bus_stateful_enabled", 0) >= 1:
+            transit["bus_context_score"] = bus_state.score
         decision = resolve_mode(window.probabilities, context=transit)
         window_records.append({
             "index": index,

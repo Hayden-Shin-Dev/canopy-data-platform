@@ -51,13 +51,15 @@ def resolve_mode(
     rail_subtype = None
 
     rail_has_structured_evidence = structured_subway or train_score >= strong
+    bus_stateful = settings.resolver.get("bus_stateful_enabled", 0) >= 1
+    bus_confirmed = context.get("bus_state") == "BUS_CONFIRMED"
     if ml_mode == "rail" and not rail_has_structured_evidence:
         # Station proximity alone is not enough to turn a high-speed car/bus
         # window into rail. Keep rail only when ordered subway evidence or a
         # strong KORAIL context is present.
         non_rail_modes = {mode: value for mode, value in probs.items() if mode != "rail"}
         strongest_non_rail = max(non_rail_modes, key=non_rail_modes.get)
-        if bus_score >= minimum and bus_score > non_rail_modes[strongest_non_rail] + margin:
+        if bus_score >= minimum and bus_score > non_rail_modes[strongest_non_rail] + margin and (not bus_stateful or bus_confirmed):
             final_mode = "bus"
         else:
             final_mode = strongest_non_rail
@@ -69,7 +71,7 @@ def resolve_mode(
         correction_applied = final_mode != ml_mode
         decision_status = "corrected" if correction_applied else "confirmed"
         correction_reason = "trajectory showed ordered stations on one subway line"
-    elif evidence_score >= strong and evidence_score > probs[evidence_mode] + margin:
+    elif evidence_score >= strong and evidence_score > probs[evidence_mode] + margin and (not bus_stateful or evidence_mode != "bus" or bus_confirmed):
         final_mode = evidence_mode
         correction_applied = final_mode != ml_mode
         decision_status = "corrected" if correction_applied else "confirmed"
