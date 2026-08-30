@@ -26,6 +26,7 @@
     "ambiguity_margin": 0.10,
     "rail_confirmation_score": 0.70,
     "bus_require_endpoint_route": 1.0,
+    "bus_require_structured_confirmation": 0.0,
     "pre_transit_bike_max_windows": 2,
     "pre_transit_bike_max_confidence": 0.75
   }

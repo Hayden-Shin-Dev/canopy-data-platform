@@ -27,6 +27,8 @@ def resolve_mode(
     ml_mode = max(CANOPY_MODES, key=probs.get)
     ml_confidence = probs[ml_mode]
     bus_score = float(context.get("bus_context_score", 0.0) or 0.0)
+    bus_route_score = float(context.get("bus_route_match_score", 0.0) or 0.0)
+    bus_endpoint_consistency = float(context.get("bus_endpoint_route_consistency", 0.0) or 0.0)
     subway_score = float(context.get("subway_context_score", 0.0) or 0.0)
     train_score = float(context.get("train_context_score", 0.0) or 0.0)
     rail_score = max(subway_score, train_score)
@@ -90,6 +92,20 @@ def resolve_mode(
         correction_applied = True
         decision_status = "insufficient_context"
         correction_reason = "non-rail prediction requires stronger rail confirmation"
+
+    # Optional P1-A candidate guard. It is disabled in the released config and
+    # only accepts a bus decision when the route evidence covers both window
+    # endpoints. No Ground Truth or trip identifier is consulted here.
+    if (
+        final_mode == "bus"
+        and settings.resolver.get("bus_require_structured_confirmation", 0.0) >= 1.0
+        and (bus_endpoint_consistency < 1.0 or bus_route_score < 2.0 / 3.0)
+    ):
+        non_bus = {mode: value for mode, value in probs.items() if mode != "bus"}
+        final_mode = max(non_bus, key=non_bus.get)
+        correction_applied = True
+        decision_status = "insufficient_context"
+        correction_reason = "bus prediction requires endpoint route confirmation"
 
     if final_mode == "rail":
         if train_score > subway_score and train_score >= strong:

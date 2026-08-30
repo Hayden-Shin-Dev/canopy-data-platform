@@ -1,4 +1,5 @@
 from src.transit_context.resolver import resolve_mode
+from src.transit_context.settings import load_settings, TransitSettings
 
 
 def test_weak_context_retains_ml_prediction() -> None:
@@ -54,3 +55,15 @@ def test_non_rail_prediction_requires_strong_rail_confirmation() -> None:
     )
     assert result["final_mode"] == "car"
     assert result["decision_status"] == "insufficient_context"
+
+
+def test_structured_bus_candidate_rejects_proximity_only_context() -> None:
+    settings = load_settings()
+    candidate = TransitSettings(settings.version, settings.coordinate_system, settings.radii_m, settings.weights, {**settings.resolver, "bus_require_structured_confirmation": 1.0})
+    result = resolve_mode(
+        {"walk": 0.05, "bike": 0.05, "car": 0.10, "bus": 0.70, "rail": 0.10},
+        context={"bus_context_score": 0.60, "bus_route_match_score": 1.0, "bus_endpoint_route_consistency": 0.0},
+        settings=candidate,
+    )
+    assert result["final_mode"] == "car"
+    assert result["correction_reason"] == "bus prediction requires endpoint route confirmation"
