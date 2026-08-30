@@ -1,0 +1,9 @@
+﻿signal,count,gt_bus_count,gt_bus_rate,precision,gt_non_bus_activation
+stop_within_radius,56668,5666,0.8016411997736276,0.0999858826851133,51002
+route_candidate_exists,56668,5666,0.8016411997736276,0.0999858826851133,51002
+route_consistent,0,0,0.0,0.0,0
+ordered_stop_progression,0,0,0.0,0.0,0
+direction_consistent,0,0,0.0,0.0,0
+temporal_consistent,0,0,0.0,0.0,0
+speed_plausible,75988,7068,1.0,0.09301468652945202,68920
+bus_evidence_present,35352,2890,0.40888511601584604,0.08174926453948857,32462

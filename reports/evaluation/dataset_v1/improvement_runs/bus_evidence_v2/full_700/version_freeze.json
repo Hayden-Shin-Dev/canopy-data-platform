@@ -1,0 +1,15 @@
+{
+  "branch": "improve/bus-evidence-v2",
+  "canopy_baseline_commit": "7a193ed",
+  "evaluation_commit": "b1df077",
+  "working_tree_status_before_evaluation": "clean_except_local_frozen_dataset",
+  "geolife_model": "C:\\Users\\user\\Desktop\\canopy-project-pt\\models\\mobility_recognition\\geolife_hardened_120s_purity_090.joblib",
+  "geolife_model_sha256": "636b1db124076c6b8d3dda5f904594d360ed7cdbe267b31ac52b55ac09c325dd",
+  "ktdb_model": "C:\\Users\\user\\Desktop\\canopy-project-pt\\models\\expected_behaviour\\ktdb_population_baseline.pkl",
+  "ktdb_model_sha256": "feecb440045a6278eafda9ed78fe709aba5bbfbc5e5b55163c58f5435e9fa8ff",
+  "transit_resolver": "src/transit_context/resolver.py",
+  "transit_settings": "config/transit_context.json",
+  "transit_settings_sha256": "32a387bf04c8d329766ac510fae3b8afb3b94700f293d04a52c22fb707baadfd",
+  "window_seconds": 120,
+  "smoothing": "src/integration/segments.py::smooth_window_modes"
+}

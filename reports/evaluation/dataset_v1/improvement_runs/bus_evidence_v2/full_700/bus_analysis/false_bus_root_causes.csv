@@ -1,0 +1,5 @@
+﻿ground_truth,reason,count
+bike,stop_only,257
+car,stop_only,453
+rail,stop_only,156
+walk,stop_only,44

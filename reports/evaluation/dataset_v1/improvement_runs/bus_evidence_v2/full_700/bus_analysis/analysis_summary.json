@@ -1,0 +1,16 @@
+{
+  "trace_rows": 76005,
+  "gt_mode_counts": {
+    "walk": 58225,
+    "bus": 7068,
+    "bike": 5083,
+    "rail": 2901,
+    "car": 2728
+  },
+  "false_bus_total": 910,
+  "true_bus_windows": 7068,
+  "bus_evidence_proxy_precision": 0.08174926453948857,
+  "bus_evidence_proxy_recall": 0.40888511601584604,
+  "production_logic_changed": false,
+  "ground_truth_used_in_inference": false
+}
