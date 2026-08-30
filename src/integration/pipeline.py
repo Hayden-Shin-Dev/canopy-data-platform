@@ -97,6 +97,8 @@ def build_transit_context(
         bus_stops=references.bus_stops,
         bus_route_stops=references.bus_route_stops,
         observed_stop_ids=_observed_bus_stops(events, references),
+        trajectory=[(event.latitude, event.longitude) for event in events],
+        timestamps=[event.timestamp for event in events],
     )
     subway = subway_context(
         start_latitude=start.latitude,

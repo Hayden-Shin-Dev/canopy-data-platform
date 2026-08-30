@@ -51,6 +51,8 @@ def bus_context(
     bus_stops: pd.DataFrame | None,
     bus_route_stops: pd.DataFrame | None,
     observed_stop_ids: Sequence[str] = (),
+    trajectory: Sequence[tuple[float, float]] = (),
+    timestamps: Sequence[object] = (),
     live_match_score: float = 0.0,
     settings: TransitSettings | None = None,
 ) -> dict[str, object]:
@@ -66,6 +68,19 @@ def bus_context(
         "live_bus_match_score": _bounded(live_match_score),
         "bus_context_score": 0.0,
         "bus_evidence_reason": "bus reference unavailable",
+        "nearest_bus_stop_id": None,
+        "nearest_bus_stop_distance_m": None,
+        "matched_stop_ids": [],
+        "route_candidate_ids": [],
+        "route_candidate_count": 0,
+        "route_consistent": False,
+        "route_consistency_count": 0,
+        "ordered_stop_progression": False,
+        "progression_length": 0,
+        "direction_consistent": False,
+        "temporal_consistent": False,
+        "bus_speed_plausible": False,
+        "bus_evidence_present": False,
     }
     if bus_stop_index is None or bus_stops is None or bus_stops.empty:
         return empty
@@ -77,9 +92,14 @@ def bus_context(
     route_score = 0.0
     sequence = 0.0
     route_id = route_no = None
+    route_candidates: list[str] = []
+    matched_stop_ids = [str(value) for value in nearby.get("stop_id", pd.Series(dtype=str)).tolist()]
+    route_consistency_count = 0
+    progression_length = 0
     if bus_route_stops is not None and not bus_route_stops.empty and not nearby.empty:
         route_rows = bus_route_stops[bus_route_stops["stop_id"].isin(nearby["stop_id"])]
         counts = route_rows.groupby(["route_id", "route_no"], dropna=False)["stop_id"].nunique().sort_values(ascending=False)
+        route_candidates = [f"{key[0]}:{key[1]}" for key in counts.index.tolist()]
         if not counts.empty:
             route_key = counts.index[0]
             route_id, route_no = str(route_key[0]), str(route_key[1])
@@ -87,6 +107,25 @@ def bus_context(
             route_score = _bounded(matched_count / 3.0)
             selected = bus_route_stops[(bus_route_stops["route_id"] == route_id) & (bus_route_stops["route_no"] == route_no)]
             sequence = sequence_score(observed_stop_ids, selected)
+            route_consistency_count = int(sum(1 for stop_id in observed_stop_ids if stop_id in set(selected["stop_id"].astype(str))))
+            progression_length = int(sum(1 for stop_id in observed_stop_ids if stop_id in set(selected["stop_id"].astype(str))))
+    nearest = bus_stop_index.nearest(start_latitude, start_longitude) if bus_stop_index is not None else {}
+    endpoint_nearest = bus_stop_index.nearest(end_latitude, end_longitude) if bus_stop_index is not None else {}
+    nearest_distance = float(min(nearest.get("distance_m", radius), endpoint_nearest.get("distance_m", radius)))
+    direction_consistent = bool(sequence >= 0.75 and progression_length >= 2)
+    temporal_consistent = bool(len(timestamps) >= 2 and progression_length >= 2)
+    bus_speed_plausible = False
+    if trajectory and len(trajectory) >= 2 and timestamps and len(timestamps) >= 2:
+        try:
+            elapsed = (timestamps[-1] - timestamps[0]).total_seconds()
+            # Endpoint displacement is only a plausibility guard, not a mode rule.
+            lat_delta = float(trajectory[-1][0]) - float(trajectory[0][0])
+            lon_delta = float(trajectory[-1][1]) - float(trajectory[0][1])
+            displacement_km = math.sqrt(lat_delta * lat_delta + lon_delta * lon_delta) * 111.0
+            speed_kmh = displacement_km / (elapsed / 3600.0) if elapsed > 0 else 0.0
+            bus_speed_plausible = 0.5 <= speed_kmh <= 100.0
+        except (AttributeError, TypeError, ValueError, ZeroDivisionError):
+            bus_speed_plausible = False
     context_score = _weighted({"bus_proximity": proximity, "bus_route": route_score, "bus_sequence": sequence, "bus_live": live_match_score}, settings.weights)
     reason = "nearby stops only" if route_id is None else "route and stop evidence"
     return {
@@ -100,6 +139,19 @@ def bus_context(
         "bus_sequence_score": sequence,
         "bus_context_score": context_score,
         "bus_evidence_reason": reason,
+        "nearest_bus_stop_id": str(nearest.get("stop_id")) if nearest.get("stop_id") is not None else None,
+        "nearest_bus_stop_distance_m": nearest_distance,
+        "matched_stop_ids": matched_stop_ids,
+        "route_candidate_ids": route_candidates,
+        "route_candidate_count": len(route_candidates),
+        "route_consistent": bool(route_consistency_count >= 2),
+        "route_consistency_count": route_consistency_count,
+        "ordered_stop_progression": bool(sequence >= 0.75 and progression_length >= 2),
+        "progression_length": progression_length,
+        "direction_consistent": direction_consistent,
+        "temporal_consistent": temporal_consistent,
+        "bus_speed_plausible": bus_speed_plausible,
+        "bus_evidence_present": bool(context_score >= settings.resolver.get("minimum_context_score", 0.35)),
     }
 
 
