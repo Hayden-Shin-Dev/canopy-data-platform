@@ -11,6 +11,8 @@
 
 Raw 전체 성능은 Accuracy 0.8067, Macro F1 0.4080, Weighted F1 0.8136이다. P0 Final은 Accuracy 0.7852, Macro F1 0.3921, Weighted F1 0.7895다. P0는 false rail을 줄이고 rail F1을 높인 변경이며, car/bus 성능을 개선한 변경은 아니다.
 
+전체 5x5 행렬은 [`confusion_matrix_raw.csv`](../improvement_runs/rail_override_v1/full_run/confusion_matrix_raw.csv)와 [`confusion_matrix_final.csv`](../improvement_runs/rail_override_v1/full_run/confusion_matrix_final.csv)에 있고, 이 디렉터리의 CSV는 car/bus 행을 추린 분석용 행렬이다.
+
 ## Car/Bus 혼동
 
 Raw Car는 walk 193, bike 546, car 1,118, bus 871, rail 0으로 예측됐다. Raw Bus는 walk 151, bike 2,263, car 2,491, bus 2,163, rail 0이었다. 따라서 Raw Car/Bus의 핵심 문제는 두 class가 서로 직접 혼동되는 것뿐 아니라, bus가 bike와 car로 넓게 분산되는 점이다.
@@ -27,7 +29,7 @@ Bus Ground Truth 7,068개 window 중 none 2,829개(40.03%), weak 4,239개(59.97%
 
 Bus evidence가 있었지만 Final이 bus가 아니었던 bus window는 rail 3,153, car 373, bike 343, walk 54, 합계 3,923개다. 반대로 false bus activation은 Ground Truth 기준 walk 44, bike 257, car 453, rail 156개였다. 이 결과만으로 evidence를 신뢰할 수 있는 bus 판정으로 승격하면 안 된다.
 
-Car window의 bus score proxy 그룹은 evidence 있음 1,903개, 없음 825개다. Car가 정류장 인근에 있을 때도 bus score가 생기는 구조라서, 현재 resolver는 도로 주행과 bus 승차를 충분히 분리하지 못한다.
+Car window의 bus score proxy 그룹은 evidence 있음 1,903개, 없음 825개다. Final car accuracy는 evidence 있음 그룹 414/1,903 = 21.76%, 없음 그룹 220/825 = 26.67%였다. Car가 정류장 인근에 있을 때도 bus score가 생기는 구조라서, 현재 resolver는 도로 주행과 bus 승차를 충분히 분리하지 못한다.
 
 Evidence 생성 조건은 `src/transit_context/evidence.py`와 `src/integration/pipeline.py`에 정의돼 있다. 버스 정류장 반경, 시작·종료 정류장, route id/number 및 stop id의 일치, 관측 순서가 점수에 반영된다. 현재 trace에는 시간표, 진행 방향, 도로 일치 같은 추가 근거가 저장되지 않으므로 해당 누락 사유를 더 세분화해 추정하지 않았다.
 
@@ -40,6 +42,8 @@ Car와 Bus 각 100개 trip에서 실제 GPS로 계산한 feature를 비교했다
 현재 frozen 시나리오에는 `car_near_station`, `car_past_bus_stops`, `car_waiting_near_stop`, `congested_car`, `slow_bus`, `long_stop_spacing`, `parallel_rail_bus`, `real_transfer` 등이 있다. P0 결과에서 `slow_bus`와 `long_stop_spacing`은 Final accuracy 0, `parallel_rail_bus`는 0.1429, `real_transfer`는 0.025였다. 대표 실패 trip 목록은 [`representative_bus_failures.json`](representative_bus_failures.json)과 [`representative_car_failures.json`](representative_car_failures.json)이다.
 
 Bus 실패 원인은 raw가 car인 경우 2,491개(37.90%), raw가 walk/bike인 경우 2,414개(36.73%), Raw에서 맞았지만 transit override로 깨진 경우 1,667개(25.37%)였다. Car 실패는 raw가 bus 871개(41.60%), raw가 walk/bike 738개(35.24%), override로 깨진 경우 485개(23.16%)였다. Pareto 원자료는 [`bus_failure_pareto.csv`](bus_failure_pareto.csv), [`car_failure_pareto.csv`](car_failure_pareto.csv)다.
+
+대표적인 bus 성공 사례로 `trip_000304`는 bus window 8개가 Final bus로 유지됐다. 다만 `trip_000302`, `trip_000303`처럼 일부 bus window만 맞고 여정 전체는 bike 또는 rail로 끝나는 사례도 있어, 성공 사례 하나만으로 resolver 품질을 판단하지 않았다.
 
 ## Raw ML 문제와 Transit 문제의 분리
 
@@ -66,4 +70,3 @@ P0 이후 false rail activation은 17,195에서 4,008로 감소했고, rail F1�
 ## 다음 실험 하나
 
 다음 실험은 **P1-A: bus evidence 계측 보강 및 coverage 검증**으로 한다. 먼저 현재 trace에 component score와 matched stop/route 정보를 모든 window에 일관되게 남기고, 서울 공식 reference가 실제로 연결된 경우와 그렇지 않은 경우를 분리해 validation set에서 evidence precision/recall을 측정한다. 그 결과가 확보되기 전에는 resolver threshold나 Raw model을 조정하지 않는다. 실행 계획은 [`p1_priority_recommendation.md`](p1_priority_recommendation.md)에 있다.
-
