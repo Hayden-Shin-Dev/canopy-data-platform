@@ -215,6 +215,10 @@ def _evaluate_trip(
                 "matched_subway_line": transit.get("matched_subway_line"),
                 "bus_context_score": transit.get("bus_context_score"),
                 "subway_context_score": transit.get("subway_context_score"),
+                "bus_state": transit.get("bus_state"),
+                "bus_state_score": transit.get("bus_state_score"),
+                "bus_state_positive_windows": transit.get("bus_state_positive_windows"),
+                "bus_state_weak_windows": transit.get("bus_state_weak_windows"),
             }
         )
     multimodal = len(truth["segments"]) > 1 or str(truth.get("scenario_category")) == "multimodal"
