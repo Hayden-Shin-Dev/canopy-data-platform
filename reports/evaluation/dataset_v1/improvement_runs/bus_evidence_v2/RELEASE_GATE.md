@@ -13,7 +13,7 @@ The ordered progression candidate was evaluated on all 700 frozen journeys (76,0
 | Car guardrail | PASS | 0.174511 -> 0.226735 |
 | Rail guardrail | PASS | 0.328001 -> 0.329121 |
 | Macro F1 non-regression | FAIL | 0.392119 -> 0.387478 |
-| Full regression | PENDING | run after candidate selection |
+| Full regression | PASS | `pytest -q` (226 passed, 0 failed) |
 | Leakage / hardcoding | PASS | evaluator `ground_truth_used_by_inference=false`, dataset unchanged |
 
 The candidate is rejected because the ordered-stop requirement suppresses nearly all true Bus windows. The promotion guard is disabled (`bus_require_ordered_progression=0`); the ordered score remains enabled for the existing official route fixture contract. No merge to `main` and no patch tag are allowed from this run.
