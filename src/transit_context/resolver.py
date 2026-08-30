@@ -57,7 +57,13 @@ def resolve_mode(
         # strong KORAIL context is present.
         non_rail_modes = {mode: value for mode, value in probs.items() if mode != "rail"}
         strongest_non_rail = max(non_rail_modes, key=non_rail_modes.get)
-        if bus_score >= minimum and bus_score > non_rail_modes[strongest_non_rail] + margin:
+        ordered_bus = bool(context.get("ordered_stop_progression", False))
+        bus_override_allowed = (
+            bus_score >= minimum
+            and bus_score > non_rail_modes[strongest_non_rail] + margin
+            and (settings.resolver.get("bus_require_ordered_progression", 0) < 1 or ordered_bus)
+        )
+        if bus_override_allowed:
             final_mode = "bus"
         else:
             final_mode = strongest_non_rail

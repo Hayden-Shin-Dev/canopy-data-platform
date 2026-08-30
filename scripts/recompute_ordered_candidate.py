@@ -18,10 +18,20 @@ def main() -> int:
     y_true, y_raw, y_final = [], [], []
     for row in rows:
         labels, raw, final = row.get("labels", []), row.get("raw_modes", []), row.get("final_modes", [])
-        adjusted = [
-            "bus" if raw_mode == "bus" else "rail" if args.preserve_rail and raw_mode == "rail" else predicted
-            for raw_mode, predicted in zip(raw, final)
-        ]
+        trace_rows = row.get("traces", [])
+        adjusted = []
+        for index, (raw_mode, predicted) in enumerate(zip(raw, final)):
+            trace = trace_rows[index] if index < len(trace_rows) else {}
+            subway_score = float(trace.get("subway_context_score") or 0.0)
+            if raw_mode == "bus" and predicted != "rail":
+                value = "bus"
+            elif args.preserve_rail and raw_mode == "rail":
+                value = "rail"
+            elif raw_mode == "bus" and subway_score < 0.35:
+                value = "bus"
+            else:
+                value = predicted
+            adjusted.append(value)
         y_true.extend(labels); y_raw.extend(raw); y_final.extend(adjusted)
     payload = {"raw": _metric_payload(y_true, y_raw), "final": _metric_payload(y_true, y_final), "false_bus": {"total": sum(a != "bus" and b == "bus" for a, b in zip(y_true, y_final)), "walk": sum(a == "walk" and b == "bus" for a, b in zip(y_true, y_final)), "bike": sum(a == "bike" and b == "bus" for a, b in zip(y_true, y_final)), "car": sum(a == "car" and b == "bus" for a, b in zip(y_true, y_final)), "rail": sum(a == "rail" and b == "bus" for a, b in zip(y_true, y_final))}, "false_rail": sum(a != "rail" and b == "rail" for a, b in zip(y_true, y_final)), "count": len(rows), "windows": len(y_true), "ground_truth_used_in_inference": False}
     args.output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
