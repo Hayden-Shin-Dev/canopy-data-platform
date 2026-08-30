@@ -1,0 +1,3 @@
+candidate,windows,accuracy,macro_f1,walk_f1,bike_f1,car_f1,bus_f1,rail_f1,bus_precision,bus_recall,false_bus_total,decision
+v1.0.1 baseline,76005,0.785198,0.392119,0.958506,0.382511,0.174511,0.117064,0.328001,0.352774,0.070175,910,baseline
+ordered_progression_guard,76005,0.784054,0.387478,0.957859,0.378219,0.226735,0.045455,0.329121,0.276899,0.024759,159,REJECT
