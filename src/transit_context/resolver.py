@@ -91,6 +91,18 @@ def resolve_mode(
         decision_status = "insufficient_context"
         correction_reason = "non-rail prediction requires stronger rail confirmation"
 
+    # Optional P1-A guard: proximity and route candidates alone cannot promote
+    # a window to bus.  A candidate must show ordered movement through at least
+    # two stops; the default remains disabled for the v1.0.1 baseline.
+    if final_mode == "bus" and settings.resolver.get("bus_require_ordered_progression", 0) >= 1:
+        ordered = bool(context.get("ordered_stop_progression", False))
+        if not ordered:
+            non_bus = {mode: value for mode, value in probs.items() if mode != "bus"}
+            final_mode = max(non_bus, key=non_bus.get)
+            correction_applied = True
+            decision_status = "insufficient_context"
+            correction_reason = "bus prediction requires ordered stop progression"
+
     if final_mode == "rail":
         if train_score > subway_score and train_score >= strong:
             rail_subtype = "train"
