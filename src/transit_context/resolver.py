@@ -94,7 +94,7 @@ def resolve_mode(
     # Optional P1-A guard: proximity and route candidates alone cannot promote
     # a window to bus.  A candidate must show ordered movement through at least
     # two stops; the default remains disabled for the v1.0.1 baseline.
-    if final_mode == "bus" and settings.resolver.get("bus_require_ordered_progression", 0) >= 1:
+    if final_mode == "bus" and ml_mode != "bus" and settings.resolver.get("bus_require_ordered_progression", 0) >= 1:
         ordered = bool(context.get("ordered_stop_progression", False))
         if not ordered:
             non_bus = {mode: value for mode, value in probs.items() if mode != "bus"}
