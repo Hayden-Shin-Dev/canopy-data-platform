@@ -32,6 +32,20 @@ models/**/*.joblib
 reports/**/runs/*
 !reports/**/runs/**/README.md
 reports/evaluation/dataset_v1/smoke_*/
+reports/evaluation/dataset_v1/improvement_runs/*/*_shards/
+reports/evaluation/dataset_v1/improvement_runs/*/shards/
+reports/evaluation/dataset_v1/improvement_runs/*/*/predictions.jsonl
+reports/evaluation/dataset_v1/improvement_runs/*/*/prediction_traces.jsonl
+reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v2/full_700/*
+!reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v2/full_700/summary.json
+!reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v2/full_700/metrics.json
+!reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v2/full_700/version_freeze.json
+!reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v2/full_700/bus_analysis/
+reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v2/candidate_ordered_700/*
+!reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v2/candidate_ordered_700/summary.json
+!reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v2/candidate_ordered_700/metrics.json
+reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v2/sample_20/
+reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v2/candidate_*_metrics.json
 
 # Frozen evaluation datasets are supplied locally and remain read-only.
 data/evaluation/**
