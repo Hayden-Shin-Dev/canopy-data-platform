@@ -16,6 +16,6 @@ The ordered progression candidate was evaluated on all 700 frozen journeys (76,0
 | Full regression | PENDING | run after candidate selection |
 | Leakage / hardcoding | PASS | evaluator `ground_truth_used_by_inference=false`, dataset unchanged |
 
-The candidate is rejected because the ordered-stop requirement suppresses nearly all true Bus windows. Production configuration was restored to the v1.0.1 defaults (`bus_require_ordered_progression=0`, `bus_use_ordered_progression_score=0`). No merge to `main` and no patch tag are allowed from this run.
+The candidate is rejected because the ordered-stop requirement suppresses nearly all true Bus windows. The promotion guard is disabled (`bus_require_ordered_progression=0`); the ordered score remains enabled for the existing official route fixture contract. No merge to `main` and no patch tag are allowed from this run.
 
 Next experiment should improve Bus recall without allowing stop proximity alone to promote a non-Bus prediction; use a validation split or a reference with sufficient multi-stop observations before changing the resolver.
