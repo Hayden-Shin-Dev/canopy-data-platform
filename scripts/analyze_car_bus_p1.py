@@ -186,13 +186,16 @@ def analyze(run_dir: Path, dataset_root: Path, output_dir: Path) -> None:
     evidence_present = sum(row["window_count"] for row in coverage if row["evidence_level"] in {"weak", "strong"})
     false_bus_by_truth = Counter()
     car_evidence_groups = Counter()
+    car_evidence_correct = Counter()
     for journey in predictions:
         for truth, final, trace in zip(journey.get("labels") or [], journey.get("final_modes") or [], journey.get("traces") or []):
             if final == "bus" and truth != "bus":
                 false_bus_by_truth[str(truth)] += 1
             if truth == "car":
                 score = float(trace.get("bus_context_score") or 0.0)
-                car_evidence_groups["bus_evidence" if score >= 0.25 else "none"] += 1
+                group = "bus_evidence" if score >= 0.25 else "none"
+                car_evidence_groups[group] += 1
+                car_evidence_correct[group] += int(final == "car")
     summary = {
         "dataset": "dataset_v1",
         "journeys": len(predictions),
@@ -201,7 +204,14 @@ def analyze(run_dir: Path, dataset_root: Path, output_dir: Path) -> None:
         "bus_evidence_proxy_recall": evidence_present / bus_gt if bus_gt else 0.0,
         "bus_evidence_definition": "stored bus_context_score >= 0.25; component-level evidence is not persisted in trace",
         "false_bus_activation_by_ground_truth": dict(false_bus_by_truth),
-        "car_evidence_groups": dict(car_evidence_groups),
+        "car_evidence_groups": {
+            group: {
+                "window_count": count,
+                "final_car_correct": car_evidence_correct[group],
+                "final_car_accuracy": car_evidence_correct[group] / count if count else 0.0,
+            }
+            for group, count in sorted(car_evidence_groups.items())
+        },
         "production_logic_modified": False,
         "ground_truth_used_to_infer": False,
     }

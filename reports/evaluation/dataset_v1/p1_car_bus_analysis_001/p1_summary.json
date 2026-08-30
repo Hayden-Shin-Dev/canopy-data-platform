@@ -12,8 +12,16 @@
     "rail": 156
   },
   "car_evidence_groups": {
-    "bus_evidence": 1903,
-    "none": 825
+    "bus_evidence": {
+      "window_count": 1903,
+      "final_car_correct": 414,
+      "final_car_accuracy": 0.21755123489227535
+    },
+    "none": {
+      "window_count": 825,
+      "final_car_correct": 220,
+      "final_car_accuracy": 0.26666666666666666
+    }
   },
   "production_logic_modified": false,
   "ground_truth_used_to_infer": false
