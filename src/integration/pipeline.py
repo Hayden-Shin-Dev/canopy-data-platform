@@ -84,10 +84,13 @@ def build_transit_context(
     references: TransitRuntimeReferences,
     *,
     station_history: Sequence[tuple[str, str]] = (),
+    bus_stop_history: Sequence[str] = (),
 ) -> dict[str, object]:
     if len(events) < 2:
         return {"bus_context_score": 0.0, "subway_context_score": 0.0, "train_context_score": 0.0, "context_status": "INSUFFICIENT_GPS"}
     start, end = events[0], events[-1]
+    observed_bus_ids = _observed_bus_stops(events, references)
+    history_enabled = load_settings().resolver.get("bus_use_window_history", 0.0) >= 1.0
     bus = bus_context(
         start_latitude=start.latitude,
         start_longitude=start.longitude,
@@ -96,7 +99,7 @@ def build_transit_context(
         bus_stop_index=references.bus_stop_index,
         bus_stops=references.bus_stops,
         bus_route_stops=references.bus_route_stops,
-        observed_stop_ids=_observed_bus_stops(events, references),
+        observed_stop_ids=[*bus_stop_history, *observed_bus_ids] if history_enabled else observed_bus_ids,
     )
     subway = subway_context(
         start_latitude=start.latitude,
@@ -117,7 +120,7 @@ def build_transit_context(
         station_index=references.korail_index,
         ml_rail_probability=probabilities.get("rail", 0.0),
     )
-    return {**bus, **subway, **korail, "context_status": "READY"}
+    return {**bus, "observed_bus_stop_ids": observed_bus_ids, **subway, **korail, "context_status": "READY"}
 
 
 def run_full_pipeline(
@@ -139,6 +142,7 @@ def run_full_pipeline(
     if not ready:
         return {"status": "COLLECTING", "windows": [window.__dict__ for window in windows]}
     station_history: list[tuple[str, str]] = []
+    bus_stop_history: list[str] = []
     window_records: list[dict[str, object]] = []
     for index, window in enumerate(ready):
         window_events = [
@@ -146,7 +150,7 @@ def run_full_pipeline(
             if window.window_start <= event.timestamp < window.window_end
             or (index == len(ready) - 1 and event.timestamp >= window.window_end)
         ]
-        transit = build_transit_context(window_events, window.probabilities, references, station_history=station_history)
+        transit = build_transit_context(window_events, window.probabilities, references, station_history=station_history, bus_stop_history=bus_stop_history)
         decision = resolve_mode(window.probabilities, context=transit)
         window_records.append({
             "index": index,
@@ -162,6 +166,10 @@ def run_full_pipeline(
                 item = (str(station_id), str(current_line))
                 if item not in station_history:
                     station_history.append(item)
+        current_bus_ids = transit.get("observed_bus_stop_ids", [])
+        for stop_id in current_bus_ids:
+            if str(stop_id) not in bus_stop_history:
+                bus_stop_history.append(str(stop_id))
     settings = load_settings()
     smoothed_modes = smooth_window_modes(
         window_records,
