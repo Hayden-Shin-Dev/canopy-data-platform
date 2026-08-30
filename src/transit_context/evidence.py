@@ -134,7 +134,8 @@ def bus_context(
             bus_speed_plausible = 0.5 <= speed_kmh <= 100.0
         except (AttributeError, TypeError, ValueError, ZeroDivisionError):
             bus_speed_plausible = False
-    context_score = _weighted({"bus_proximity": proximity, "bus_route": route_score, "bus_sequence": sequence, "bus_live": live_match_score}, settings.weights)
+    sequence_for_score = sequence if settings.resolver.get("bus_use_ordered_progression_score", 0) >= 1 else 0.0
+    context_score = _weighted({"bus_proximity": proximity, "bus_route": route_score, "bus_sequence": sequence_for_score, "bus_live": live_match_score}, settings.weights)
     reason = "nearby stops only" if route_id is None else "route and stop evidence"
     return {
         **empty,
