@@ -76,7 +76,11 @@ def analyze(trace_path: Path, output_dir: Path) -> None:
     false_bus.groupby(["ground_truth", "reason"], dropna=False).size().reset_index(name="count").to_csv(output_dir / "false_bus_root_causes.csv", index=False, encoding="utf-8-sig")
 
     true_bus = frame[frame["ground_truth"] == "bus"].copy()
-    true_bus["pattern"] = true_bus.apply(lambda row: "+".join(name for name, key in (("stop", "stop_within_radius"), ("route", "route_consistent"), ("progression", "ordered_stop_progression"), ("direction", "direction_consistent"), ("temporal", "temporal_consistent"), ("speed", "speed_plausible")) if signals[key].loc[row.name]), axis=1)
+    pattern_columns = (("stop", "stop_within_radius"), ("route", "route_consistent"), ("progression", "ordered_stop_progression"), ("direction", "direction_consistent"), ("temporal", "temporal_consistent"), ("speed", "speed_plausible"))
+    true_bus["pattern"] = [
+        "+".join(name for name, key in pattern_columns if bool(signals[key].loc[index]))
+        for index in true_bus.index
+    ]
     true_bus.groupby("pattern", dropna=False).size().reset_index(name="count").sort_values("count", ascending=False).to_csv(output_dir / "true_bus_evidence_patterns.csv", index=False, encoding="utf-8-sig")
 
     summary = {
