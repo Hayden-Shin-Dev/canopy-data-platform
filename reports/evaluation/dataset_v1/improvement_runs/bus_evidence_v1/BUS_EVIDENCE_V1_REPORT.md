@@ -28,7 +28,7 @@ Candidate A는 8개 shard로 전체 700개를 실행했고 모든 shard가 faile
 | False Bus 감소 | FAIL |
 | Car regression 없음 | PASS (Candidate A 기준 동일) |
 | Rail P0 regression 없음 | PASS (Candidate A 기준 동일) |
-| 전체 regression test | PASS (230 passed) |
+| 전체 regression test | PASS (227 passed) |
 | Ground Truth leakage 없음 | PASS |
 | dataset_v1 변경 없음 | PASS |
 | main 반영 | NOT RUN |
@@ -39,4 +39,3 @@ Bus F1·Recall·Precision과 false bus가 동시에 좋아진 후보가 없으�
 ## 다음 작업
 
 다음 실험은 route/stop/direction/temporal evidence를 모든 window에 저장하는 P1-A 계측 단계다. 증거 품질을 측정할 수 있는 trace가 먼저 확보되어야 resolver threshold 변경을 안전하게 검증할 수 있다.
-
