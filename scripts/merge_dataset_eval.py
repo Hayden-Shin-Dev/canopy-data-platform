@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from collections import Counter
 from pathlib import Path
 
 import pandas as pd
 
+# Allow direct execution from the repository root as well as module execution.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts.evaluate_dataset_v1 import MODES, _metric_payload, _present, _write_confusion, _write_per_class, _write_report
 
 
