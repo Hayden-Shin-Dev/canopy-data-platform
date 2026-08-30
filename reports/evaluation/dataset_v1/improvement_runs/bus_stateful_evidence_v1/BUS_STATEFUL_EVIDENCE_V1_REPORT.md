@@ -23,11 +23,11 @@
 | Car F1 | 0.174511 | 0.174511 | +0.000000 |
 | Rail F1 | 0.328001 | 0.328001 | +0.000000 |
 
-후보와 baseline의 최종 prediction은 동일했다. 상태 전이도 `BUS_CANDIDATE` 이상 0회였으며, 상세 수치는 `bus_state_transition_metrics.csv`와 `bus_transition_timing.csv`에 남겼다.
+후보와 baseline의 최종 prediction은 동일했다. 이 700개 실행은 상태 telemetry를 추가하기 전 evaluator 프로세스로 수행되어 `bus_state` 필드가 trace에 기록되지 않았다(76,005개 window 모두 `NOT_CAPTURED`). 따라서 상태 진입률은 이 실행에서 단정하지 않고, telemetry 공백 자체를 재현성 이슈로 기록했다. 상세 수치는 `bus_state_transition_metrics.csv`와 `bus_transition_timing.csv`에 남겼다.
 
 ## 원인 판단
 
-주요 원인은 **Transit Context evidence 부족**이다. 현재 run에서 GT bus window의 bus context score 평균은 0.131, 75 percentile은 0.180이었다. 상태 머신의 첫 기준 0.35에도 이르지 못해 누적 로직이 실제 판정에 참여하지 못했다. 현재 데이터만으로 threshold를 낮추면 false Bus와 raw car 혼동을 다시 키울 위험이 있으므로 이번 release에는 반영하지 않았다.
+주요 원인은 **Transit Context evidence 부족**이다. 현재 run에서 GT bus window의 bus context score 평균은 0.131, 75 percentile은 0.180이었다. 이 수준에서는 상태 머신이 충분한 누적 근거를 얻기 어렵다. 또한 후보 실행에는 상태 telemetry 공백이 있어 다음 실험에서는 evaluator와 pipeline commit을 고정하고 상태 필드를 함께 저장해야 한다. 현재 데이터만으로 threshold를 낮추면 false Bus와 raw car 혼동을 다시 키울 위험이 있으므로 이번 release에는 반영하지 않았다.
 
 ## Release 결정
 

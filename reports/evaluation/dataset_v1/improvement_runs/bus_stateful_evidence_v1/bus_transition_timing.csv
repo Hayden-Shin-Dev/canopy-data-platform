@@ -2,4 +2,5 @@ metric,value
 confirmed_entries,0
 mean_confirmation_window_index_on_gt_bus,N/A
 mean_release_window_index_after_confirmation,N/A
-state_transitions,0
+state_transitions,700
+state_telemetry_windows,0

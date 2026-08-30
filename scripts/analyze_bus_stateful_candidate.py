@@ -20,6 +20,7 @@ def _write_rows(path: Path, fieldnames: list[str], rows: list[dict[str, object]]
 def analyze(run_dir: Path, output_dir: Path) -> None:
     records = [json.loads(line) for line in (run_dir / "predictions.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
     states = Counter()
+    telemetry_present = 0
     state_gt = defaultdict(Counter)
     transitions = Counter()
     delays: list[int] = []
@@ -28,7 +29,9 @@ def analyze(run_dir: Path, output_dir: Path) -> None:
         previous = "UNKNOWN"
         bus_start = None
         for index, trace in enumerate(record.get("traces", [])):
-            state = str(trace.get("bus_state") or "UNKNOWN")
+            if "bus_state" in trace:
+                telemetry_present += 1
+            state = str(trace.get("bus_state") or "UNKNOWN") if "bus_state" in trace else "NOT_CAPTURED"
             gt = str(trace.get("ground_truth") or "unknown")
             states[state] += 1
             state_gt[state][gt] += 1
@@ -42,7 +45,7 @@ def analyze(run_dir: Path, output_dir: Path) -> None:
                 release_delays.append(index)
             previous = state
     state_rows = []
-    for state in ("UNKNOWN", "BUS_CANDIDATE", "BUS_PROBABLE", "BUS_CONFIRMED"):
+    for state in ("UNKNOWN", "BUS_CANDIDATE", "BUS_PROBABLE", "BUS_CONFIRMED", "NOT_CAPTURED"):
         total = states[state]
         true_bus = state_gt[state]["bus"]
         state_rows.append({
@@ -61,6 +64,7 @@ def analyze(run_dir: Path, output_dir: Path) -> None:
             {"metric": "mean_confirmation_window_index_on_gt_bus", "value": round(sum(delays) / len(delays), 4) if delays else "N/A"},
             {"metric": "mean_release_window_index_after_confirmation", "value": round(sum(release_delays) / len(release_delays), 4) if release_delays else "N/A"},
             {"metric": "state_transitions", "value": sum(transitions.values())},
+            {"metric": "state_telemetry_windows", "value": telemetry_present},
         ],
     )
     _write_rows(
