@@ -1,0 +1,7 @@
+{
+  "status": "NO_CANDIDATE_SELECTED",
+  "reason": "No candidate improved Bus precision, recall, F1 and false-bus guardrails together on an eligible evaluation.",
+  "production_config_restored": true,
+  "main_merge": "NOT_RUN",
+  "patch_tag": "NOT_RUN"
+}

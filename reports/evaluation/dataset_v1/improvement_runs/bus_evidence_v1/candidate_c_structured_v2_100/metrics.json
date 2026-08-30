@@ -1,0 +1,92 @@
+{
+  "raw": {
+    "count": 2167,
+    "accuracy": 0.3248730964467005,
+    "macro_precision": 0.2005329830532087,
+    "macro_recall": 0.13252766366315819,
+    "macro_f1": 0.15694139194139195,
+    "weighted_f1": 0.39166708925592175,
+    "per_class": {
+      "walk": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "bike": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "car": {
+        "precision": 0.4274711168164313,
+        "recall": 0.36958934517203107,
+        "f1": 0.3964285714285714,
+        "support": 901
+      },
+      "bus": {
+        "precision": 0.5751937984496124,
+        "recall": 0.2930489731437599,
+        "f1": 0.3882783882783883,
+        "support": 1266
+      },
+      "rail": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      }
+    }
+  },
+  "final": {
+    "count": 2167,
+    "accuracy": 0.1652053530226119,
+    "macro_precision": 0.18066767611219264,
+    "macro_recall": 0.07665135981961416,
+    "macro_f1": 0.09625502642241976,
+    "weighted_f1": 0.21083867206289808,
+    "per_class": {
+      "walk": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "bike": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "car": {
+        "precision": 0.5207296849087893,
+        "recall": 0.34850166481687017,
+        "f1": 0.4175531914893617,
+        "support": 901
+      },
+      "bus": {
+        "precision": 0.3826086956521739,
+        "recall": 0.03475513428120063,
+        "f1": 0.06372194062273714,
+        "support": 1266
+      },
+      "rail": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      }
+    }
+  },
+  "false_positive": {
+    "rail_from_car": 301,
+    "rail_from_bike": 0,
+    "rail_from_walk": 0,
+    "bus_from_car": 71
+  },
+  "false_negative": {
+    "rail_to_nonrail": 0,
+    "bus_to_nonbus": 1222
+  }
+}

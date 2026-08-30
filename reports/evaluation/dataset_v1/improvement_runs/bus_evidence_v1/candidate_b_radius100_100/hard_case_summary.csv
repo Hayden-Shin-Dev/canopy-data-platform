@@ -1,0 +1,12 @@
+﻿hard_case_type,journey_count,raw_accuracy,final_accuracy
+car_near_station,1,1.0,0.0
+car_past_bus_stops,1,1.0,0.0
+car_waiting_near_stop,1,1.0,0.0
+congested_car,1,0.0,0.0
+long_stop_spacing,3,0.0,0.0
+parallel_rail_bus,3,0.0,0.0
+parallel_rail_road,1,1.0,0.0
+parallel_road_and_bikeway,1,1.0,1.0
+slow_bus,4,0.0,0.0
+stop_like_car,2,0.0,0.0
+two_station_proximity,2,1.0,1.0

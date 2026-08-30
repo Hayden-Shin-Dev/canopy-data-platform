@@ -1,0 +1,43 @@
+{
+  "dataset_root": "C:\\Users\\user\\Desktop\\canopy-project-pt\\data\\evaluation\\seoul-synthetic\\evaluation_dataset_v1",
+  "dataset_validation": {
+    "root": "C:\\Users\\user\\Desktop\\canopy-project-pt\\data\\evaluation\\seoul-synthetic\\evaluation_dataset_v1",
+    "dataset_version": "dataset_v1",
+    "frozen": "frozen",
+    "journey_count": 700,
+    "gps_file_count": 700,
+    "ground_truth_file_count": 700,
+    "validation_status": "passed",
+    "hashes_checked": 0,
+    "hashes_passed": 0,
+    "hashes_missing_optional": [],
+    "checks": {
+      "dataset_version": true,
+      "frozen": true,
+      "journey_count": true,
+      "gps_count": true,
+      "ground_truth_count": true,
+      "validation_report_passed": true,
+      "manifest_hashes": true
+    },
+    "status": "PASS"
+  },
+  "canopy_baseline_commit": "7a193ed",
+  "evaluation_commit": "5b1139f",
+  "branch": "improve/bus-evidence-v1",
+  "total_journeys": 100,
+  "successfully_evaluated": 100,
+  "failed": 0,
+  "skipped": 0,
+  "runtime_seconds": 157.731,
+  "ground_truth_used_by_inference": false,
+  "gps_label_leakage": false,
+  "multimodal_journeys": 0,
+  "hard_case_journeys": 20,
+  "merged_from_shards": [
+    "reports\\evaluation\\dataset_v1\\improvement_runs\\bus_evidence_v1\\candidate_b_radius100_shards\\shard_00",
+    "reports\\evaluation\\dataset_v1\\improvement_runs\\bus_evidence_v1\\candidate_b_radius100_shards\\shard_01",
+    "reports\\evaluation\\dataset_v1\\improvement_runs\\bus_evidence_v1\\candidate_b_radius100_shards\\shard_02",
+    "reports\\evaluation\\dataset_v1\\improvement_runs\\bus_evidence_v1\\candidate_b_radius100_shards\\shard_03"
+  ]
+}

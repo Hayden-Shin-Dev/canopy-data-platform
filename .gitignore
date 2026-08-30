@@ -33,6 +33,14 @@ reports/**/runs/*
 !reports/**/runs/**/README.md
 reports/evaluation/dataset_v1/smoke_*/
 
+# Evaluation shard/intermediate outputs; merged candidate reports are tracked.
+reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v1/*_shards/
+reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v1/baseline/
+reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v1/sample/
+reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v1/candidate_a_endpoint_route_50/
+reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v1/candidate_c_structured_100/
+reports/evaluation/dataset_v1/improvement_runs/bus_evidence_v1/candidate_c_structured_bus_100/
+
 # Frozen evaluation datasets are supplied locally and remain read-only.
 data/evaluation/**
 

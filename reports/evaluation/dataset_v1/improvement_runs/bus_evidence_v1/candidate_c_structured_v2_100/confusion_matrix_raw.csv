@@ -1,0 +1,6 @@
+﻿actual,walk,bike,car,bus,rail
+walk,0,0,0,0,0
+bike,0,0,0,0,0
+car,74,220,333,274,0
+bus,24,425,446,371,0
+rail,0,0,0,0,0

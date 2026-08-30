@@ -1,0 +1,9 @@
+{
+  "previous_production_commit": "7a193ed",
+  "previous_production_tag": "integration-v1.0.1",
+  "improvement_branch": "improve/bus-evidence-v1",
+  "selected_candidate": null,
+  "release_status": "BLOCKED",
+  "new_tag": null,
+  "main_merge": null
+}

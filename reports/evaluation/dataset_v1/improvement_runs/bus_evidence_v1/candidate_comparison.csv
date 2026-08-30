@@ -1,0 +1,5 @@
+candidate,scope,journeys,failed,accuracy,macro_f1,car_f1,bus_precision,bus_recall,bus_f1,false_bus,decision
+production_v1.0.1,700_full,700,0,0.7851983422,0.3921187007,0.1745114231,0.3527738265,0.0701754386,0.1170639603,910,baseline
+candidate_a_endpoint_route,700_full,700,0,0.7851983422,0.3921187007,0.1745114231,0.3527738265,0.0701754386,0.1170639603,910,rejected_no_change
+candidate_b_radius100,car_bus_subset,100,0,0.1707429626,0.1044565309,0.3220338983,0.4707602339,0.1271721959,0.2002487562,181,not_release_eligible
+candidate_c_structured_confirmation,car_bus_subset,100,0,0.1652053530,0.0962550264,0.4175531915,0.3826086957,0.0347551343,0.0637219406,71,rejected_bus_regression

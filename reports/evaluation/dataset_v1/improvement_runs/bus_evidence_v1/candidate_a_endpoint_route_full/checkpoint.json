@@ -1,0 +1,19 @@
+{
+  "dataset_version": "dataset_v1",
+  "canopy_baseline_commit": "7a193ed",
+  "evaluation_commit": "537ad33",
+  "completed_trip_ids": [
+    "trip_000001",
+    "trip_000002",
+    "trip_000003",
+    "trip_000004",
+    "trip_000005",
+    "trip_000006",
+    "trip_000007",
+    "trip_000008",
+    "trip_000009"
+  ],
+  "completed_count": 9,
+  "total_requested": 700,
+  "updated_at": "2026-08-30T13:15:43.853112+09:00"
+}

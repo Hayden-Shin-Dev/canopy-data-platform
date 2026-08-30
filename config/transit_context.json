@@ -2,7 +2,7 @@
   "version": "1.0",
   "coordinate_system": "WGS84 (EPSG:4326)",
   "radii_m": {
-    "bus_stop": 100,
+    "bus_stop": 150,
     "subway_station": 250,
     "korail_station": 500
   },
@@ -25,9 +25,9 @@
     "minimum_ml_confidence": 0.55,
     "ambiguity_margin": 0.10,
     "rail_confirmation_score": 0.70,
-    "bus_require_endpoint_route": 1.0,
+    "bus_require_endpoint_route": 0.0,
     "bus_require_structured_confirmation": 0.0,
-    "bus_use_window_history": 1.0,
+    "bus_use_window_history": 0.0,
     "pre_transit_bike_max_windows": 2,
     "pre_transit_bike_max_confidence": 0.75
   }
