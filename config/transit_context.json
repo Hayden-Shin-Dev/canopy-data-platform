@@ -26,7 +26,7 @@
     "ambiguity_margin": 0.10,
     "rail_confirmation_score": 0.70,
     "bus_require_ordered_progression": 0,
-    "bus_use_ordered_progression_score": 0,
+    "bus_use_ordered_progression_score": 1,
     "pre_transit_bike_max_windows": 2,
     "pre_transit_bike_max_confidence": 0.75
   }
