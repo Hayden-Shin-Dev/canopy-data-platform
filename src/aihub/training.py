@@ -118,6 +118,7 @@ def train_model(
             raise ValueError(f"{split_name} split is missing classes: {missing_classes}")
     model = make_model(model_type, seed=seed, n_estimators=n_estimators, class_weight=class_weight)
     model.fit(train[feature_columns], train["canonical_mode"])
+    model_classes = [str(value) for value in getattr(model, "classes_", CANOPY_MODES)]
     result: dict[str, object] = {
         "model_type": model_type,
         "seed": seed,
@@ -125,8 +126,9 @@ def train_model(
         "class_weight": class_weight,
         "feature_set": feature_set,
         "feature_version": "aihub-window-v1",
+        "window_duration_seconds": 60,
         "feature_columns": feature_columns,
-        "classes": list(CANOPY_MODES),
+        "classes": model_classes,
         "metrics": {
             "train": _evaluate(model, train, feature_columns),
             "validation": _evaluate(model, validation, feature_columns),
@@ -141,8 +143,9 @@ def train_model(
         {
             "model": model,
             "feature_columns": feature_columns,
-            "classes": list(CANOPY_MODES),
+            "classes": model_classes,
             "feature_version": "aihub-window-v1",
+            "window_duration_seconds": 60,
         },
         model_output,
     )

@@ -55,6 +55,17 @@ def predict_event_window(model_path: str | Path, events: Sequence[GpsEvent]) -> 
         raise ValueError("Invalid AI-Hub model artifact")
     if list(bundle["feature_columns"]) != list(AIHUB_FEATURE_COLUMNS):
         raise ValueError("AI-Hub model feature contract does not match runtime")
+    duration_seconds = (events[-1].timestamp - events[0].timestamp).total_seconds()
+    expected_duration = float(bundle.get("window_duration_seconds", 60))
+    if duration_seconds < expected_duration * 0.75:
+        return {
+            "status": "COLLECTING",
+            "predicted_mode": None,
+            "confidence": None,
+            "probabilities": {},
+            "feature_version": bundle.get("feature_version", "unknown"),
+            "window_duration_seconds": duration_seconds,
+        }
     frame = pd.DataFrame([event_features(events)])[list(AIHUB_FEATURE_COLUMNS)]
     probabilities = bundle["model"].predict_proba(frame)[0]
     classes = [str(value) for value in bundle["classes"]]
@@ -65,5 +76,6 @@ def predict_event_window(model_path: str | Path, events: Sequence[GpsEvent]) -> 
         "confidence": probability_map[predicted_mode],
         "probabilities": probability_map,
         "feature_version": bundle.get("feature_version", "unknown"),
-        "window_duration_seconds": (events[-1].timestamp - events[0].timestamp).total_seconds(),
+        "status": "READY",
+        "window_duration_seconds": duration_seconds,
     }

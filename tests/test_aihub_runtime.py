@@ -33,6 +33,18 @@ def test_runtime_uses_same_feature_contract(tmp_path: Path) -> None:
     )
     path = tmp_path / "model.joblib"
     joblib.dump({"model": model, "feature_columns": list(AIHUB_FEATURE_COLUMNS), "classes": ["walk", "car"], "feature_version": "aihub-window-v1"}, path)
-    result = predict_event_window(path, [_event(0), _event(1)])
+    result = predict_event_window(path, [_event(index) for index in range(61)])
     assert result["predicted_mode"] in {"walk", "car"}
     assert abs(sum(result["probabilities"].values()) - 1.0) < 1e-9
+
+
+def test_runtime_waits_for_a_complete_aihub_window(tmp_path: Path) -> None:
+    model = ExtraTreesClassifier(n_estimators=2, random_state=1).fit(
+        [[0.0] * len(AIHUB_FEATURE_COLUMNS), [1.0] * len(AIHUB_FEATURE_COLUMNS)],
+        ["walk", "car"],
+    )
+    path = tmp_path / "model.joblib"
+    joblib.dump({"model": model, "feature_columns": list(AIHUB_FEATURE_COLUMNS), "classes": ["walk", "car"]}, path)
+    result = predict_event_window(path, [_event(0), _event(1)])
+    assert result["status"] == "COLLECTING"
+    assert result["predicted_mode"] is None
