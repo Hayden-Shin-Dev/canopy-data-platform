@@ -23,7 +23,13 @@ def _load_manifest(path: str | Path) -> dict[str, object]:
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
-def replay_entry(entry: dict[str, object], *, source_root: str | Path, speed: int | str = "instant") -> dict[str, object]:
+def replay_entry(
+    entry: dict[str, object],
+    *,
+    source_root: str | Path,
+    speed: int | str = "instant",
+    references: TransitRuntimeReferences | None = None,
+) -> dict[str, object]:
     """Run one manifest entry; ground truth is read only after inference returns."""
 
     split_path = ROOT / "data/interim/aihub/aihub_split_manifest.json"
@@ -34,19 +40,9 @@ def replay_entry(entry: dict[str, object], *, source_root: str | Path, speed: in
     events = replay.session.events
     model = default_mobility_model()
     windows = infer_windows(events, model_path=model, window_seconds=120)
-    expected = build_expected_features(events)
-    pipeline = run_full_pipeline(
-        events,
-        expected.features,
-        references=TransitRuntimeReferences.from_directory(),
-        geolife_model_path=model,
-        ktdb_model_path=ROOT / "models/expected_behaviour/ktdb_population_baseline.pkl",
-        factors_csv=ROOT / "data/processed/emission_factors/emission_factors_2026.csv",
-    )
     ground_truth = str(entry["ground_truth"])
     movement_modes = [window.predicted_mode for window in windows if window.status == "READY" and window.predicted_mode]
-    final_mode = pipeline.get("actual_behaviour", {}).get("final_mode")
-    return {
+    result: dict[str, object] = {
         "replay_id": entry["replay_id"],
         "uid": entry["uid"],
         "trajectory_id": entry["trajectory_id"],
@@ -56,20 +52,48 @@ def replay_entry(entry: dict[str, object], *, source_root: str | Path, speed: in
         "replay_status": replay.status,
         "movement_prediction": movement_modes[-1] if movement_modes else None,
         "movement_probabilities": windows[-1].probabilities if windows else {},
-        "temporal_prediction": pipeline.get("actual_behaviour", {}).get("mode_sequence", []),
-        "transit_context_result": pipeline.get("window_results", []),
-        "final_prediction": final_mode,
+        "temporal_prediction": [],
+        "transit_context_result": [],
+        "final_prediction": None,
         "movement_correct": movement_modes[-1] == ground_truth if movement_modes else False,
-        "final_correct": final_mode == ground_truth,
-        "pipeline_status": pipeline.get("status"),
-        "distance_km": pipeline.get("distance_km"),
-        "emission": pipeline.get("co2", {}),
+        "final_correct": False,
+        "pipeline_status": "NOT_RUN",
+        "distance_km": None,
+        "emission": {},
     }
+    try:
+        expected = build_expected_features(events)
+        pipeline = run_full_pipeline(
+            events,
+            expected.features,
+            references=references or TransitRuntimeReferences.from_directory(),
+            geolife_model_path=model,
+            ktdb_model_path=ROOT / "models/expected_behaviour/ktdb_population_baseline.pkl",
+            factors_csv=ROOT / "data/processed/emission_factors/emission_factors_2026.csv",
+        )
+    except Exception as error:
+        result["pipeline_status"] = "KTDB_CONTEXT_UNAVAILABLE"
+        result["error"] = str(error)
+        return result
+    final_mode = pipeline.get("actual_behaviour", {}).get("final_mode")
+    result.update(
+        {
+            "temporal_prediction": pipeline.get("actual_behaviour", {}).get("mode_sequence", []),
+            "transit_context_result": pipeline.get("window_results", []),
+            "final_prediction": final_mode,
+            "final_correct": final_mode == ground_truth,
+            "pipeline_status": pipeline.get("status"),
+            "distance_km": pipeline.get("distance_km"),
+            "emission": pipeline.get("co2", {}),
+        }
+    )
+    return result
 
 
 def replay_batch(manifest_path: str | Path, *, source_root: str | Path, speed: int | str = "instant") -> dict[str, object]:
     manifest = _load_manifest(manifest_path)
-    results = [replay_entry(entry, source_root=source_root, speed=speed) for entry in manifest["trajectories"]]
+    references = TransitRuntimeReferences.from_directory()
+    results = [replay_entry(entry, source_root=source_root, speed=speed, references=references) for entry in manifest["trajectories"]]
     return {
         "manifest": str(Path(manifest_path)),
         "model": str(default_mobility_model()),
@@ -77,6 +101,10 @@ def replay_batch(manifest_path: str | Path, *, source_root: str | Path, speed: i
         "trajectory_count": len(results),
         "movement_correct_count": sum(bool(row["movement_correct"]) for row in results),
         "final_correct_count": sum(bool(row["final_correct"]) for row in results),
+        "pipeline_status_counts": {
+            status: sum(row["pipeline_status"] == status for row in results)
+            for status in sorted({str(row["pipeline_status"]) for row in results})
+        },
         "by_class": {
             mode: {
                 "count": sum(row["ground_truth"] == mode for row in results),
