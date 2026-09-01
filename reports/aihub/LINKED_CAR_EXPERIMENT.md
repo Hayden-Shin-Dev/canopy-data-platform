@@ -27,3 +27,18 @@ car test F1은 0.7101에서 0.7195로 상승했고, bus F1도 0.5896에서 0.598
 ## 판단
 
 Validation Macro F1이 개선됐고 release threshold도 유지하므로 이 후보를 다음 production candidate로 선택한다. 전체 linked archive를 무리하게 학습에 넣지 않고, `scripts/rebuild_aihub_linked_car_candidate.ps1`의 bounded sample 정책을 그대로 재현한다.
+
+## 10,000-file follow-up
+
+The first 2,000-file sample was expanded to 10,000 files from the linked vehicle archive. The linked rows were still assigned to train only, capped at three windows per linked user. Existing AI-Hub validation and test rows were not changed, and all user IDs remained disjoint.
+
+| Metric | 2,000-file candidate | 10,000-file candidate | Change |
+|---|---:|---:|---:|
+| Validation Accuracy | 0.7280 | 0.7242 | -0.0038 |
+| Validation Macro F1 | 0.7295 | 0.7305 | +0.0010 |
+| Test Accuracy | 0.7074 | 0.7071 | -0.0003 |
+| Test Macro F1 | 0.6959 | 0.6992 | +0.0033 |
+
+The 10,000-file candidate is the current production artifact because it improves the independent test Macro F1 while keeping the validation Macro F1 above the previous candidate. Its per-class test F1 is walk 0.8489, bike 0.6438, car 0.7145, bus 0.5928, rail 0.6959. Validation-only probability calibration was also tested, but it reduced the independent test Macro F1 for this larger sample and was not promoted.
+
+The production rebuild defaults to this bounded 10,000-file sample when `-VehicleArchives` is supplied. The ZIP remains an external input and is never committed.

@@ -2,7 +2,7 @@
 
 ## 현재 Production Movement ML
 
-AI-Hub 실제 한국 GPS를 primary benchmark로 사용합니다. 사용자 UID가 겹치지 않는 train/validation/test split을 유지하며, 현재 champion은 linked vehicle 보강을 포함한 120초 aggregate HistGradientBoosting입니다. Validation Accuracy 0.7280 / Macro F1 0.7295, Test Accuracy 0.7074 / Macro F1 0.6959를 기록했습니다.
+AI-Hub 실제 한국 GPS를 primary benchmark로 사용합니다. 사용자 UID가 겹치지 않는 train/validation/test split을 유지하며, 현재 champion은 linked vehicle 10,000-file 보강을 포함한 120초 aggregate HistGradientBoosting입니다. Validation Accuracy 0.7242 / Macro F1 0.7305, Test Accuracy 0.7071 / Macro F1 0.6992를 기록했습니다.
 
 `evaluation_dataset_v3`는 synthetic historical benchmark로 보존하지만 Production 모델 선택과 Release Gate에서는 제외합니다. 정책과 근거는 [v3 benchmark deprecation](docs/evaluation/V3_BENCHMARK_DEPRECATION.md)에 정리되어 있습니다. 기존 GeoLife 모델은 rollback artifact로 유지합니다.
 
@@ -46,6 +46,13 @@ AI-Hub Production 모델을 처음 준비하거나 다시 만들 때는 저장�
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/rebuild_aihub_production.ps1
+```
+
+linked 차량 ZIP을 사용해 같은 후보를 다시 만들려면 다음처럼 실행합니다. ZIP은 로컬에만 두고, 기본 10,000개 파일을 train split에만 추가합니다.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/rebuild_aihub_production.ps1 `
+  -VehicleArchives "C:\path\01.연계데이터_003.차량이동궤적_2.zip"
 ```
 
 모델 파일은 용량 때문에 Git에 저장하지 않습니다. 생성된 `models/mobility_recognition/aihub_hist120.joblib`이 있으면 production 경로가 이를 사용하고, 없으면 기존 GeoLife rollback 모델을 사용합니다.

@@ -14,13 +14,10 @@
       "accepted_event_count": 433,
       "actual_geolife_window_sequence": [
         "walk",
-        "rail",
+        "bike",
         "walk",
         "rail",
-        "bus",
         "bike",
-        "rail",
-        "bus",
         "walk"
       ],
       "production_mode_sequence": [
@@ -84,8 +81,8 @@
     },
     "transit_fusion_evaluation": {
       "status": "PASS",
-      "raw_accuracy": 0.0,
-      "fused_accuracy": 0.25,
+      "raw_accuracy": 0.5,
+      "fused_accuracy": 0.5,
       "false_rail_raw": 0,
       "false_rail_fused": 0,
       "bike_support": 0
@@ -132,7 +129,7 @@
           "status": "PASS",
           "accepted_event_count": 4,
           "rejected_event_count": 0,
-          "actual_mode": "car",
+          "actual_mode": "walk",
           "distance_km": 0.17026723772840138
         }
       },

@@ -3,7 +3,7 @@ param(
     [string]$SplitManifest = "data/interim/aihub/aihub_split_manifest.json",
     [string]$AggregateWindows = "data/interim/aihub/aihub_120_agg_rebuilt.csv",
     [string[]]$VehicleArchives = @(),
-    [int]$MaxVehicleFiles = 2000,
+    [int]$MaxVehicleFiles = 10000,
     [string]$Model = "models/mobility_recognition/aihub_hist120.joblib",
     [string]$Metrics = "data/interim/aihub/aihub_hist120_metrics.json"
 )

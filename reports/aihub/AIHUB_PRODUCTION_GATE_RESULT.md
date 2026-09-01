@@ -12,10 +12,10 @@
 | Feature contract | PASS | `AIHUB_PRODUCTION_CONFIG.json`, release validator |
 | Dataset / split manifest hash | PASS | release validator |
 | 120초 window contract | PASS | release validator `--window-seconds 120` |
-| Validation Accuracy >= 0.70 | PASS (0.7280) | `hist_120_linked_car_train3_metrics.json` |
-| Test Accuracy >= 0.70 | PASS (0.7074) | `hist_120_linked_car_train3_metrics.json` |
-| Validation Macro F1 >= 0.65 | PASS (0.7295) | `hist_120_linked_car_train3_metrics.json` |
-| Test Macro F1 >= 0.65 | PASS (0.6959) | `hist_120_linked_car_train3_metrics.json` |
+| Validation Accuracy >= 0.70 | PASS (0.7242) | `hist_120_linked_car_10000_metrics.json` |
+| Test Accuracy >= 0.70 | PASS (0.7071) | `hist_120_linked_car_10000_metrics.json` |
+| Validation Macro F1 >= 0.65 | PASS (0.7305) | `hist_120_linked_car_10000_metrics.json` |
+| Test Macro F1 >= 0.65 | PASS (0.6992) | `hist_120_linked_car_10000_metrics.json` |
 | Production replay | PASS | `reports/integration/validation.json` |
 | Full regression suite | PASS (247 passed) | `python -m pytest -q` |
 | v3 in model selection or gate | PASS (excluded) | `docs/evaluation/V3_BENCHMARK_DEPRECATION.md` |
@@ -23,6 +23,8 @@
 ## Champion
 
 `models/mobility_recognition/aihub_hist120.joblib`
+
+Current artifact: 10,000-file linked vehicle train-only augmentation, three windows per linked user. Validation-only probability calibration was evaluated but not promoted because it lowered the independent test Macro F1 on this larger sample.
 
 HistGradientBoostingClassifier, seed 2021, 120초 aggregate window, 21개 AI-Hub feature, class weighting 없음. AI-Hub linked vehicle ZIP에서 사용자별 최대 3개 train window를 보강했습니다. 기존 `geolife_hardened_120s_purity_090.joblib`는 rollback artifact로 유지합니다. 모델 파일은 저장소 정책상 Git에 넣지 않으며 `scripts/rebuild_aihub_production.ps1 -VehicleArchives <zip>`로 재생성합니다.
 
