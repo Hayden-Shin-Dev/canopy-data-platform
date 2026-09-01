@@ -59,6 +59,8 @@ def make_model(model_type: str, *, seed: int = 2021, n_estimators: int = 300) ->
 def _evaluate(model: Any, frame: pd.DataFrame, features: list[str]) -> dict[str, object]:
     target = frame["canonical_mode"].astype(str)
     predicted = model.predict(frame[features])
+    if getattr(predicted, "ndim", 1) > 1:
+        predicted = predicted[:, 0]
     predicted = [str(value) for value in predicted]
     probabilities = model.predict_proba(frame[features])
     report = classification_report(
