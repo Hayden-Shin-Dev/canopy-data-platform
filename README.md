@@ -42,6 +42,14 @@ python scripts/run_integration_ui.py
 pytest -q --disable-warnings
 ```
 
+AI-Hub Production 모델을 처음 준비하거나 다시 만들 때는 저장소 루트에서 다음 PowerShell 명령을 실행합니다.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/rebuild_aihub_production.ps1
+```
+
+모델 파일은 용량 때문에 Git에 저장하지 않습니다. 생성된 `models/mobility_recognition/aihub_hist120.joblib`이 있으면 production 경로가 이를 사용하고, 없으면 기존 GeoLife rollback 모델을 사용합니다.
+
 Local UI는 `http://127.0.0.1:8765`에서 확인합니다. 지도 Tile을 보려면 인터넷 연결이 필요합니다.
 
 Integration 실행 방법과 사용자 화면은 [Integration branch README](https://github.com/Hayden-Shin-Dev/canopy-data-platform/tree/dev/integration-v1)에서 확인할 수 있습니다. 실제 확인 화면은 [Home](reports/integration/screenshots/home.png), [Active](reports/integration/screenshots/active.png), [Result](reports/integration/screenshots/result.png)입니다.
