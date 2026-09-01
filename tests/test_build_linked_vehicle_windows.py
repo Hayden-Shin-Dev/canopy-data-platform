@@ -20,3 +20,12 @@ def test_build_linked_vehicle_windows_labels_car_and_keeps_user_split(tmp_path: 
     assert set(frame["canonical_mode"]) == {"car"}
     assert set(frame["source_class"]) == {"LINKED_VEHICLE"}
     assert frame["accuracy_missing_ratio"].iloc[0] == 1.0
+
+
+def test_build_linked_vehicle_windows_skips_csv_error_entry(tmp_path: Path) -> None:
+    archive_path = tmp_path / "oversized.zip"
+    oversized = "timestamp,latitude,longitude\n" + ("1," + "x" * 140_000 + ",2\n")
+    with zipfile.ZipFile(archive_path, "w") as archive:
+        archive.writestr("broken.csv", oversized)
+    output = tmp_path / "windows.csv"
+    assert build([archive_path], output) == 0

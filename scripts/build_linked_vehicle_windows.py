@@ -29,26 +29,34 @@ def _split_for_user(user_id: str) -> str:
 
 
 def _read_points(archive: zipfile.ZipFile, entry: zipfile.ZipInfo) -> list[TrajectoryPoint] | None:
-    with archive.open(entry) as stream:
-        text = io.TextIOWrapper(stream, encoding="utf-8-sig", errors="replace", newline="")
-        reader = csv.DictReader(text)
-        required = {"timestamp", "latitude", "longitude"}
-        if not required <= set(reader.fieldnames or ()):
-            return None
-        points: list[TrajectoryPoint] = []
-        user_id = Path(entry.filename).name.split("-")[1]
-        trajectory_id = Path(entry.filename).stem
-        for row in reader:
-            try:
-                timestamp = datetime.fromtimestamp(int(row["timestamp"]) / 1000, tz=UTC).replace(tzinfo=None)
-                latitude = float(row["latitude"])
-                longitude = float(row["longitude"])
-            except (TypeError, ValueError, OverflowError, OSError):
-                continue
-            if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
-                continue
-            points.append(TrajectoryPoint(user_id, trajectory_id, latitude, longitude, 0.0, timestamp))
-    return points
+    try:
+        with archive.open(entry) as stream:
+            text = io.TextIOWrapper(stream, encoding="utf-8-sig", errors="replace", newline="")
+            reader = csv.DictReader(text)
+            required = {"timestamp", "latitude", "longitude"}
+            if not required <= set(reader.fieldnames or ()):
+                return None
+            points: list[TrajectoryPoint] = []
+            filename_parts = Path(entry.filename).name.split("-")
+            if len(filename_parts) < 2:
+                return None
+            user_id = filename_parts[1]
+            trajectory_id = Path(entry.filename).stem
+            for row in reader:
+                try:
+                    timestamp = datetime.fromtimestamp(int(row["timestamp"]) / 1000, tz=UTC).replace(tzinfo=None)
+                    latitude = float(row["latitude"])
+                    longitude = float(row["longitude"])
+                except (TypeError, ValueError, OverflowError, OSError):
+                    continue
+                if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
+                    continue
+                points.append(TrajectoryPoint(user_id, trajectory_id, latitude, longitude, 0.0, timestamp))
+        return points
+    except csv.Error:
+        # A few linked entries are not valid CSV (including oversized fields).
+        # They are excluded from the experiment and never interpreted as GPS.
+        return None
 
 
 def _feature_row(window) -> dict[str, object]:
