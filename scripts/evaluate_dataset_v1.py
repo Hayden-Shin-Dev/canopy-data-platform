@@ -58,12 +58,16 @@ def _load_ground_truth(path: Path) -> dict[str, Any]:
         payload = json.load(handle)
     segments = []
     for segment in payload.get("segments", []):
+        start_value = segment.get("start_timestamp", segment.get("start_time"))
+        end_value = segment.get("end_timestamp", segment.get("end_time"))
+        if start_value is None or end_value is None:
+            raise ValueError(f"ground truth segment has no start/end timestamp: {path}")
         segments.append(
             {
                 **segment,
                 "mode": str(segment["mode"]),
-                "start": _parse_time(segment["start_timestamp"]),
-                "end": _parse_time(segment["end_timestamp"]),
+                "start": _parse_time(start_value),
+                "end": _parse_time(end_value),
             }
         )
     return {**payload, "segments": segments}
@@ -253,7 +257,7 @@ def _write_report(run_dir: Path, summary: dict[str, Any], metrics: dict[str, Any
 
     raw, final = metrics["raw"], metrics["final"]
     rows = [
-        "# Canopy dataset_v1 blind evaluation",
+        f"# Canopy {summary.get('dataset_version', 'dataset_v1')} blind evaluation",
         "",
         f"Dataset: `{summary['dataset_root']}`",
         f"Canopy Baseline Commit: `{summary['canopy_baseline_commit']}`",
@@ -314,7 +318,8 @@ def _write_report(run_dir: Path, summary: dict[str, Any], metrics: dict[str, Any
             "- Distance-weighted metrics are marked NOT AVAILABLE because the frozen Ground Truth does not provide per-segment distance weights.",
         ]
     )
-    (run_dir / "CANOPY_DATASET_V1_EVALUATION.md").write_text("\n".join(rows) + "\n", encoding="utf-8")
+    report_name = "BASELINE_EVALUATION_V3.md" if summary.get("dataset_version") == "evaluation_dataset_v3" else "CANOPY_DATASET_V1_EVALUATION.md"
+    (run_dir / report_name).write_text("\n".join(rows) + "\n", encoding="utf-8")
 
 
 def _artifact_sha256(path: Path) -> str | None:
@@ -386,7 +391,7 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
             (output / "checkpoint.json").write_text(
                 json.dumps(
                     {
-                        "dataset_version": "dataset_v1",
+                        "dataset_version": dataset.dataset_manifest.get("dataset_version"),
                         "canopy_baseline_commit": canopy_baseline_commit,
                         "evaluation_commit": evaluation_commit,
                         "completed_trip_ids": sorted(completed),
@@ -429,6 +434,7 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
     }
     summary = {
         "dataset_root": str(dataset.root),
+        "dataset_version": dataset.dataset_manifest.get("dataset_version"),
         "dataset_validation": frozen_validation,
         "canopy_baseline_commit": canopy_baseline_commit,
         "evaluation_commit": evaluation_commit,
