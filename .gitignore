@@ -36,7 +36,7 @@ reports/evaluation_v3_baseline/predictions.jsonl
 reports/evaluation_v3_baseline/prediction_traces.jsonl
 reports/evaluation_v3_baseline_shards/
 reports/evaluation_v3_smoke/
-reports/evaluation_v3_aihub_candidate*/
+reports/evaluation_v3_aihub_*/
 
 # Frozen evaluation datasets are supplied locally and remain read-only.
 data/evaluation/**
