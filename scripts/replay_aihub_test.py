@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 import sys
 
+import pandas as pd
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -29,6 +31,7 @@ def replay_entry(
     source_root: str | Path,
     speed: int | str = "instant",
     references: TransitRuntimeReferences | None = None,
+    purpose: str | None = None,
 ) -> dict[str, object]:
     """Run one manifest entry; ground truth is read only after inference returns."""
 
@@ -62,7 +65,7 @@ def replay_entry(
         "emission": {},
     }
     try:
-        expected = build_expected_features(events)
+        expected = build_expected_features(events, purpose=purpose)
         pipeline = run_full_pipeline(
             events,
             expected.features,
@@ -93,7 +96,14 @@ def replay_entry(
 def replay_batch(manifest_path: str | Path, *, source_root: str | Path, speed: int | str = "instant") -> dict[str, object]:
     manifest = _load_manifest(manifest_path)
     references = TransitRuntimeReferences.from_directory()
-    results = [replay_entry(entry, source_root=source_root, speed=speed, references=references) for entry in manifest["trajectories"]]
+    dataset = pd.read_csv(
+        ROOT / "data/processed/population_baseline/ktdb/01_population_model_training_all.csv",
+        usecols=["purpose", "commute_direction"],
+        encoding="utf-8-sig",
+    )
+    commute = dataset.loc[dataset["commute_direction"].eq("to_work"), "purpose"].dropna().astype(str)
+    purpose = str(commute.mode().iloc[0]) if not commute.empty else None
+    results = [replay_entry(entry, source_root=source_root, speed=speed, references=references, purpose=purpose) for entry in manifest["trajectories"]]
     return {
         "manifest": str(Path(manifest_path)),
         "model": str(default_mobility_model()),
