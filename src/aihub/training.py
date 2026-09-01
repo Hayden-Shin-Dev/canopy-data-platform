@@ -15,18 +15,21 @@ from .config import CANOPY_MODES
 from .features import AIHUB_FEATURE_COLUMNS
 
 
-def make_model(model_type: str, *, seed: int = 2021, n_estimators: int = 300) -> Any:
+BASE_FEATURE_COLUMNS = AIHUB_FEATURE_COLUMNS[:16]
+
+
+def make_model(model_type: str, *, seed: int = 2021, n_estimators: int = 300, class_weight: str | None = "balanced") -> Any:
     if model_type == "random_forest":
         return RandomForestClassifier(
             n_estimators=n_estimators,
-            class_weight="balanced_subsample",
+            class_weight="balanced_subsample" if class_weight else None,
             random_state=seed,
             n_jobs=-1,
         )
     if model_type == "extra_trees":
         return ExtraTreesClassifier(
             n_estimators=n_estimators,
-            class_weight="balanced",
+            class_weight=class_weight,
             random_state=seed,
             n_jobs=-1,
         )
@@ -35,7 +38,7 @@ def make_model(model_type: str, *, seed: int = 2021, n_estimators: int = 300) ->
             max_iter=250,
             learning_rate=0.08,
             max_leaf_nodes=31,
-            class_weight="balanced",
+            class_weight=class_weight,
             random_state=seed,
         )
     if model_type == "catboost":
@@ -48,7 +51,7 @@ def make_model(model_type: str, *, seed: int = 2021, n_estimators: int = 300) ->
             depth=8,
             learning_rate=0.08,
             loss_function="MultiClass",
-            auto_class_weights="Balanced",
+            auto_class_weights="Balanced" if class_weight else None,
             random_seed=seed,
             verbose=False,
             thread_count=-1,
@@ -91,13 +94,17 @@ def train_model(
     model_type: str = "extra_trees",
     seed: int = 2021,
     n_estimators: int = 300,
+    class_weight: str | None = "balanced",
+    feature_set: str = "all",
 ) -> dict[str, object]:
     frame = pd.read_csv(dataset_csv, encoding="utf-8-sig", dtype={"user_id": "string"})
     required = {"user_id", "canonical_mode", "split", *AIHUB_FEATURE_COLUMNS}
     missing = sorted(required - set(frame.columns))
     if missing:
         raise ValueError(f"AI-Hub training table is missing columns: {missing}")
-    feature_columns = list(AIHUB_FEATURE_COLUMNS)
+    if feature_set not in {"all", "base"}:
+        raise ValueError("feature_set must be all or base")
+    feature_columns = list(AIHUB_FEATURE_COLUMNS if feature_set == "all" else BASE_FEATURE_COLUMNS)
     for column in feature_columns:
         frame[column] = pd.to_numeric(frame[column], errors="coerce").fillna(0.0)
     train = frame[frame["split"] == "train"]
@@ -109,12 +116,14 @@ def train_model(
         missing_classes = sorted(set(CANOPY_MODES) - set(subset["canonical_mode"].astype(str)))
         if missing_classes:
             raise ValueError(f"{split_name} split is missing classes: {missing_classes}")
-    model = make_model(model_type, seed=seed, n_estimators=n_estimators)
+    model = make_model(model_type, seed=seed, n_estimators=n_estimators, class_weight=class_weight)
     model.fit(train[feature_columns], train["canonical_mode"])
     result: dict[str, object] = {
         "model_type": model_type,
         "seed": seed,
         "n_estimators": n_estimators,
+        "class_weight": class_weight,
+        "feature_set": feature_set,
         "feature_version": "aihub-window-v1",
         "feature_columns": feature_columns,
         "classes": list(CANOPY_MODES),

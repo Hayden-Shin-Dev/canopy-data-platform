@@ -24,8 +24,10 @@
 | RandomForest (200) | **0.6789** | **0.6825** | **0.6640** | **0.6444** |
 | HistGradientBoosting | 0.6730 | 0.6628 | 0.6491 | 0.6181 |
 | CatBoost (400 iterations) | 0.6732 | 0.6613 | 0.6475 | 0.6137 |
+| RandomForest, no class weight | **0.6801** | **0.6841** | 0.6633 | 0.6426 |
+| RandomForest, base 16 features only | 0.6527 | 0.6606 | 0.6427 | 0.6205 |
 
-현재 Validation 기준 후보는 RandomForest다. CatBoost까지 포함해도 RandomForest의 Validation Macro F1 0.6825가 가장 높았다. Test에서도 RandomForest가 가장 높았지만, Test를 보고 모델을 고른 것은 아니다.
+현재 Validation 기준 후보는 class weight를 사용하지 않은 RandomForest다(Macro F1 0.6841). Accuracy는 0.6801로 balanced RandomForest보다 높았고, base 16개 feature만 사용한 후보보다도 높았다. 품질 feature 5개가 실제 validation 개선에 기여했다. Test에서도 unweighted RandomForest가 가장 높았지만, Test를 보고 모델을 고른 것은 아니다.
 
 ## RandomForest class별 F1
 
