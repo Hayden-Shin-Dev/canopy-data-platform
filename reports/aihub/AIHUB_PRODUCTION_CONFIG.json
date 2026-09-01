@@ -53,6 +53,12 @@
   },
   "artifact": "models/mobility_recognition/aihub_hist120.joblib",
   "rollback_artifact": "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib",
+  "augmentation": {
+    "enabled": true,
+    "source": "AI-Hub linked vehicle archive",
+    "policy": "add at most 3 deterministic train windows per linked user; never add linked rows to AI-Hub validation/test",
+    "rebuild_option": "scripts/rebuild_aihub_production.ps1 -VehicleArchives <vehicle_zip_paths>"
+  },
   "selection": "validation Macro F1 on UID-disjoint AI-Hub split",
   "v3_policy": "deprecated historical benchmark; excluded from model selection and release gate"
 }

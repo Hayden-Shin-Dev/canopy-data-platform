@@ -2,7 +2,7 @@
 
 ## 현재 Production Movement ML
 
-AI-Hub 실제 한국 GPS를 primary benchmark로 사용합니다. 사용자 UID가 겹치지 않는 train/validation/test split을 유지하며, 현재 champion은 120초 aggregate HistGradientBoosting입니다. Validation Accuracy 0.7235 / Macro F1 0.7276, Test Accuracy 0.7027 / Macro F1 0.6914를 기록했습니다.
+AI-Hub 실제 한국 GPS를 primary benchmark로 사용합니다. 사용자 UID가 겹치지 않는 train/validation/test split을 유지하며, 현재 champion은 linked vehicle 보강을 포함한 120초 aggregate HistGradientBoosting입니다. Validation Accuracy 0.7280 / Macro F1 0.7295, Test Accuracy 0.7074 / Macro F1 0.6959를 기록했습니다.
 
 `evaluation_dataset_v3`는 synthetic historical benchmark로 보존하지만 Production 모델 선택과 Release Gate에서는 제외합니다. 정책과 근거는 [v3 benchmark deprecation](docs/evaluation/V3_BENCHMARK_DEPRECATION.md)에 정리되어 있습니다. 기존 GeoLife 모델은 rollback artifact로 유지합니다.
 
