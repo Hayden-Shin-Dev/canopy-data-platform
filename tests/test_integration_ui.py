@@ -35,6 +35,9 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     assert 'id="mypage"' in module.MOBILE_APP_HTML
     assert 'class="bottom-nav"' in module.MOBILE_APP_HTML
     assert "navigateTab" in module.MOBILE_APP_HTML
+    for screen in ("home", "plan", "start", "active", "complete", "profile"):
+        assert f'id="{screen}"' in module.MOBILE_APP_HTML
+    assert "/assets/canopy-ui/canopy-mascot.png" in module.MOBILE_APP_HTML
     assert "AI-Hub Real GPS Replay" in module.MOBILE_APP_HTML
     assert 'id="aihubReplay"' in module.MOBILE_APP_HTML
     assert "runAIHubReplay" in module.MOBILE_APP_HTML
