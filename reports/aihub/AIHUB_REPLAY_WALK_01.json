@@ -1,0 +1,132 @@
+{
+  "replay_id": "WALK-01",
+  "uid": "00000022",
+  "trajectory_id": "TMC-GPS-00000022-634dfc9e044bd86ff364b5e5-92934489ed7a4d4481cc3d9216d061e72-Dataset__TMC-GPS-00000022-634dfc9e044bd86ff364b5e5-92934489ed7a4d4481cc3d9216d061e73-Dataset__TMC-GPS-00000022-634dfc9e044bd86ff364b5e5-92934489ed7a4d4481cc3d9216d061e74-Dataset",
+  "ground_truth": "walk",
+  "point_count": 180,
+  "duration_seconds": 179.0,
+  "replay_status": "STREAMED",
+  "movement_prediction": "walk",
+  "movement_probabilities": {
+    "bike": 0.010279568993698387,
+    "bus": 0.03605634092035396,
+    "car": 0.2659512458197969,
+    "rail": 0.15166374188133305,
+    "walk": 0.5360491023848177
+  },
+  "temporal_prediction": [
+    "walk"
+  ],
+  "transit_context_result": [
+    {
+      "window_start": "2022-10-18T00:35:21+00:00",
+      "window_end": "2022-10-18T00:37:21+00:00",
+      "features": {
+        "point_count": 120,
+        "observed_duration_sec": 119.0,
+        "distance_m": 41.39868255848936,
+        "displacement_m": 28.62275457397227,
+        "straightness_ratio": 0.6913928851125429,
+        "mean_speed_mps": 0.3478880887268013,
+        "max_speed_mps": 1.8152382545521146,
+        "speed_std_mps": 0.5311464983075762,
+        "mean_abs_acceleration_mps2": 0.1192803724692423,
+        "acceleration_std_mps2": 0.2771721485692324,
+        "stop_ratio": 0.7142857142857143,
+        "mean_heading_change_deg": 26.29810341997136,
+        "altitude_range_m": 11.000793457031264,
+        "avg_sampling_interval_sec": 1.0,
+        "valid_step_count": 119,
+        "gap_step_count": 0,
+        "accuracy_mean_m": 4.284880616267523,
+        "accuracy_std_m": 0.5660487767298376,
+        "accuracy_missing_ratio": 0.0,
+        "altitude_missing_ratio": 0.0,
+        "valid_point_ratio": 1.0
+      },
+      "probabilities": {
+        "bike": 0.019876589513540984,
+        "bus": 0.15387640148075574,
+        "car": 0.08629975061117107,
+        "rail": 0.0800508318888966,
+        "walk": 0.6598964265056356
+      },
+      "geolife_predicted_mode": "walk",
+      "final_mode": "walk",
+      "decision": {
+        "ml_predicted_mode": "walk",
+        "ml_confidence": 0.6598964265056356,
+        "walk_probability": 0.6598964265056356,
+        "bike_probability": 0.019876589513540984,
+        "car_probability": 0.08629975061117107,
+        "bus_probability": 0.15387640148075574,
+        "rail_probability": 0.0800508318888966,
+        "bus_context_score": 0.39397854406130167,
+        "subway_context_score": 0.2650697987347852,
+        "train_context_score": 0.024015249566668978,
+        "matched_bus_route_id": "100100607",
+        "matched_bus_route_no": "9711",
+        "matched_subway_line": "2",
+        "subway_start_station_id": "222",
+        "subway_end_station_id": "222",
+        "matched_train_start_station": null,
+        "matched_train_end_station": null,
+        "final_mode": "walk",
+        "rail_subtype": null,
+        "correction_applied": false,
+        "decision_status": "unchanged",
+        "decision_confidence": 0.6598964265056356,
+        "correction_reason": "ML prediction retained"
+      },
+      "transit_context": {
+        "nearby_bus_stop_count": 5,
+        "matched_bus_route_id": "100100607",
+        "matched_bus_route_no": "9711",
+        "matched_bus_stop_count": 5,
+        "bus_stop_proximity_score": 0.7759141762452068,
+        "bus_route_match_score": 0.6666666666666666,
+        "bus_sequence_score": 0.0,
+        "live_bus_match_score": 0.0,
+        "bus_context_score": 0.39397854406130167,
+        "bus_evidence_reason": "route and stop evidence",
+        "subway_context_score": 0.2650697987347852,
+        "subway_proximity_score": 0.043056567813672064,
+        "subway_line_score": 1.0,
+        "subway_sequence_score": 0.0,
+        "subway_timetable_score": 0.0,
+        "subway_corridor_proximity_score": 0.043056567813672064,
+        "subway_observed_station_count": 1,
+        "subway_current_observed_station_count": 1,
+        "subway_observed_station_ids": [
+          "222"
+        ],
+        "subway_current_observed_station_ids": [
+          "222"
+        ],
+        "subway_current_observed_lines": [
+          "2"
+        ],
+        "matched_subway_line": "2",
+        "subway_start_station_id": "222",
+        "subway_end_station_id": "222",
+        "subway_evidence_reason": "trajectory station proximity",
+        "train_context_score": 0.024015249566668978,
+        "matched_train_start_station": null,
+        "matched_train_end_station": null,
+        "train_evidence_reason": "station proximity with rail probability",
+        "context_status": "READY"
+      }
+    }
+  ],
+  "final_prediction": "walk",
+  "movement_correct": true,
+  "final_correct": true,
+  "pipeline_status": "PASS",
+  "distance_km": 0.042150297342703216,
+  "emission": {
+    "expected_co2e_g": 2.292460945548277,
+    "actual_co2e_g": 0.0,
+    "reduction_co2e_g": 2.292460945548277,
+    "increase": false
+  }
+}

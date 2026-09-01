@@ -1,0 +1,569 @@
+{
+  "schema_version": "aihub-replay-manifest-v1",
+  "source_root": "external AI-Hub dataset root (pass to the loader)",
+  "split_manifest": "aihub_split_manifest.json",
+  "split_manifest_sha256": "10ed3cb0176eb377be825de62386d9e3b0e25843d50bb734d7f07a71cee42bde",
+  "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+  "per_class": 5,
+  "trajectory_count": 25,
+  "class_counts": {
+    "walk": 5,
+    "bike": 5,
+    "car": 5,
+    "bus": 5,
+    "rail": 5
+  },
+  "ground_truth_for_evaluation_only": true,
+  "trajectories": [
+    {
+      "replay_id": "WALK-01",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000022",
+      "trajectory_id": "TMC-GPS-00000022-634dfc9e044bd86ff364b5e5-92934489ed7a4d4481cc3d9216d061e72-Dataset__TMC-GPS-00000022-634dfc9e044bd86ff364b5e5-92934489ed7a4d4481cc3d9216d061e73-Dataset__TMC-GPS-00000022-634dfc9e044bd86ff364b5e5-92934489ed7a4d4481cc3d9216d061e74-Dataset",
+      "ground_truth": "walk",
+      "gps_file": [
+        "TMC-GPS-00000022-634dfc9e044bd86ff364b5e5-92934489ed7a4d4481cc3d9216d061e72-Dataset.csv",
+        "TMC-GPS-00000022-634dfc9e044bd86ff364b5e5-92934489ed7a4d4481cc3d9216d061e73-Dataset.csv",
+        "TMC-GPS-00000022-634dfc9e044bd86ff364b5e5-92934489ed7a4d4481cc3d9216d061e74-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-18 00:35:21",
+      "end_timestamp": "2022-10-18 00:38:20",
+      "source_class": "WALK",
+      "file_sha256": [
+        "35682cd469b643a1a78ddd8b034a4577d61194d2ed5ec86eb6a79121e5d5cf61",
+        "37935bf4c34edc3747004a4861a31238faf0697a1dbdd19fbb48ea2e6a38f29e",
+        "2ed190c210b833c07fad60249ea7addd8664d7edabd8956005af97f00eafeee9"
+      ]
+    },
+    {
+      "replay_id": "WALK-02",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000022",
+      "trajectory_id": "TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20570-Dataset__TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20571-Dataset__TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20572-Dataset",
+      "ground_truth": "walk",
+      "gps_file": [
+        "TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20570-Dataset.csv",
+        "TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20571-Dataset.csv",
+        "TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20572-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-18 23:47:01",
+      "end_timestamp": "2022-10-18 23:50:00",
+      "source_class": "WALK",
+      "file_sha256": [
+        "2072047ddaeee571b41fa12d9ea3339f6fce1f0a0338dfc40cc8a1b685a509e6",
+        "2d6b1b2330f6691135d828bf4fa5e4d7ee1134c7780165f3f146185b51f88825",
+        "512e82798234355bc85bea994f044fe8d12e63d1e552e17bc77d42f686447e2c"
+      ]
+    },
+    {
+      "replay_id": "WALK-03",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000022",
+      "trajectory_id": "TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20571-Dataset__TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20572-Dataset__TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20573-Dataset",
+      "ground_truth": "walk",
+      "gps_file": [
+        "TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20571-Dataset.csv",
+        "TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20572-Dataset.csv",
+        "TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20573-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-18 23:48:01",
+      "end_timestamp": "2022-10-18 23:51:00",
+      "source_class": "WALK",
+      "file_sha256": [
+        "2d6b1b2330f6691135d828bf4fa5e4d7ee1134c7780165f3f146185b51f88825",
+        "512e82798234355bc85bea994f044fe8d12e63d1e552e17bc77d42f686447e2c",
+        "a4a74cdbe0b91cf77f9de675d0192d8b1b456b2dd3ca5a9bcebdf086429b7bda"
+      ]
+    },
+    {
+      "replay_id": "WALK-04",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000022",
+      "trajectory_id": "TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20572-Dataset__TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20573-Dataset__TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20574-Dataset",
+      "ground_truth": "walk",
+      "gps_file": [
+        "TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20572-Dataset.csv",
+        "TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20573-Dataset.csv",
+        "TMC-GPS-00000022-634f7cc363a759379fc40a37-17472cfad04542dc8762cdfc72db20574-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-18 23:49:01",
+      "end_timestamp": "2022-10-18 23:52:00",
+      "source_class": "WALK",
+      "file_sha256": [
+        "512e82798234355bc85bea994f044fe8d12e63d1e552e17bc77d42f686447e2c",
+        "a4a74cdbe0b91cf77f9de675d0192d8b1b456b2dd3ca5a9bcebdf086429b7bda",
+        "0d1a94cec0cd373cc1ae3132c77f860406dff9c3c63508acbce5d97482b328dc"
+      ]
+    },
+    {
+      "replay_id": "WALK-05",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000022",
+      "trajectory_id": "TMC-GPS-00000022-635130441956506a7cc42523-3a13e8584de54c0a8b68c4c941d48b3f0-Dataset__TMC-GPS-00000022-635130441956506a7cc42523-3a13e8584de54c0a8b68c4c941d48b3f1-Dataset__TMC-GPS-00000022-635130441956506a7cc42523-3a13e8584de54c0a8b68c4c941d48b3f2-Dataset",
+      "ground_truth": "walk",
+      "gps_file": [
+        "TMC-GPS-00000022-635130441956506a7cc42523-3a13e8584de54c0a8b68c4c941d48b3f0-Dataset.csv",
+        "TMC-GPS-00000022-635130441956506a7cc42523-3a13e8584de54c0a8b68c4c941d48b3f1-Dataset.csv",
+        "TMC-GPS-00000022-635130441956506a7cc42523-3a13e8584de54c0a8b68c4c941d48b3f2-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-20 09:34:51",
+      "end_timestamp": "2022-10-20 09:37:50",
+      "source_class": "WALK",
+      "file_sha256": [
+        "b0fb351ed1ae8a7cf553237ec4b35a4a3eb20e5d1cac951d7e2f2cad8fb8ae90",
+        "20705c6b8b7e76f5870845dd73266f930a8de1062e0e48aae6880816e3f4a428",
+        "b40919cf0ffc1cb9491fa79f77b156b5a184a1743d767ddf8414db8f97884aaa"
+      ]
+    },
+    {
+      "replay_id": "BIKE-01",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000087",
+      "trajectory_id": "TMC-GPS-00000087-634cb5df55caa228b5cc68a6-b35e2e4c11d14c34954586a39af1d0700-Dataset__TMC-GPS-00000087-634cb5df55caa228b5cc68a6-b35e2e4c11d14c34954586a39af1d0701-Dataset__TMC-GPS-00000087-634cb5df55caa228b5cc68a6-b35e2e4c11d14c34954586a39af1d0702-Dataset",
+      "ground_truth": "bike",
+      "gps_file": [
+        "TMC-GPS-00000087-634cb5df55caa228b5cc68a6-b35e2e4c11d14c34954586a39af1d0700-Dataset.csv",
+        "TMC-GPS-00000087-634cb5df55caa228b5cc68a6-b35e2e4c11d14c34954586a39af1d0701-Dataset.csv",
+        "TMC-GPS-00000087-634cb5df55caa228b5cc68a6-b35e2e4c11d14c34954586a39af1d0702-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-17 01:09:08",
+      "end_timestamp": "2022-10-17 01:12:07",
+      "source_class": "BIKE",
+      "file_sha256": [
+        "c733f484fbaa2970edd7630066d6c552297e722feddd215f7932ce46303cd72c",
+        "8ad2850f104e974aa418af96e2ca01e0698f107d810b587bd310d1d28bb39f4a",
+        "ee5e45ca0777f236166f8861c2f46c98d2fb86e74d70d9ebc320854d9d68c374"
+      ]
+    },
+    {
+      "replay_id": "BIKE-02",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000087",
+      "trajectory_id": "TMC-GPS-00000087-634cb5df55caa228b5cc68a6-b35e2e4c11d14c34954586a39af1d0701-Dataset__TMC-GPS-00000087-634cb5df55caa228b5cc68a6-b35e2e4c11d14c34954586a39af1d0702-Dataset__TMC-GPS-00000087-634cb5df55caa228b5cc68a6-b35e2e4c11d14c34954586a39af1d0703-Dataset",
+      "ground_truth": "bike",
+      "gps_file": [
+        "TMC-GPS-00000087-634cb5df55caa228b5cc68a6-b35e2e4c11d14c34954586a39af1d0701-Dataset.csv",
+        "TMC-GPS-00000087-634cb5df55caa228b5cc68a6-b35e2e4c11d14c34954586a39af1d0702-Dataset.csv",
+        "TMC-GPS-00000087-634cb5df55caa228b5cc68a6-b35e2e4c11d14c34954586a39af1d0703-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-17 01:10:08",
+      "end_timestamp": "2022-10-17 01:13:07",
+      "source_class": "BIKE",
+      "file_sha256": [
+        "8ad2850f104e974aa418af96e2ca01e0698f107d810b587bd310d1d28bb39f4a",
+        "ee5e45ca0777f236166f8861c2f46c98d2fb86e74d70d9ebc320854d9d68c374",
+        "3ea208fbcca27d261fa766661a689b0e24054a71b7f9b8e6d71826f51bd9559d"
+      ]
+    },
+    {
+      "replay_id": "BIKE-03",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000087",
+      "trajectory_id": "TMC-GPS-00000087-634e374a63a759379fc3b343-6c1dd49d213b4e488a250978d3e4e8c30-Dataset__TMC-GPS-00000087-634e374a63a759379fc3b343-6c1dd49d213b4e488a250978d3e4e8c31-Dataset__TMC-GPS-00000087-634e374a63a759379fc3b343-6c1dd49d213b4e488a250978d3e4e8c32-Dataset",
+      "ground_truth": "bike",
+      "gps_file": [
+        "TMC-GPS-00000087-634e374a63a759379fc3b343-6c1dd49d213b4e488a250978d3e4e8c30-Dataset.csv",
+        "TMC-GPS-00000087-634e374a63a759379fc3b343-6c1dd49d213b4e488a250978d3e4e8c31-Dataset.csv",
+        "TMC-GPS-00000087-634e374a63a759379fc3b343-6c1dd49d213b4e488a250978d3e4e8c32-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-17 03:17:33",
+      "end_timestamp": "2022-10-17 03:20:32",
+      "source_class": "BIKE",
+      "file_sha256": [
+        "c79b7d59e78dd28ae4f91f350a2e6860920c66368f75633c20d972b6c30b7524",
+        "26ebc756ed2b56d8c399b03f05ef0f2db57296137e176af4b8e13245b99be997",
+        "8ef4874010940a21e761cc9c0b9544ec6995e70ff0ec6308c560ed815cc35490"
+      ]
+    },
+    {
+      "replay_id": "BIKE-04",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000087",
+      "trajectory_id": "TMC-GPS-00000087-634e374a63a759379fc3b343-6c1dd49d213b4e488a250978d3e4e8c31-Dataset__TMC-GPS-00000087-634e374a63a759379fc3b343-6c1dd49d213b4e488a250978d3e4e8c32-Dataset__TMC-GPS-00000087-634e374a63a759379fc3b343-6c1dd49d213b4e488a250978d3e4e8c33-Dataset",
+      "ground_truth": "bike",
+      "gps_file": [
+        "TMC-GPS-00000087-634e374a63a759379fc3b343-6c1dd49d213b4e488a250978d3e4e8c31-Dataset.csv",
+        "TMC-GPS-00000087-634e374a63a759379fc3b343-6c1dd49d213b4e488a250978d3e4e8c32-Dataset.csv",
+        "TMC-GPS-00000087-634e374a63a759379fc3b343-6c1dd49d213b4e488a250978d3e4e8c33-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-17 03:18:33",
+      "end_timestamp": "2022-10-17 03:21:32",
+      "source_class": "BIKE",
+      "file_sha256": [
+        "26ebc756ed2b56d8c399b03f05ef0f2db57296137e176af4b8e13245b99be997",
+        "8ef4874010940a21e761cc9c0b9544ec6995e70ff0ec6308c560ed815cc35490",
+        "eb2a620b413745830778ac4b1de8c812d53921e4e64d1c58be5cfc6babc302da"
+      ]
+    },
+    {
+      "replay_id": "BIKE-05",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000087",
+      "trajectory_id": "TMC-GPS-00000087-634e38964bf5c707bcfa0061-f45d0716f1994a18b99353838855fcbe0-Dataset__TMC-GPS-00000087-634e38964bf5c707bcfa0061-f45d0716f1994a18b99353838855fcbe1-Dataset__TMC-GPS-00000087-634e38964bf5c707bcfa0061-f45d0716f1994a18b99353838855fcbe2-Dataset",
+      "ground_truth": "bike",
+      "gps_file": [
+        "TMC-GPS-00000087-634e38964bf5c707bcfa0061-f45d0716f1994a18b99353838855fcbe0-Dataset.csv",
+        "TMC-GPS-00000087-634e38964bf5c707bcfa0061-f45d0716f1994a18b99353838855fcbe1-Dataset.csv",
+        "TMC-GPS-00000087-634e38964bf5c707bcfa0061-f45d0716f1994a18b99353838855fcbe2-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-18 04:05:11",
+      "end_timestamp": "2022-10-18 04:08:10",
+      "source_class": "BIKE",
+      "file_sha256": [
+        "fa607987fbe72aa567e200cb66d0682f857465e4b3006dcf2c48477a2efb225b",
+        "66b87de0bec5a15993af8a3ae140a2517d46cfc9f6a31b011e9c6fa4eb09c4aa",
+        "9866a825adef22b42e5aac564b23a3da43d2e92add19d197b1ed92ce86f57dec"
+      ]
+    },
+    {
+      "replay_id": "CAR-01",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000007",
+      "trajectory_id": "TMC-GPS-00000007-6357fd33362f7e4adf3113dc-a62521cbd20e4ad6bd1b631b51da79790-Dataset__TMC-GPS-00000007-6357fd33362f7e4adf3113dc-a62521cbd20e4ad6bd1b631b51da79791-Dataset__TMC-GPS-00000007-6357fd33362f7e4adf3113dc-a62521cbd20e4ad6bd1b631b51da79792-Dataset",
+      "ground_truth": "car",
+      "gps_file": [
+        "TMC-GPS-00000007-6357fd33362f7e4adf3113dc-a62521cbd20e4ad6bd1b631b51da79790-Dataset.csv",
+        "TMC-GPS-00000007-6357fd33362f7e4adf3113dc-a62521cbd20e4ad6bd1b631b51da79791-Dataset.csv",
+        "TMC-GPS-00000007-6357fd33362f7e4adf3113dc-a62521cbd20e4ad6bd1b631b51da79792-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-19 23:10:25",
+      "end_timestamp": "2022-10-19 23:13:24",
+      "source_class": "CAR",
+      "file_sha256": [
+        "c4fda191d3f67b37dde2c94d6a0086a4c40630da7e3122c733f0267730536f35",
+        "80a29174c2b35e6e01a15172a6ddc36ec9dfd6afb77b1a8550981a2e2d87d2e9",
+        "29445031f9afefe015d3933b9bac541edc2fcc854c05b459d71f1f4a7c594b1e"
+      ]
+    },
+    {
+      "replay_id": "CAR-02",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000007",
+      "trajectory_id": "TMC-GPS-00000007-6357fd33362f7e4adf3113dc-01ad17642d584cb493854ae0af962f810-Dataset__TMC-GPS-00000007-6357fd33362f7e4adf3113dc-01ad17642d584cb493854ae0af962f811-Dataset__TMC-GPS-00000007-6357fd33362f7e4adf3113dc-01ad17642d584cb493854ae0af962f812-Dataset",
+      "ground_truth": "car",
+      "gps_file": [
+        "TMC-GPS-00000007-6357fd33362f7e4adf3113dc-01ad17642d584cb493854ae0af962f810-Dataset.csv",
+        "TMC-GPS-00000007-6357fd33362f7e4adf3113dc-01ad17642d584cb493854ae0af962f811-Dataset.csv",
+        "TMC-GPS-00000007-6357fd33362f7e4adf3113dc-01ad17642d584cb493854ae0af962f812-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-19 23:55:25",
+      "end_timestamp": "2022-10-19 23:58:24",
+      "source_class": "CAR",
+      "file_sha256": [
+        "20b4559c9442a2cc18d83b06da6f6edb46b51c2e9c619f6b911caf9364930c81",
+        "1b6b2dc57be9f6432df9dff135606c05b33f376eecec8d00361b478eaf3c4568",
+        "200b1fa35359f440ab38bb6688efbcf277357cc6525953b99140f7723b1fbd75"
+      ]
+    },
+    {
+      "replay_id": "CAR-03",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000007",
+      "trajectory_id": "TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a30-Dataset__TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a31-Dataset__TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a32-Dataset",
+      "ground_truth": "car",
+      "gps_file": [
+        "TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a30-Dataset.csv",
+        "TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a31-Dataset.csv",
+        "TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a32-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-20 06:29:41",
+      "end_timestamp": "2022-10-20 06:32:40",
+      "source_class": "CAR",
+      "file_sha256": [
+        "06dbefae766f3297f25cb735ec4ee48c10ff9e9874e5b59bf3126b667f78ed3d",
+        "915d2ec6f1099132a8dcc45d7376a97bc7790948174d672e42b4a5464d3cf188",
+        "1ff4cfb43e99dd2cf40a3601962fa811d9c910d8ee7c2aa3082301cf53476b89"
+      ]
+    },
+    {
+      "replay_id": "CAR-04",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000007",
+      "trajectory_id": "TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a31-Dataset__TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a32-Dataset__TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a33-Dataset",
+      "ground_truth": "car",
+      "gps_file": [
+        "TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a31-Dataset.csv",
+        "TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a32-Dataset.csv",
+        "TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a33-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-20 06:30:41",
+      "end_timestamp": "2022-10-20 06:33:40",
+      "source_class": "CAR",
+      "file_sha256": [
+        "915d2ec6f1099132a8dcc45d7376a97bc7790948174d672e42b4a5464d3cf188",
+        "1ff4cfb43e99dd2cf40a3601962fa811d9c910d8ee7c2aa3082301cf53476b89",
+        "67ea8b80f0dd44680342236b8b834d44ae0a9665962663dacacd43a4b54e4449"
+      ]
+    },
+    {
+      "replay_id": "CAR-05",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000007",
+      "trajectory_id": "TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a32-Dataset__TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a33-Dataset__TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a34-Dataset",
+      "ground_truth": "car",
+      "gps_file": [
+        "TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a32-Dataset.csv",
+        "TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a33-Dataset.csv",
+        "TMC-GPS-00000007-63593b1ca60bad075c517ff8-bce97b2f8dc8472da2d8c4affeaf44a34-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-20 06:31:41",
+      "end_timestamp": "2022-10-20 06:34:40",
+      "source_class": "CAR",
+      "file_sha256": [
+        "1ff4cfb43e99dd2cf40a3601962fa811d9c910d8ee7c2aa3082301cf53476b89",
+        "67ea8b80f0dd44680342236b8b834d44ae0a9665962663dacacd43a4b54e4449",
+        "50021bd1d03c75b7a03f0a0f101170a26d7197c38e8ffce4d72cd30b4d1adc69"
+      ]
+    },
+    {
+      "replay_id": "BUS-01",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000007",
+      "trajectory_id": "TMC-GPS-00000007-63592ed22b381d35f190ef52-15f2b45ac91d4de896ef51c4710f96512-Dataset__TMC-GPS-00000007-63592ed22b381d35f190ef52-15f2b45ac91d4de896ef51c4710f96513-Dataset__TMC-GPS-00000007-63592ed22b381d35f190ef52-15f2b45ac91d4de896ef51c4710f96514-Dataset",
+      "ground_truth": "bus",
+      "gps_file": [
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-15f2b45ac91d4de896ef51c4710f96512-Dataset.csv",
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-15f2b45ac91d4de896ef51c4710f96513-Dataset.csv",
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-15f2b45ac91d4de896ef51c4710f96514-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-24 22:39:39",
+      "end_timestamp": "2022-10-24 22:42:38",
+      "source_class": "BUS",
+      "file_sha256": [
+        "d1e4bb06e3710d52d0bd188efafc78530012d608763493e55437bba8a346ede6",
+        "f9887f1634d28d9115c894b96876e48c6294ddd527592741565d035d80701d3c",
+        "391e5e66cf8f66cffdaccc97f56eefafc51bb356ea0d352a35d715b452fcea3c"
+      ]
+    },
+    {
+      "replay_id": "BUS-02",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000007",
+      "trajectory_id": "TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8551-Dataset__TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8552-Dataset__TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8553-Dataset",
+      "ground_truth": "bus",
+      "gps_file": [
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8551-Dataset.csv",
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8552-Dataset.csv",
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8553-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-24 22:58:39",
+      "end_timestamp": "2022-10-24 23:01:38",
+      "source_class": "BUS",
+      "file_sha256": [
+        "3a00b8df5cb588e098cac681a89a82a3a9410e39eee7c3d3aeb005655b360828",
+        "4f1608888ae3c81b9ca56da1b7613b18d7e78625d26e27e0716222a51d6e9a6a",
+        "5ae876b7656a79933d37a7e306b439a3be26634de85b39f3a66d9338a14047fd"
+      ]
+    },
+    {
+      "replay_id": "BUS-03",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000007",
+      "trajectory_id": "TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8552-Dataset__TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8553-Dataset__TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8554-Dataset",
+      "ground_truth": "bus",
+      "gps_file": [
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8552-Dataset.csv",
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8553-Dataset.csv",
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8554-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-24 22:59:39",
+      "end_timestamp": "2022-10-24 23:02:38",
+      "source_class": "BUS",
+      "file_sha256": [
+        "4f1608888ae3c81b9ca56da1b7613b18d7e78625d26e27e0716222a51d6e9a6a",
+        "5ae876b7656a79933d37a7e306b439a3be26634de85b39f3a66d9338a14047fd",
+        "a21b80254e81b63938ab32b421bfd4e2e46ef2170fe472dc47c8d69be8925987"
+      ]
+    },
+    {
+      "replay_id": "BUS-04",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000007",
+      "trajectory_id": "TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8553-Dataset__TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8554-Dataset__TMC-GPS-00000007-63592ed22b381d35f190ef52-d63a93f6f3a04aca8ee17da6c49b39f90-Dataset",
+      "ground_truth": "bus",
+      "gps_file": [
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8553-Dataset.csv",
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8554-Dataset.csv",
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-d63a93f6f3a04aca8ee17da6c49b39f90-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-24 23:00:39",
+      "end_timestamp": "2022-10-24 23:03:38",
+      "source_class": "BUS",
+      "file_sha256": [
+        "5ae876b7656a79933d37a7e306b439a3be26634de85b39f3a66d9338a14047fd",
+        "a21b80254e81b63938ab32b421bfd4e2e46ef2170fe472dc47c8d69be8925987",
+        "0e7e11f6092c8261e9565162362c9cb9445be2629c8df07d476d12590fd9f12c"
+      ]
+    },
+    {
+      "replay_id": "BUS-05",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000007",
+      "trajectory_id": "TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8554-Dataset__TMC-GPS-00000007-63592ed22b381d35f190ef52-d63a93f6f3a04aca8ee17da6c49b39f90-Dataset__TMC-GPS-00000007-63592ed22b381d35f190ef52-d63a93f6f3a04aca8ee17da6c49b39f91-Dataset",
+      "ground_truth": "bus",
+      "gps_file": [
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-71830df166b8485095baff900f19b8554-Dataset.csv",
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-d63a93f6f3a04aca8ee17da6c49b39f90-Dataset.csv",
+        "TMC-GPS-00000007-63592ed22b381d35f190ef52-d63a93f6f3a04aca8ee17da6c49b39f91-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-24 23:01:39",
+      "end_timestamp": "2022-10-24 23:04:38",
+      "source_class": "BUS",
+      "file_sha256": [
+        "a21b80254e81b63938ab32b421bfd4e2e46ef2170fe472dc47c8d69be8925987",
+        "0e7e11f6092c8261e9565162362c9cb9445be2629c8df07d476d12590fd9f12c",
+        "61e5f216b0e78be6a1ea164b6cac08e6df129604be385d7a644f2741e987510c"
+      ]
+    },
+    {
+      "replay_id": "RAIL-01",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000058",
+      "trajectory_id": "TMC-GPS-00000058-6356a6540689f125abe1b087-5761522e8f9549fca2b40cde5aa40cf22-Dataset__TMC-GPS-00000058-6356a6540689f125abe1b087-5761522e8f9549fca2b40cde5aa40cf23-Dataset__TMC-GPS-00000058-6356a6540689f125abe1b087-5761522e8f9549fca2b40cde5aa40cf24-Dataset",
+      "ground_truth": "rail",
+      "gps_file": [
+        "TMC-GPS-00000058-6356a6540689f125abe1b087-5761522e8f9549fca2b40cde5aa40cf22-Dataset.csv",
+        "TMC-GPS-00000058-6356a6540689f125abe1b087-5761522e8f9549fca2b40cde5aa40cf23-Dataset.csv",
+        "TMC-GPS-00000058-6356a6540689f125abe1b087-5761522e8f9549fca2b40cde5aa40cf24-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-21 09:27:49",
+      "end_timestamp": "2022-10-21 09:30:48",
+      "source_class": "SUBWAY",
+      "file_sha256": [
+        "b5c86f0e7c14fa7b74073f03ca2e0330b2f54d3cec173c4e9e3183efb8de8f8b",
+        "e01d4f97cc986e5afdf6ba9618164d75307e0dedc6b44035a3070cf3d2ec01ad",
+        "5a868ad7daa99467502679823138d8b3ac316ace5e582466386470b7fe007766"
+      ]
+    },
+    {
+      "replay_id": "RAIL-02",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000094",
+      "trajectory_id": "TMC-GPS-00000094-635110c84679597ac3314635-83b15ddfa10a46f9a88b9a90ebdd244b2-Dataset__TMC-GPS-00000094-635110c84679597ac3314635-83b15ddfa10a46f9a88b9a90ebdd244b3-Dataset__TMC-GPS-00000094-635110c84679597ac3314635-83b15ddfa10a46f9a88b9a90ebdd244b4-Dataset",
+      "ground_truth": "rail",
+      "gps_file": [
+        "TMC-GPS-00000094-635110c84679597ac3314635-83b15ddfa10a46f9a88b9a90ebdd244b2-Dataset.csv",
+        "TMC-GPS-00000094-635110c84679597ac3314635-83b15ddfa10a46f9a88b9a90ebdd244b3-Dataset.csv",
+        "TMC-GPS-00000094-635110c84679597ac3314635-83b15ddfa10a46f9a88b9a90ebdd244b4-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-20 01:52:01",
+      "end_timestamp": "2022-10-20 01:55:00",
+      "source_class": "SUBWAY",
+      "file_sha256": [
+        "d42312c4a819325fb8dc7316e936afe88f04cbd1f4db9afb9a3ad0259eb09aee",
+        "17480d581a61417ab0aeddbb46b64fc7796ca7c24e30938582a5ad40cb450e02",
+        "dfb7e39d692d6160045615430b0d248d6cccfd2a3cfd1f81b7f0fccfe592b9aa"
+      ]
+    },
+    {
+      "replay_id": "RAIL-03",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000094",
+      "trajectory_id": "TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a60-Dataset__TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a61-Dataset__TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a62-Dataset",
+      "ground_truth": "rail",
+      "gps_file": [
+        "TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a60-Dataset.csv",
+        "TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a61-Dataset.csv",
+        "TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a62-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-20 09:05:51",
+      "end_timestamp": "2022-10-20 09:08:50",
+      "source_class": "SUBWAY",
+      "file_sha256": [
+        "40145527111e2c6b43dd378c37b2d7b543dc7360a8cf59523af15c4f78ba777c",
+        "11ab1007c296c3a4b4ee1a14b0a2beaf42716d8f4750609ea6b73fba21f3a728",
+        "c4349d604d8abed3b87d35dd56c11038d9e177bd3dd824518f782907f777492c"
+      ]
+    },
+    {
+      "replay_id": "RAIL-04",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000094",
+      "trajectory_id": "TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a61-Dataset__TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a62-Dataset__TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a63-Dataset",
+      "ground_truth": "rail",
+      "gps_file": [
+        "TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a61-Dataset.csv",
+        "TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a62-Dataset.csv",
+        "TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a63-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-20 09:06:51",
+      "end_timestamp": "2022-10-20 09:09:50",
+      "source_class": "SUBWAY",
+      "file_sha256": [
+        "11ab1007c296c3a4b4ee1a14b0a2beaf42716d8f4750609ea6b73fba21f3a728",
+        "c4349d604d8abed3b87d35dd56c11038d9e177bd3dd824518f782907f777492c",
+        "03e69c326a0e8e7f8fd300f12b373047e740aa049e2773a033dfecf5626408a2"
+      ]
+    },
+    {
+      "replay_id": "RAIL-05",
+      "selection_rule": "test_uid;quality;adjacent_120s_group sort",
+      "uid": "00000094",
+      "trajectory_id": "TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a62-Dataset__TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a63-Dataset__TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a64-Dataset",
+      "ground_truth": "rail",
+      "gps_file": [
+        "TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a62-Dataset.csv",
+        "TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a63-Dataset.csv",
+        "TMC-GPS-00000094-63541108a72b8d7596f30243-b9bac1c3221547a19b01ba4c320167a64-Dataset.csv"
+      ],
+      "point_count": 180,
+      "duration_seconds": 179.0,
+      "start_timestamp": "2022-10-20 09:07:51",
+      "end_timestamp": "2022-10-20 09:10:50",
+      "source_class": "SUBWAY",
+      "file_sha256": [
+        "c4349d604d8abed3b87d35dd56c11038d9e177bd3dd824518f782907f777492c",
+        "03e69c326a0e8e7f8fd300f12b373047e740aa049e2773a033dfecf5626408a2",
+        "a80d167d97eefb7102269f9e68c6561e56042a41768e8316a6fdb7e8bfaf7ee1"
+      ]
+    }
+  ]
+}
