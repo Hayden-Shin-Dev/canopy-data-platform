@@ -17,6 +17,10 @@ from .features import AIHUB_FEATURE_COLUMNS
 
 
 BASE_FEATURE_COLUMNS = AIHUB_FEATURE_COLUMNS[:16]
+ROBUST_FEATURE_COLUMNS = tuple(
+    column for column in AIHUB_FEATURE_COLUMNS
+    if column not in {"point_count", "observed_duration_sec", "avg_sampling_interval_sec", "valid_step_count", "gap_step_count"}
+)
 
 
 def _sha256(path: str | Path) -> str:
@@ -125,9 +129,9 @@ def train_model(
     missing = sorted(required - set(frame.columns))
     if missing:
         raise ValueError(f"AI-Hub training table is missing columns: {missing}")
-    if feature_set not in {"all", "base"}:
-        raise ValueError("feature_set must be all or base")
-    feature_columns = list(AIHUB_FEATURE_COLUMNS if feature_set == "all" else BASE_FEATURE_COLUMNS)
+    if feature_set not in {"all", "base", "robust"}:
+        raise ValueError("feature_set must be all, base, or robust")
+    feature_columns = list({"all": AIHUB_FEATURE_COLUMNS, "base": BASE_FEATURE_COLUMNS, "robust": ROBUST_FEATURE_COLUMNS}[feature_set])
     for column in feature_columns:
         frame[column] = pd.to_numeric(frame[column], errors="coerce").fillna(0.0)
     train = frame[frame["split"] == "train"]

@@ -11,6 +11,7 @@ import pandas as pd
 from src.integration.gps_contract import GpsEvent
 
 from .features import AIHUB_FEATURE_COLUMNS, _std
+from .training import BASE_FEATURE_COLUMNS, ROBUST_FEATURE_COLUMNS
 from .training import _evaluate
 from src.geolife.raw import TrajectoryPoint
 from src.geolife.window_features import compute_window_features
@@ -53,7 +54,12 @@ def predict_event_window(model_path: str | Path, events: Sequence[GpsEvent]) -> 
     bundle = joblib.load(model_path)
     if not isinstance(bundle, dict) or not {"model", "feature_columns", "classes"} <= set(bundle):
         raise ValueError("Invalid AI-Hub model artifact")
-    if list(bundle["feature_columns"]) != list(AIHUB_FEATURE_COLUMNS):
+    allowed_feature_sets = {
+        tuple(AIHUB_FEATURE_COLUMNS),
+        tuple(BASE_FEATURE_COLUMNS),
+        tuple(ROBUST_FEATURE_COLUMNS),
+    }
+    if tuple(bundle["feature_columns"]) not in allowed_feature_sets:
         raise ValueError("AI-Hub model feature contract does not match runtime")
     duration_seconds = (events[-1].timestamp - events[0].timestamp).total_seconds()
     expected_duration = float(bundle.get("window_duration_seconds", 60))
@@ -66,7 +72,7 @@ def predict_event_window(model_path: str | Path, events: Sequence[GpsEvent]) -> 
             "feature_version": bundle.get("feature_version", "unknown"),
             "window_duration_seconds": duration_seconds,
         }
-    frame = pd.DataFrame([event_features(events)])[list(AIHUB_FEATURE_COLUMNS)]
+    frame = pd.DataFrame([event_features(events)])[list(bundle["feature_columns"])]
     probabilities = bundle["model"].predict_proba(frame)[0]
     classes = [str(value) for value in bundle["classes"]]
     probability_map = {classes[index]: float(value) for index, value in enumerate(probabilities)}

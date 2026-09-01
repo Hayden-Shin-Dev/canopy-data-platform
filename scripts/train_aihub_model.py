@@ -17,7 +17,7 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=2021)
     parser.add_argument("--n-estimators", type=int, default=300)
     parser.add_argument("--class-weight", choices=("balanced", "none"), default="balanced")
-    parser.add_argument("--feature-set", choices=("all", "base"), default="all")
+    parser.add_argument("--feature-set", choices=("all", "base", "robust"), default="all")
     parser.add_argument("--split-manifest", default=None, help="Optional split manifest whose hash is recorded in the artifact")
     args = parser.parse_args()
     result = train_model(
