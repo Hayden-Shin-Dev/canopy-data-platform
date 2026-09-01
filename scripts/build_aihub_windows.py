@@ -37,6 +37,7 @@ def build_dataset(
     *,
     split: str = "Training",
     workers: int = 1,
+    read_label_content: bool = True,
 ) -> dict[str, object]:
     if workers < 1:
         raise ValueError("workers must be at least 1")
@@ -52,13 +53,13 @@ def build_dataset(
         files = iter_gps_files(source_root, split)
         if workers == 1:
             trajectories = (
-                read_trajectory(source_class, gps_path, label_path)
+                read_trajectory(source_class, gps_path, label_path, read_label_content=read_label_content)
                 for source_class, gps_path, label_path in files
             )
         else:
             executor = ThreadPoolExecutor(max_workers=workers)
             trajectories = executor.map(
-                lambda item: read_trajectory(*item),
+                lambda item: read_trajectory(*item, read_label_content=read_label_content),
                 files,
                 buffersize=max(2, workers * 2),
             )
@@ -82,6 +83,7 @@ def build_dataset(
         "output_csv": str(output_path),
         "feature_version": "aihub-window-v1",
         "workers": workers,
+        "read_label_content": read_label_content,
         "trajectory_count": sum(counts.values()),
         "selected_count": sum(selected.values()),
         "excluded_count": sum(excluded.values()),
@@ -102,8 +104,9 @@ def main() -> None:
     parser.add_argument("output_csv")
     parser.add_argument("--split", choices=("Training", "Validation"), default="Training")
     parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument("--skip-label-content", action="store_true")
     args = parser.parse_args()
-    print(json.dumps(build_dataset(args.source_root, args.output_csv, split=args.split, workers=args.workers), ensure_ascii=False, indent=2))
+    print(json.dumps(build_dataset(args.source_root, args.output_csv, split=args.split, workers=args.workers, read_label_content=not args.skip_label_content), ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

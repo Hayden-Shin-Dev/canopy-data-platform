@@ -154,6 +154,7 @@ def read_trajectory(
     label_path: str | Path,
     *,
     strict_label_timestamps: bool = True,
+    read_label_content: bool = True,
 ) -> AiHubTrajectory:
     """Read one 60-point TMC file pair; only that pair is held in memory."""
 
@@ -170,13 +171,16 @@ def read_trajectory(
             raise AiHubFormatError(f"Unexpected GPS header at {gps_path}")
         rows = list(gps_reader)
 
-    with label_path.open("r", encoding="utf-8-sig", newline="") as label_stream:
-        label_reader = csv.DictReader(label_stream)
-        if tuple(label_reader.fieldnames or ()) != LABEL_HEADER:
-            raise AiHubFormatError(f"Unexpected Label header at {label_path}")
-        label_rows = list(label_reader)
+    if read_label_content:
+        with label_path.open("r", encoding="utf-8-sig", newline="") as label_stream:
+            label_reader = csv.DictReader(label_stream)
+            if tuple(label_reader.fieldnames or ()) != LABEL_HEADER:
+                raise AiHubFormatError(f"Unexpected Label header at {label_path}")
+            label_rows = list(label_reader)
+    else:
+        label_rows = []
 
-    if len(rows) != len(label_rows):
+    if read_label_content and len(rows) != len(label_rows):
         raise AiHubFormatError(
             f"GPS/Label row count mismatch for {gps_path.name}: {len(rows)} != {len(label_rows)}"
         )
@@ -191,12 +195,15 @@ def read_trajectory(
     previous_timestamp: datetime | None = None
     raw_label_values: set[str] = set()
 
-    for row_number, (row, label_row) in enumerate(zip(rows, label_rows), start=2):
+    label_iter = iter(label_rows)
+    for row_number, row in enumerate(rows, start=2):
         timestamp = _parse_timestamp(row["timestamp"], gps_path, row_number)
-        label_timestamp = _parse_timestamp(label_row["timestamp"], label_path, row_number)
-        if timestamp != label_timestamp:
-            label_timestamp_mismatches += 1
-        raw_label_values.add(label_row["label"].strip())
+        if read_label_content:
+            label_row = next(label_iter)
+            label_timestamp = _parse_timestamp(label_row["timestamp"], label_path, row_number)
+            if timestamp != label_timestamp:
+                label_timestamp_mismatches += 1
+            raw_label_values.add(label_row["label"].strip())
         if previous_timestamp is not None:
             delta = (timestamp - previous_timestamp).total_seconds()
             if delta == 0:
@@ -248,7 +255,7 @@ def read_trajectory(
         duplicate_timestamp_count=duplicate_timestamps,
         backwards_timestamp_count=backwards_timestamps,
         gap_count=gap_count,
-        label_row_count=len(label_rows),
+        label_row_count=len(label_rows) if read_label_content else len(rows),
         raw_label_values=tuple(sorted(raw_label_values)),
     )
 
