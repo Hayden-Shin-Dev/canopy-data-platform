@@ -135,7 +135,7 @@ def build(run_dir: Path) -> None:
         "",
         "## Confusion and stage attribution",
         "",
-        "`confusion_matrix.csv` is the final GT→Prediction matrix. `movement_ml_results.csv`, `transit_context_results.csv`, and `final_prediction_results.csv` retain the three stage views. `error_attribution.csv` records observed error categories without inventing labels.",
+        "`confusion_matrix.csv` is the final Ground Truth to prediction matrix. `movement_ml_results.csv`, `transit_context_results.csv`, and `final_prediction_results.csv` retain the three stage views. `error_attribution.csv` records observed error categories without inventing labels.",
         "",
         "## Multimodal and delay view",
         "",
