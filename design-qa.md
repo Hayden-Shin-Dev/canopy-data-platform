@@ -56,7 +56,7 @@ Implementation: `http://127.0.0.1:8765/`
 - Token 1회 적립 및 My Page history 반영: PASS
 - Developer Mode 진입/복귀: PASS
 - Browser severe console errors: 0
-- Full tests: 260 passed
+- Full tests: 261 passed
 
 ## 허용한 데이터 제약
 
