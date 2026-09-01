@@ -44,26 +44,26 @@ def assign_user_splits(
     group_rows = frame.assign(_group=groups).groupby("_group", sort=False)
     group_sizes = group_rows.size().to_dict()
     group_classes = {str(group): set(part[target_column].astype(str)) for group, part in group_rows}
-    ordered = sorted(_group_order(list(group_sizes), seed), key=lambda group: -group_sizes[group])
-    total_rows = len(frame)
-    train_boundary = total_rows * ratios["train"]
-    validation_boundary = total_rows * (ratios["train"] + ratios["validation"])
+    ordered = _group_order(list(group_sizes), seed)
+    total_groups = len(ordered)
+    train_boundary = max(1, round(total_groups * ratios["train"]))
+    validation_boundary = train_boundary + max(1, round(total_groups * ratios["validation"]))
+    if validation_boundary >= total_groups:
+        validation_boundary = total_groups - 1
     assigned_rows = {split: 0 for split in ratios}
     assigned_classes = {split: set() for split in ratios}
     split_by_group: dict[str, str] = {}
 
-    cumulative_rows = 0
-    for group in ordered:
-        if cumulative_rows < train_boundary:
+    for group_index, group in enumerate(ordered):
+        if group_index < train_boundary:
             selected = "train"
-        elif cumulative_rows < validation_boundary:
+        elif group_index < validation_boundary:
             selected = "validation"
         else:
             selected = "test"
         split_by_group[group] = selected
         assigned_rows[selected] += group_sizes[group]
         assigned_classes[selected].update(group_classes[group])
-        cumulative_rows += group_sizes[group]
 
     result = frame.copy()
     result["split"] = groups.map(split_by_group)
