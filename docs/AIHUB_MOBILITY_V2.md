@@ -20,21 +20,20 @@ PowerShell에서 저장소 루트로 이동한 뒤 실행합니다.
 
 ```powershell
 $aihub = "C:\Users\user\Downloads\186.교통수단판별 데이터\01-1.정식개방데이터"
-python -m scripts.profile_aihub $aihub data/interim/aihub/training_profile.json --split Training --workers 8 --skip-label-content
-python -m scripts.profile_aihub $aihub data/interim/aihub/validation_profile.json --split Validation --workers 8 --skip-label-content
-python -m scripts.build_aihub_windows $aihub data/interim/aihub/training_windows.csv --split Training --workers 8 --skip-label-content
-python -m scripts.build_aihub_windows $aihub data/interim/aihub/validation_windows.csv --split Validation --workers 8 --skip-label-content
-python -m scripts.merge_aihub_windows data/interim/aihub/training_windows.csv data/interim/aihub/validation_windows.csv data/interim/aihub/pool_windows.csv
-python -m scripts.assign_aihub_splits data/interim/aihub/pool_windows.csv data/interim/aihub/split_windows.csv data/interim/aihub/split_manifest.json
-python -m scripts.train_aihub_model data/interim/aihub/split_windows.csv data/interim/aihub/rf_unweighted.joblib data/interim/aihub/rf_unweighted_metrics.json --model-type random_forest --n-estimators 200 --class-weight none --split-manifest data/interim/aihub/split_manifest.json
+python -m scripts.profile_aihub $aihub data/interim/aihub/aihub_training_profile.json --split Training --workers 8 --skip-label-content
+python -m scripts.profile_aihub $aihub data/interim/aihub/aihub_validation_profile.json --split Validation --workers 8 --skip-label-content
+python -m scripts.build_aihub_windows $aihub data/interim/aihub/aihub_training_windows.csv --split Training --workers 8 --skip-label-content
+python -m scripts.build_aihub_windows $aihub data/interim/aihub/aihub_validation_windows.csv --split Validation --workers 8 --skip-label-content
+python -m scripts.merge_aihub_windows data/interim/aihub/aihub_training_windows.csv data/interim/aihub/aihub_validation_windows.csv data/interim/aihub/aihub_pool_windows.csv
+python -m scripts.assign_aihub_splits data/interim/aihub/aihub_pool_windows.csv data/interim/aihub/aihub_split_windows.csv data/interim/aihub/aihub_split_manifest.json
+python -m scripts.train_aihub_model data/interim/aihub/aihub_split_windows.csv data/interim/aihub/rf_unweighted.joblib data/interim/aihub/rf_unweighted_metrics.json --model-type random_forest --n-estimators 200 --class-weight none --split-manifest data/interim/aihub/aihub_split_manifest.json
+python -m scripts.validate_aihub_release data/interim/aihub/aihub_split_windows.csv data/interim/aihub/aihub_split_manifest.json data/interim/aihub/rf_unweighted.joblib
 ```
 
 후보 비교는 같은 `split_windows.csv`에 대해 다음처럼 실행합니다.
 
 ```powershell
-python -m scripts.train_aihub_model data/interim/aihub/split_windows.csv data/interim/aihub/extra_trees.joblib data/interim/aihub/extra_trees_metrics.json --model-type extra_trees --n-estimators 200
-python -m scripts.train_aihub_model data/interim/aihub/split_windows.csv data/interim/aihub/hist_gradient_boosting.joblib data/interim/aihub/hgb_metrics.json --model-type hist_gradient_boosting
-python -m scripts.train_aihub_model data/interim/aihub/split_windows.csv data/interim/aihub/catboost.joblib data/interim/aihub/catboost_metrics.json --model-type catboost
+python -m scripts.compare_aihub_models data/interim/aihub/aihub_split_windows.csv data/interim/aihub/candidates --split-manifest data/interim/aihub/aihub_split_manifest.json
 ```
 
 모델 artifact에는 feature 순서, class 순서, 60초 window 계약, dataset SHA-256, split manifest SHA-256이 함께 저장됩니다. `src/aihub/runtime.py`는 45초 미만 입력을 `COLLECTING`으로 반환하고, 계약이 다른 artifact는 거부합니다.
