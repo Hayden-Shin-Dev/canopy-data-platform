@@ -123,6 +123,7 @@ def train_model(
     class_weight: str | None = "balanced",
     feature_set: str = "all",
     split_manifest_path: str | Path | None = None,
+    window_seconds: int = 60,
 ) -> dict[str, object]:
     frame = pd.read_csv(dataset_csv, encoding="utf-8-sig", dtype={"user_id": "string"})
     required = {"user_id", "canonical_mode", "split", *AIHUB_FEATURE_COLUMNS}
@@ -153,7 +154,7 @@ def train_model(
         "class_weight": class_weight,
         "feature_set": feature_set,
         "feature_version": "aihub-window-v1",
-        "window_duration_seconds": 60,
+        "window_duration_seconds": int(window_seconds),
         "feature_columns": feature_columns,
         "classes": model_classes,
         "dataset_sha256": _sha256(dataset_csv),
@@ -176,7 +177,7 @@ def train_model(
             "dataset_sha256": result["dataset_sha256"],
             "split_manifest_sha256": result["split_manifest_sha256"],
             "feature_version": "aihub-window-v1",
-            "window_duration_seconds": 60,
+            "window_duration_seconds": int(window_seconds),
         },
         model_output,
     )
