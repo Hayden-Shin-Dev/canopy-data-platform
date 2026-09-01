@@ -43,28 +43,27 @@ def assign_user_splits(
         raise AiHubSplitError("At least three users are required")
     group_rows = frame.assign(_group=groups).groupby("_group", sort=False)
     group_sizes = group_rows.size().to_dict()
-    group_classes = {
-        str(group): set(part[target_column].astype(str))
-        for group, part in group_rows
-    }
+    group_classes = {str(group): set(part[target_column].astype(str)) for group, part in group_rows}
     ordered = sorted(_group_order(list(group_sizes), seed), key=lambda group: -group_sizes[group])
     total_rows = len(frame)
-    target_rows = {split: total_rows * ratio for split, ratio in ratios.items()}
+    train_boundary = total_rows * ratios["train"]
+    validation_boundary = total_rows * (ratios["train"] + ratios["validation"])
     assigned_rows = {split: 0 for split in ratios}
     assigned_classes = {split: set() for split in ratios}
     split_by_group: dict[str, str] = {}
 
+    cumulative_rows = 0
     for group in ordered:
-        candidates = []
-        for split in ratios:
-            projected = assigned_rows[split] + group_sizes[group]
-            size_error = abs(projected - target_rows[split]) / max(target_rows[split], 1)
-            missing_class_penalty = len(group_classes[group] - assigned_classes[split])
-            candidates.append((size_error + 0.05 * missing_class_penalty, split))
-        _, selected = min(candidates)
+        if cumulative_rows < train_boundary:
+            selected = "train"
+        elif cumulative_rows < validation_boundary:
+            selected = "validation"
+        else:
+            selected = "test"
         split_by_group[group] = selected
         assigned_rows[selected] += group_sizes[group]
         assigned_classes[selected].update(group_classes[group])
+        cumulative_rows += group_sizes[group]
 
     result = frame.copy()
     result["split"] = groups.map(split_by_group)
