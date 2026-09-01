@@ -52,6 +52,7 @@ def merge(shard_dirs: list[Path], output: Path, *, baseline_commit: str, evaluat
     (output / "metrics.json").write_text(json.dumps(metrics, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     summary = {
         "dataset_root": shard_summaries[0].get("dataset_root"),
+        "dataset_version": shard_summaries[0].get("dataset_version"),
         "dataset_validation": shard_summaries[0].get("dataset_validation"),
         "canopy_baseline_commit": baseline_commit,
         "evaluation_commit": evaluation_commit,
