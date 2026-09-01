@@ -12,7 +12,7 @@ from src.integration.gps_contract import GpsEvent
 
 from .features import AIHUB_FEATURE_COLUMNS, _std
 from .training import BASE_FEATURE_COLUMNS, ROBUST_FEATURE_COLUMNS
-from .training import _evaluate
+from .training import _biased_probabilities
 from src.geolife.raw import TrajectoryPoint
 from src.geolife.window_features import compute_window_features
 
@@ -73,8 +73,13 @@ def predict_event_window(model_path: str | Path, events: Sequence[GpsEvent]) -> 
             "window_duration_seconds": duration_seconds,
         }
     frame = pd.DataFrame([event_features(events)])[list(bundle["feature_columns"])]
-    probabilities = bundle["model"].predict_proba(frame)[0]
     classes = [str(value) for value in bundle["classes"]]
+    probabilities = bundle["model"].predict_proba(frame)
+    probabilities = _biased_probabilities(
+        probabilities,
+        classes,
+        bundle.get("probability_bias"),
+    )[0]
     probability_map = {classes[index]: float(value) for index, value in enumerate(probabilities)}
     predicted_mode = max(probability_map, key=probability_map.get)
     return {

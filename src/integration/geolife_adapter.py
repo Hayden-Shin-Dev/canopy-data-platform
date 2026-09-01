@@ -129,7 +129,14 @@ def _infer_aihub_windows(
             )
             probabilities = base_map if predicted_mode == base_mode else ai_map
         else:
-            probabilities = bundle["model"].predict_proba(frame)[0]
+            from src.aihub.training import _biased_probabilities
+
+            probabilities = bundle["model"].predict_proba(frame)
+            probabilities = _biased_probabilities(
+                probabilities,
+                classes,
+                bundle.get("probability_bias"),
+            )[0]
             probabilities = {classes[index]: float(value) for index, value in enumerate(probabilities)}
         probability_map = probabilities if isinstance(probabilities, dict) else {
             classes[index]: float(value) for index, value in enumerate(probabilities)

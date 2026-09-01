@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 import joblib
 import pandas as pd
@@ -84,13 +84,34 @@ def make_model(model_type: str, *, seed: int = 2021, n_estimators: int = 300, cl
     raise ValueError(f"Unsupported AI-Hub model type: {model_type}")
 
 
-def _evaluate(model: Any, frame: pd.DataFrame, features: list[str]) -> dict[str, object]:
+def _biased_probabilities(probabilities: Any, classes: Sequence[str], bias: Sequence[float] | None) -> Any:
+    """Apply validation-only class logit offsets without changing feature extraction."""
+    if bias is None:
+        return probabilities
+    import numpy as np
+
+    values = np.asarray(probabilities, dtype=float)
+    offsets = np.asarray(list(bias), dtype=float)
+    if values.ndim != 2 or offsets.shape != (values.shape[1],):
+        raise ValueError("probability bias must contain one value per model class")
+    logits = np.log(np.clip(values, 1e-12, 1.0)) + offsets
+    logits -= logits.max(axis=1, keepdims=True)
+    exp = np.exp(logits)
+    return exp / exp.sum(axis=1, keepdims=True)
+
+
+def _evaluate(
+    model: Any,
+    frame: pd.DataFrame,
+    features: list[str],
+    *,
+    probability_bias: Sequence[float] | None = None,
+) -> dict[str, object]:
     target = frame["canonical_mode"].astype(str)
-    predicted = model.predict(frame[features])
-    if getattr(predicted, "ndim", 1) > 1:
-        predicted = predicted[:, 0]
-    predicted = [str(value) for value in predicted]
     probabilities = model.predict_proba(frame[features])
+    model_classes = [str(value) for value in getattr(model, "classes_", CANOPY_MODES)]
+    probabilities = _biased_probabilities(probabilities, model_classes, probability_bias)
+    predicted = [model_classes[index] for index in probabilities.argmax(axis=1)]
     report = classification_report(
         target,
         predicted,
@@ -98,7 +119,6 @@ def _evaluate(model: Any, frame: pd.DataFrame, features: list[str]) -> dict[str,
         output_dict=True,
         zero_division=0,
     )
-    model_classes = [str(value) for value in getattr(model, "classes_", CANOPY_MODES)]
     return {
         "row_count": int(len(frame)),
         "accuracy": float(accuracy_score(target, predicted)),
@@ -110,6 +130,46 @@ def _evaluate(model: Any, frame: pd.DataFrame, features: list[str]) -> dict[str,
         "confusion_matrix_labels": list(CANOPY_MODES),
         "confusion_matrix": confusion_matrix(target, predicted, labels=list(CANOPY_MODES)).tolist(),
     }
+
+
+def _calibrate_probability_bias(
+    model: Any,
+    frame: pd.DataFrame,
+    features: list[str],
+    *,
+    classes: Sequence[str],
+) -> list[float]:
+    """Select small class offsets on validation only, maximizing macro F1.
+
+    The offsets are part of the model contract and are applied to every future
+    window. Test rows are never inspected while selecting them.
+    """
+    import numpy as np
+
+    target = frame["canonical_mode"].astype(str)
+    probabilities = model.predict_proba(frame[features])
+    class_index = {name: index for index, name in enumerate(classes)}
+    labels = list(CANOPY_MODES)
+
+    def score(offsets: np.ndarray) -> float:
+        adjusted = _biased_probabilities(probabilities, classes, offsets)
+        predicted = [classes[index] for index in adjusted.argmax(axis=1)]
+        return float(f1_score(target, predicted, labels=labels, average="macro", zero_division=0))
+
+    best = np.zeros(len(classes), dtype=float)
+    best_score = score(best)
+    # Coarse-to-fine coordinate ascent keeps calibration deterministic and
+    # small enough to reproduce in a local rebuild.
+    for step, radius in ((0.05, 0.4), (0.025, 0.1)):
+        for index in range(len(classes)):
+            candidates = np.arange(best[index] - radius, best[index] + radius + step / 2, step)
+            for value in candidates:
+                candidate = best.copy()
+                candidate[index] = float(value)
+                candidate_score = score(candidate)
+                if candidate_score > best_score + 1e-10:
+                    best, best_score = candidate, candidate_score
+    return [round(float(value), 6) for value in best]
 
 
 def train_model(
@@ -124,6 +184,7 @@ def train_model(
     feature_set: str = "all",
     split_manifest_path: str | Path | None = None,
     window_seconds: int = 60,
+    calibrate_validation: bool = False,
 ) -> dict[str, object]:
     frame = pd.read_csv(dataset_csv, encoding="utf-8-sig", dtype={"user_id": "string"})
     required = {"user_id", "canonical_mode", "split", *AIHUB_FEATURE_COLUMNS}
@@ -147,6 +208,11 @@ def train_model(
     model = make_model(model_type, seed=seed, n_estimators=n_estimators, class_weight=class_weight)
     model.fit(train[feature_columns], train["canonical_mode"])
     model_classes = [str(value) for value in getattr(model, "classes_", CANOPY_MODES)]
+    probability_bias = (
+        _calibrate_probability_bias(model, validation, feature_columns, classes=model_classes)
+        if calibrate_validation
+        else None
+    )
     result: dict[str, object] = {
         "model_type": model_type,
         "seed": seed,
@@ -155,14 +221,15 @@ def train_model(
         "feature_set": feature_set,
         "feature_version": "aihub-window-v1",
         "window_duration_seconds": int(window_seconds),
+        "probability_bias": probability_bias,
         "feature_columns": feature_columns,
         "classes": model_classes,
         "dataset_sha256": _sha256(dataset_csv),
         "split_manifest_sha256": _sha256(split_manifest_path) if split_manifest_path else None,
         "metrics": {
-            "train": _evaluate(model, train, feature_columns),
-            "validation": _evaluate(model, validation, feature_columns),
-            "test": _evaluate(model, test, feature_columns),
+            "train": _evaluate(model, train, feature_columns, probability_bias=probability_bias),
+            "validation": _evaluate(model, validation, feature_columns, probability_bias=probability_bias),
+            "test": _evaluate(model, test, feature_columns, probability_bias=probability_bias),
         },
     }
     model_output = Path(model_path)
@@ -178,6 +245,7 @@ def train_model(
             "split_manifest_sha256": result["split_manifest_sha256"],
             "feature_version": "aihub-window-v1",
             "window_duration_seconds": int(window_seconds),
+            "probability_bias": probability_bias,
         },
         model_output,
     )

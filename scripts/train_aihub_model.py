@@ -20,6 +20,11 @@ def main() -> None:
     parser.add_argument("--feature-set", choices=("all", "base", "robust"), default="all")
     parser.add_argument("--split-manifest", default=None, help="Optional split manifest whose hash is recorded in the artifact")
     parser.add_argument("--window-seconds", type=int, default=60)
+    parser.add_argument(
+        "--calibrate-validation",
+        action="store_true",
+        help="fit deterministic class probability offsets on validation Macro F1 only",
+    )
     args = parser.parse_args()
     result = train_model(
         args.dataset_csv,
@@ -32,6 +37,7 @@ def main() -> None:
         feature_set=args.feature_set,
         split_manifest_path=args.split_manifest,
         window_seconds=args.window_seconds,
+        calibrate_validation=args.calibrate_validation,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
