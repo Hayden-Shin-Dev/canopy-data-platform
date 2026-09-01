@@ -101,8 +101,29 @@ def _infer_aihub_windows(
             continue
         features = event_features(window_events)
         frame = pd.DataFrame([features])[feature_columns]
-        probabilities = bundle["model"].predict_proba(frame)[0]
-        probability_map = {
+        if str(bundle.get("feature_version", "")).startswith("aihub-ensemble-v1"):
+            # The legacy GeoLife model remains the conservative choice for
+            # walk/bike/car; AI-Hub evidence is admitted for bus/rail only
+            # when the legacy model is not confidently on a human-powered
+            # mode.  This rule is fixed from held-out class results.
+            ai_probs = bundle["aihub_model"].predict_proba(
+                frame[list(bundle["aihub_feature_columns"])]
+            )[0]
+            base_probs = bundle["baseline_model"].predict_proba(
+                frame[list(bundle["baseline_feature_columns"])]
+            )[0]
+            ai_classes = [str(value) for value in bundle["aihub_classes"]]
+            base_classes = [str(value) for value in bundle["baseline_classes"]]
+            ai_map = {name: float(ai_probs[i]) for i, name in enumerate(ai_classes)}
+            base_map = {name: float(base_probs[i]) for i, name in enumerate(base_classes)}
+            ai_mode = max(ai_map, key=ai_map.get)
+            base_mode = max(base_map, key=base_map.get)
+            predicted_mode = ai_mode if ai_mode in {"bus", "rail"} and base_mode not in {"walk", "bike"} else base_mode
+            probabilities = base_map if predicted_mode == base_mode else ai_map
+        else:
+            probabilities = bundle["model"].predict_proba(frame)[0]
+            probabilities = {classes[index]: float(value) for index, value in enumerate(probabilities)}
+        probability_map = probabilities if isinstance(probabilities, dict) else {
             classes[index]: float(value) for index, value in enumerate(probabilities)
         }
         closed = last_timestamp >= window.window_end
@@ -136,7 +157,10 @@ def infer_windows(
         contract = _load_artifact(model)
     except Exception:
         contract = None
-    if isinstance(contract, dict) and str(contract.get("feature_version", "")).startswith("aihub-window-v1"):
+    if isinstance(contract, dict) and (
+        str(contract.get("feature_version", "")).startswith("aihub-window-v1")
+        or str(contract.get("feature_version", "")).startswith("aihub-ensemble-v1")
+    ):
         return _infer_aihub_windows(events, model_path=model, window_seconds=window_seconds)
     built = build_window_table(events, window_seconds=window_seconds)
     if not built:
