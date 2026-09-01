@@ -159,3 +159,8 @@ Validation UID 846명이 모두 Training에도 존재한다. 따라서 제공된
 10. Production 반영 여부는 독립 검증 결과와 회귀 테스트를 확인한 뒤 별도 릴리스 작업으로 결정한다.
 
 이번 단계에서는 위 계획의 1단계 전 조사만 수행했다. 모델 학습, artifact 교체, pipeline 수정, v3 실행, main merge, tag 생성은 하지 않는다.
+## 전체 streaming profiling 결과
+
+Training 95,948개 trajectory는 5,756,880개 GPS 행으로 구성됐다. 유효 좌표는 4,312,935개, 좌표 결측은 1,443,945개였다. Validation은 719,520개 행 중 535,608개가 유효했고 183,912개가 결측이었다.
+
+두 split 전체에서 invalid coordinate, duplicate timestamp, backwards timestamp, 120초 초과 gap은 0건이었다. 대부분의 관측 간격은 1초였지만, 결측 좌표 행이 있어 원본 행 기준 gap과 유효 좌표 기준 gap을 분리해 기록해야 한다.
