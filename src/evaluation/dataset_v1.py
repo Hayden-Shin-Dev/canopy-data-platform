@@ -85,8 +85,12 @@ def _read_json(path: Path) -> dict[str, Any]:
     return value
 
 
-def discover_dataset(root: str | Path) -> FrozenDataset:
-    """Find the single dataset_v1 root below ``root`` without copying files."""
+def discover_dataset(root: str | Path, *, preferred_version: str | None = "dataset_v1") -> FrozenDataset:
+    """Find one frozen evaluation dataset below ``root``.
+
+    The legacy default keeps existing v1 callers stable when v3 is present
+    beside it; v3 evaluation passes its dataset directory directly.
+    """
 
     base = Path(root).resolve()
     candidates: list[Path] = []
@@ -96,6 +100,10 @@ def discover_dataset(root: str | Path) -> FrozenDataset:
             (candidate / name).is_dir() for name in ("gps", "ground_truth")
         ):
             candidates.append(candidate)
+    if len(candidates) > 1 and preferred_version:
+        preferred = [candidate for candidate in candidates if _read_json(candidate / "dataset_manifest.json").get("dataset_version") == preferred_version]
+        if len(preferred) == 1:
+            candidates = preferred
     if len(candidates) != 1:
         raise ValueError(f"expected one frozen dataset root, found {len(candidates)}: {candidates}")
     dataset_root = candidates[0]
@@ -138,13 +146,15 @@ def validate_frozen_dataset(dataset: FrozenDataset, *, verify_hashes: bool = Tru
                 continue
             hash_results[str(relative)] = _sha256(path) == str(expected)
     frozen_status = freeze.get("status") or manifest.get("freeze", {}).get("status")
+    expected_count = int(manifest.get("journey_count", -1))
+    validation_status = str(validation.get("status", "")).lower()
     checks = {
-        "dataset_version": manifest.get("dataset_version") == "dataset_v1",
+        "dataset_version": str(manifest.get("dataset_version", "")).startswith("evaluation_dataset_") or manifest.get("dataset_version") == "dataset_v1",
         "frozen": str(frozen_status or "").lower() == "frozen",
-        "journey_count": int(manifest.get("journey_count", -1)) == 700 == len(dataset.journey_manifest),
-        "gps_count": int(manifest.get("journey_count", -1)) == len(gps_files),
-        "ground_truth_count": int(manifest.get("journey_count", -1)) == len(truth_files),
-        "validation_report_passed": validation.get("status") == "passed" and int(validation.get("failed", 1)) == 0,
+        "journey_count": expected_count >= 0 and expected_count == len(dataset.journey_manifest),
+        "gps_count": expected_count == len(gps_files),
+        "ground_truth_count": expected_count == len(truth_files),
+        "validation_report_passed": validation_status in {"pass", "passed"} and int(validation.get("failed", 0)) == 0,
         "manifest_hashes": all(hash_results.values()) if hash_results else not verify_hashes,
     }
     return {
