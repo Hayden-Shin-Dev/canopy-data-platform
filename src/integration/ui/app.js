@@ -305,7 +305,6 @@ function renderSnapshot(snapshot) {
   $("#developer-json").textContent = JSON.stringify(snapshot, null, 2);
   if (state.tripStarted && snapshot.status === "PASS" && state.screen === "active") {
     showScreen("complete");
-    showToast("여정 분석과 탄소 계산이 완료됐어요.");
   }
   if (snapshot.status === "FAIL") showToast(snapshot.pipeline?.reason || "여정 처리 중 오류가 발생했습니다.");
 }
