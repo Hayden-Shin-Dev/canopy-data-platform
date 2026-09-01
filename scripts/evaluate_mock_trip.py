@@ -14,6 +14,7 @@ if str(ROOT) not in sys.path:
 
 from src.integration.geolife_adapter import infer_windows
 from src.integration.ktdb_context import build_expected_features
+from src.integration.model_config import default_mobility_model
 from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
 from src.integration.replay import ReplayEngine, read_replay_csv
 
@@ -48,7 +49,7 @@ def evaluate(csv_path: str | Path = DEFAULT_CSV, ground_truth_path: str | Path =
     replay = ReplayEngine(speed="instant").stream(rows)
     windows = infer_windows(
         replay.session.events,
-        model_path=ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib",
+        model_path=default_mobility_model(),
         window_seconds=120,
     )
     actual_window_modes = [window.predicted_mode for window in windows if window.status == "READY" and window.predicted_mode]
@@ -59,7 +60,7 @@ def evaluate(csv_path: str | Path = DEFAULT_CSV, ground_truth_path: str | Path =
         replay.session.events,
         expected_features,
         references=TransitRuntimeReferences.from_directory(),
-        geolife_model_path=ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib",
+        geolife_model_path=default_mobility_model(),
         ktdb_model_path=ROOT / "models/expected_behaviour/ktdb_population_baseline.pkl",
         factors_csv=ROOT / "data/processed/emission_factors/emission_factors_2026.csv",
     )
