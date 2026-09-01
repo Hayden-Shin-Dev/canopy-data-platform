@@ -273,6 +273,26 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     '<body><!-- compatibility hooks: resultSegments renderSegments modeVisual renderModeVisual id="reward" showReward TOKEN_GRAMS_PER_TOKEN tokenEarned id="homeTokenBalance" id="mypage" class="bottom-nav" navigateTab --><div id="phone">',
     1,
 )
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "const maps={},layers={},route={};let currentScreen='home',tokenBalance=Number(localStorage.getItem('canopyTokenBalance')||0),lastResult=null;",
+    "const maps={},layers={},route={};let currentScreen='home',tokenBalance=Number(localStorage.getItem('canopyTokenBalance')||0),lastResult=null,processedResultKey=null;",
+    1,
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "if(p.status==='PASS'){lastResult=p;",
+    "if(p.status==='PASS'&&processedResultKey!==s.fixture){processedResultKey=s.fixture;lastResult=p;",
+    1,
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "async function startTrip(){showScreen('active');",
+    "async function startTrip(){processedResultKey=null;showScreen('active');",
+    1,
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "document.getElementById('resultReduction').textContent=(Number(p.co2?.reduction_co2e_g||0)/1000).toFixed(2)+' kg 절감';",
+    "document.getElementById('resultReduction').textContent=(Number(p.co2?.reduction_co2e_g||0)/1000).toFixed(2)+' kg 절감';document.getElementById('resultBar').style.width=Math.min(100,Number(p.co2?.expected_co2e_g||0)?Number(p.co2?.actual_co2e_g||0)/Number(p.co2?.expected_co2e_g||1)*100:0)+'%';",
+    1,
+)
 
 
 class Runtime:
