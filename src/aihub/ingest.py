@@ -266,6 +266,7 @@ def iter_trajectories(
     split: str = "Training",
     *,
     strict_label_timestamps: bool = True,
+    read_label_content: bool = True,
 ) -> Iterator[AiHubTrajectory]:
     for source_class, gps_path, label_path in iter_gps_files(root, split):
         yield read_trajectory(
@@ -273,6 +274,7 @@ def iter_trajectories(
             gps_path,
             label_path,
             strict_label_timestamps=strict_label_timestamps,
+            read_label_content=read_label_content,
         )
 
 

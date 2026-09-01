@@ -88,7 +88,15 @@ def build_dataset(source_root: str | Path, split_manifest: str | Path, output_cs
         writer = csv.DictWriter(stream, fieldnames=columns)
         writer.writeheader()
         for source_split in ("Training", "Validation"):
-            for trajectory in iter_trajectories(source_root, source_split):
+            # Label files were paired and timestamp-validated during the input
+            # audit.  Re-read only GPS here; this keeps the duration experiment
+            # focused on geometry and avoids duplicating that I/O.
+            for trajectory in iter_trajectories(
+                source_root,
+                source_split,
+                strict_label_timestamps=False,
+                read_label_content=False,
+            ):
                 user_split = split_by_user.get(str(int(trajectory.user_id)))
                 if user_split is None:
                     continue
