@@ -2,7 +2,7 @@
 
 ## Experiment A 추가 결과
 
-120초 aggregate HistGradientBoosting은 AI-Hub UID-disjoint Test에서 Accuracy 0.7058, Macro F1 0.6980을 기록했다. 그러나 frozen v3 최종은 Accuracy 0.4761, Macro F1 0.3131로 기존 0.5265, 0.3452보다 낮았다. 기존 모델과 AI-Hub를 고정 결합한 탐색 후보는 Accuracy 0.5428, Macro F1 0.3645까지 개선했지만 car F1이 0.1527에서 0.1205로 하락해 release gate를 통과하지 못했다. 상세 수치는 `reports/aihub/AIHUB_EXPERIMENT_A_RESULTS.md`와 로컬 `reports/evaluation_v3_aihub_ensemble120/metrics.json`에 기록했다.
+120초 aggregate HistGradientBoosting은 AI-Hub UID-disjoint Test에서 Accuracy 0.7027, Macro F1 0.6914를 기록했다. 그러나 frozen v3 최종은 Accuracy 0.4761, Macro F1 0.3131로 기존 0.5265, 0.3452보다 낮았다. 재현 가능한 기존 모델+AI-Hub 결합 후보도 Accuracy 0.5260, Macro F1 0.3440으로 기준을 넘지 못해 release gate를 통과하지 못했다. 상세 수치는 `reports/aihub/AIHUB_EXPERIMENT_A_RESULTS.md`와 로컬 `reports/evaluation_v3_aihub_ensemble120_rebuilt/metrics.json`에 기록했다.
 
 기준 브랜치: `feature/aihub-mobility-v2`
 

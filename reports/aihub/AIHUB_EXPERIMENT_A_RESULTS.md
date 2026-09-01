@@ -12,7 +12,7 @@
 | RandomForest 60초, sampling-robust | 0.6816 | 0.6854 | 0.6631 | 0.6466 |
 | RandomForest 120초 aggregate | 0.7190 | 0.7242 | 0.6965 | 0.6867 |
 | ExtraTrees 120초 aggregate | 0.7095 | 0.7184 | 0.6949 | 0.6835 |
-| HistGradientBoosting 120초 aggregate | **0.7260** | **0.7314** | **0.7058** | **0.6980** |
+| HistGradientBoosting 120초 aggregate | **0.7235** | **0.7276** | **0.7027** | **0.6914** |
 
 120초 후보는 인접한 동일 사용자·동일 class TMC 파일을 시간 순서로 결합했다. 원본 GPS와 label 파일은 수정하지 않았다.
 
@@ -26,17 +26,17 @@
 | Macro F1 | 0.3452 | 0.3131 | -0.0321 |
 | Weighted F1 | 0.5107 | 0.4950 | -0.0157 |
 
-AI-Hub와 기존 모델을 고정 규칙으로 결합한 탐색 후보는 다음 결과를 냈다.
+AI-Hub와 기존 모델을 고정 규칙으로 결합한 재현 가능한 후보는 다음 결과를 냈다.
 
 | 지표 | 기존 Production Final | Ensemble Final | 차이 |
 |---|---:|---:|---:|
-| Accuracy | 0.5265 | **0.5428** | **+0.0163** |
-| Macro F1 | 0.3452 | **0.3645** | **+0.0193** |
-| Weighted F1 | 0.5107 | **0.5422** | **+0.0315** |
+| Accuracy | 0.5265 | 0.5260 | -0.0004 |
+| Macro F1 | 0.3452 | 0.3440 | -0.0013 |
+| Weighted F1 | 0.5107 | **0.5123** | +0.0017 |
 
-Ensemble class F1은 walk 0.9254, bike 0.3541, car 0.1205, bus 0.1232, rail 0.2995다. 기존 값 대비 car F1이 0.1527에서 0.1205로 하락했기 때문에 전체 gate는 PASS가 아니다. 따라서 이 후보를 기본 production 모델로 교체하지 않았다.
+재현본 ensemble class F1은 walk 0.9254, bike 0.3531, car 0.1324, bus 0.0266, rail 0.2824다. Accuracy와 Macro F1이 기존보다 낮고 bus F1도 기준을 넘지 못해 전체 gate는 PASS가 아니다. 따라서 이 후보를 기본 production 모델로 교체하지 않았다.
 
-추가로 class-balanced Hist 120초 후보(Test Accuracy 0.6937, Macro F1 0.6695)와 AI-Hub transit override confidence 0.6 후보(raw Accuracy 0.5366, Macro F1 0.3402)를 확인했다. 둘 다 unweighted Hist와 ensemble보다 낮아 선택하지 않았다.
+추가로 class-balanced Hist 120초 후보(Test Accuracy 0.6937, Macro F1 0.6695)와 AI-Hub transit override confidence 0.6 후보(raw Accuracy 0.5366, Macro F1 0.3402)를 확인했다. 둘 다 unweighted Hist와 재현본 ensemble보다 낮아 선택하지 않았다.
 
 ## 원인 판단
 
@@ -47,6 +47,8 @@ v3 validation report와 frozen hash는 PASS다. 문제는 v3가 이상한 데이
 ## 재현 명령
 
 ```powershell
+python -m scripts.aggregate_aihub_windows data/interim/aihub/aihub_split_windows.csv data/interim/aihub/aihub_120_agg.csv
 python -m scripts.train_aihub_model data/interim/aihub/aihub_120_agg.csv data/interim/aihub/hist_120_agg.joblib data/interim/aihub/hist_120_agg_metrics.json --model-type hist_gradient_boosting --class-weight none --feature-set all --split-manifest data/interim/aihub/aihub_split_manifest.json --window-seconds 120
-python -m scripts.evaluate_dataset_v3 --dataset-root data/evaluation/seoul-synthetic/evaluation_dataset_v3 --run-dir reports/evaluation_v3_aihub_ensemble120 --canopy-baseline-commit d5335dc --evaluation-commit 1f1c09b --mobility-model data/interim/aihub/ensemble_hist120.joblib --window-seconds 120
+python -m scripts.build_aihub_ensemble models/mobility_recognition/geolife_hardened_120s_purity_090.joblib data/interim/aihub/hist_120_agg.joblib data/interim/aihub/ensemble_hist120.joblib
+python -m scripts.evaluate_dataset_v3 --dataset-root data/evaluation/seoul-synthetic/evaluation_dataset_v3 --run-dir reports/evaluation_v3_aihub_ensemble120_rebuilt --canopy-baseline-commit d5335dc --evaluation-commit 08effb4 --mobility-model data/interim/aihub/ensemble_hist120.joblib --window-seconds 120
 ```
