@@ -24,8 +24,12 @@
 | GeoLife와 동일 조건의 최종 비교 | NOT READY | AI-Hub 60초 window와 기존 GeoLife 120초 window가 달라 직접 교체 근거가 부족함 |
 | rail 데이터 충분성 | NOT READY | rail 원본 중 좌표 결측 trajectory 비율이 높음 |
 | 기존 production pipeline 교체 | NOT READY | 후보 artifact는 opt-in adapter에서만 사용하며 기본 GeoLife 경로는 유지 |
-| frozen evaluation_dataset_v3 최종 평가 | NOT RUN | 후보 선택 전 평가 금지 원칙에 따라 실행하지 않음 |
+| frozen evaluation_dataset_v3 최종 평가 | PASS (gate FAIL) | 후보 고정 후 700개 실행, 700 PASS, 단 최종 metric 개선 조건 미충족 |
 | main merge 및 release tag | BLOCKED | 위 gate 항목이 남아 있어 성능을 과장하지 않기 위해 반영하지 않음 |
+
+## 후보 고정 후 v3 결과
+
+후보를 고정한 뒤 frozen v3 700개를 실제 실행했습니다. 데이터 무결성은 PASS였지만 기존 Production 대비 최종 Accuracy와 Weighted F1이 하락하여 release gate는 여전히 BLOCKED입니다. 상세 수치는 `AIHUB_V3_EVALUATION.md`에 기록했습니다.
 
 ## 현재 결론
 
