@@ -19,28 +19,20 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     assert "Baseline Preview" in module.IPHONE_HTML
     assert "Trip Detail" in module.IPHONE_HTML
     assert "developer-only" in module.IPHONE_HTML
-    assert "openstreetmap.org" in module.MOBILE_APP_HTML
-    assert "startTrip()" in module.MOBILE_APP_HTML
-    assert 'class="screen active"' in module.MOBILE_APP_HTML
-    assert "resultSegments" in module.MOBILE_APP_HTML
-    assert "renderSegments" in module.MOBILE_APP_HTML
-    assert "modeVisual" in module.MOBILE_APP_HTML
-    assert "renderModeVisual" in module.MOBILE_APP_HTML
-    assert 'id="reward"' in module.MOBILE_APP_HTML
-    assert "결과 확인" in module.MOBILE_APP_HTML
-    assert 'id="homeTokenBalance"' in module.MOBILE_APP_HTML
-    assert "showReward" in module.MOBILE_APP_HTML
-    assert "TOKEN_GRAMS_PER_TOKEN" in module.MOBILE_APP_HTML
-    assert "tokenEarned" in module.MOBILE_APP_HTML
-    assert 'id="mypage"' in module.MOBILE_APP_HTML
+    assert "/ui/styles.css" in module.MOBILE_APP_HTML
+    assert "/ui/app.js" in module.MOBILE_APP_HTML
+    assert "여정 시작하기" in module.MOBILE_APP_HTML
+    assert 'id="result-segments"' in module.MOBILE_APP_HTML
+    assert 'id="result-token"' in module.MOBILE_APP_HTML
+    assert 'id="profile"' in module.MOBILE_APP_HTML
     assert 'class="bottom-nav"' in module.MOBILE_APP_HTML
-    assert "navigateTab" in module.MOBILE_APP_HTML
-    for screen in ("home", "plan", "start", "active", "complete", "profile"):
+    for screen in ("home", "plan", "start", "active", "complete", "profile", "developer"):
         assert f'id="{screen}"' in module.MOBILE_APP_HTML
-    assert "/assets/canopy-ui/canopy-mascot.png" in module.MOBILE_APP_HTML
+    assert "/assets/canopy-ui/home-landscape.png" in module.MOBILE_APP_HTML
+    assert "/assets/canopy-ui/journey-start.png" in module.MOBILE_APP_HTML
+    assert "/assets/canopy-ui/journey-complete.png" in module.MOBILE_APP_HTML
     assert "AI-Hub Real GPS Replay" in module.MOBILE_APP_HTML
-    assert 'id="aihubReplay"' in module.MOBILE_APP_HTML
-    assert "runAIHubReplay" in module.MOBILE_APP_HTML
+    assert 'id="aihub-replay"' in module.MOBILE_APP_HTML
 
     assert module._fixture_path("insufficient_gps.csv").is_file()
     runtime.start("insufficient_gps.csv", "instant")
@@ -73,9 +65,26 @@ def test_ui_route_and_baseline_endpoints_use_real_local_inputs():
     assert route["status"] == "READY"
     assert route["origin"]["label"].startswith("서울 영등포구")
     assert route["destination"]["label"].startswith("Microsoft Korea")
+    assert route["distance_km"] > 0
+    assert len(route["polyline"]) > 2
     assert baseline["status"] == "READY"
     assert set(baseline["probabilities"]) == {"walk", "bike", "car", "bus", "rail"}
     assert abs(sum(baseline["probabilities"].values()) - 1) < 1e-6
+    assert baseline["distance_km"] > 0
+    assert baseline["duration_sec"] > 0
+    assert baseline["expected_co2e_g"] > 0
+
+
+def test_ui_static_files_keep_the_five_screen_flow_and_real_data_hooks():
+    root = Path(__file__).resolve().parents[1]
+    javascript = (root / "src/integration/ui/app.js").read_text(encoding="utf-8")
+    stylesheet = (root / "src/integration/ui/styles.css").read_text(encoding="utf-8")
+
+    for hook in ("/api/baseline", "/api/route", "/api/start", "/api/status", "/api/stop"):
+        assert hook in javascript
+    assert "ground_truth_mode" not in javascript.lower()
+    assert "393px" in stylesheet
+    assert "852px" in stylesheet
 
 
 def test_aihub_manifest_exposes_test_case_metadata_without_raw_paths():
