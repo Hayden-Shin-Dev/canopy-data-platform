@@ -35,6 +35,7 @@ MOCK_DIR = ROOT / "mock"
 DEFAULT_MOCK = MOCK_DIR / "canopy_iphone_mock_yeongdeungpo_to_microsoft.csv"
 DEFAULT_KTDB_SAMPLE = ROOT / "data/processed/population_baseline/ktdb/01_population_model_training_all.csv"
 AIHUB_REPLAY_MANIFEST = ROOT / "data/replay/aihub_test/AIHUB_REPLAY_MANIFEST.json"
+UI_DIR = ROOT / "src/integration/ui"
 
 
 HTML = """<!doctype html>
@@ -306,6 +307,9 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     1,
 )
 
+# 화면은 별도 정적 파일로 관리하고 기존 Runtime/API만 그대로 연결한다.
+MOBILE_APP_HTML = (UI_DIR / "index.html").read_text(encoding="utf-8")
+
 
 class Runtime:
     def __init__(self) -> None:
@@ -518,10 +522,26 @@ def _baseline_payload() -> dict[str, object]:
     valid_events = [event for event in events if event is not None]
     scenario = build_expected_features(valid_events)
     prediction = predict_expected_behaviour(pd.DataFrame([scenario.features]), model_path=model).iloc[0]
+    probabilities = {
+        mode: float(prediction[f"{mode}_probability"])
+        for mode in ("walk", "bike", "car", "bus", "rail")
+    }
+    distance_km = trajectory_distance_km(valid_events)
+    resolver = load_factor_resolver(ROOT / "data/processed/emission_factors/emission_factors_2026.csv")
+    expected_emission = calculate_expected_emission(probabilities, distance_km, resolver=resolver)
+    duration_sec = (
+        max(0.0, (valid_events[-1].timestamp - valid_events[0].timestamp).total_seconds())
+        if len(valid_events) >= 2
+        else 0.0
+    )
     return {
         "status": "READY",
         "predicted_mode": str(prediction["predicted_mode"]),
-        "probabilities": {mode: float(prediction[f"{mode}_probability"]) for mode in ("walk", "bike", "car", "bus", "rail")},
+        "probabilities": probabilities,
+        "distance_km": distance_km,
+        "duration_sec": duration_sec,
+        "expected_co2e_g": expected_emission["expected_co2e_g"],
+        "recommended_co2e_g": expected_emission["contributions"]["rail"]["co2e_g"],
         "source": "existing KTDB population baseline model",
         "features": scenario.features,
         "provenance": scenario.provenance,
@@ -536,10 +556,24 @@ def _route_payload() -> dict[str, object]:
     rows = read_replay_csv(DEFAULT_MOCK)
     if not rows:
         return {"status": "WAITING"}
+    sample_step = max(1, len(rows) // 80)
+    sampled = rows[::sample_step]
+    if sampled[-1] is not rows[-1]:
+        sampled.append(rows[-1])
+    valid_events = [
+        event
+        for event in (validate_gps_event(row).event for row in rows)
+        if event is not None
+    ]
     return {
         "status": "READY",
         "origin": {"label": "서울 영등포구 버드나루로10길 7", "latitude": float(rows[0]["latitude"]), "longitude": float(rows[0]["longitude"])},
         "destination": {"label": "Microsoft Korea · 서울 종로구 종로1길 50", "latitude": float(rows[-1]["latitude"]), "longitude": float(rows[-1]["longitude"])},
+        "distance_km": trajectory_distance_km(valid_events),
+        "polyline": [
+            {"latitude": float(row["latitude"]), "longitude": float(row["longitude"])}
+            for row in sampled
+        ],
     }
 
 
@@ -575,6 +609,21 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         if path == "/":
             self._send(200, MOBILE_APP_HTML, "text/html")
+        elif path.startswith("/ui/"):
+            asset = (UI_DIR / path.removeprefix("/ui/")).resolve()
+            ui_root = UI_DIR.resolve()
+            if ui_root not in asset.parents or not asset.is_file():
+                self._send(404, {"error": "UI asset not found"})
+                return
+            payload = asset.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", mimetypes.guess_type(asset.name)[0] or "application/octet-stream")
+            self.send_header("Content-Length", str(len(payload)))
+            self.end_headers()
+            try:
+                self.wfile.write(payload)
+            except (BrokenPipeError, ConnectionAbortedError):
+                return
         elif path.startswith("/assets/"):
             asset = (ROOT / "assets" / path.removeprefix("/assets/")).resolve()
             asset_root = (ROOT / "assets").resolve()
