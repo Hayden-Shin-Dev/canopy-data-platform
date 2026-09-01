@@ -36,6 +36,8 @@ AI-Hub와 기존 모델을 고정 규칙으로 결합한 탐색 후보는 다음
 
 Ensemble class F1은 walk 0.9254, bike 0.3541, car 0.1205, bus 0.1232, rail 0.2995다. 기존 값 대비 car F1이 0.1527에서 0.1205로 하락했기 때문에 전체 gate는 PASS가 아니다. 따라서 이 후보를 기본 production 모델로 교체하지 않았다.
 
+추가로 class-balanced Hist 120초 후보(Test Accuracy 0.6937, Macro F1 0.6695)와 AI-Hub transit override confidence 0.6 후보(raw Accuracy 0.5366, Macro F1 0.3402)를 확인했다. 둘 다 unweighted Hist와 ensemble보다 낮아 선택하지 않았다.
+
 ## 원인 판단
 
 v3 validation report와 frozen hash는 PASS다. 문제는 v3가 이상한 데이터라기보다 입력 계약 차이다. AI-Hub TMC는 약 1초 간격 60포인트(60초)이고, v3는 4~30초 간격의 불규칙 GPS다. AI-Hub 원본에는 rail 좌표 누락도 training 26,848건 중 16,136건이 있어 유효 trajectory가 10,712건으로 줄어든다. 내부 holdout 성능은 높지만 이 차이로 v3 일반화가 보장되지 않았다.
