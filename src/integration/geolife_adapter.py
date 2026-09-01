@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Sequence
 
 import pandas as pd
+import joblib
 
 from src.config import PROJECT_ROOT
 from src.geolife.predict import predict_probabilities
@@ -52,6 +53,58 @@ def build_window_table(events: Sequence[GpsEvent], *, window_seconds: int = 120)
     return [(window, compute_window_features(window.points)) for window in windows]
 
 
+def _infer_aihub_windows(
+    events: Sequence[GpsEvent],
+    *,
+    model_path: Path,
+    window_seconds: int,
+) -> list[WindowInference]:
+    """Run the opt-in AI-Hub contract without changing the GeoLife default."""
+    from src.aihub.runtime import event_features
+
+    bundle = joblib.load(model_path)
+    feature_columns = list(bundle["feature_columns"])
+    classes = [str(value) for value in bundle["classes"]]
+    expected_seconds = int(bundle.get("window_duration_seconds", window_seconds))
+    if expected_seconds != window_seconds:
+        raise ValueError(
+            f"AI-Hub artifact requires {expected_seconds}s windows; received {window_seconds}s"
+        )
+    points = [_to_point(event) for event in events]
+    windows = list(iter_time_windows(points, window_seconds=window_seconds, min_points=2))
+    if not windows:
+        return []
+    last_timestamp = events[-1].timestamp
+    output: list[WindowInference] = []
+    for window in windows:
+        window_events = [
+            event for event in events
+            if window.window_start <= event.timestamp < window.window_end
+        ]
+        if not window_events:
+            continue
+        features = event_features(window_events)
+        frame = pd.DataFrame([features])[feature_columns]
+        probabilities = bundle["model"].predict_proba(frame)[0]
+        probability_map = {
+            classes[index]: float(value) for index, value in enumerate(probabilities)
+        }
+        closed = last_timestamp >= window.window_end
+        predicted = max(probability_map, key=probability_map.get) if closed else None
+        output.append(
+            WindowInference(
+                window_start=pd.Timestamp(window.window_start),
+                window_end=pd.Timestamp(window.window_end),
+                status="READY" if closed else "COLLECTING",
+                features=features,
+                probabilities=probability_map,
+                predicted_mode=predicted,
+                confidence=probability_map[predicted] if predicted else None,
+            )
+        )
+    return output
+
+
 def infer_windows(
     events: Sequence[GpsEvent],
     *,
@@ -63,6 +116,12 @@ def infer_windows(
     model = Path(model_path)
     if not model.is_file():
         raise FileNotFoundError(f"GeoLife model artifact not found: {model}")
+    try:
+        contract = joblib.load(model)
+    except Exception:
+        contract = None
+    if isinstance(contract, dict) and str(contract.get("feature_version", "")).startswith("aihub-window-v1"):
+        return _infer_aihub_windows(events, model_path=model, window_seconds=window_seconds)
     built = build_window_table(events, window_seconds=window_seconds)
     if not built:
         return []

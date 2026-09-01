@@ -154,6 +154,7 @@ def _evaluate_trip(
     factors_csv: Path,
     fallback_expected: dict[str, object],
     derive_ktdb_features: bool = False,
+    window_seconds: int = 120,
 ) -> dict[str, Any]:
     """Run production inference, then load Ground Truth for scoring."""
 
@@ -181,6 +182,7 @@ def _evaluate_trip(
         geolife_model_path=geolife_model,
         ktdb_model_path=ktdb_model,
         factors_csv=factors_csv,
+        window_seconds=window_seconds,
     )
     # Ground Truth is intentionally opened only after run_full_pipeline.
     truth = _load_ground_truth(row["ground_truth_path"])
@@ -332,7 +334,7 @@ def _artifact_sha256(path: Path) -> str | None:
     return digest.hexdigest()
 
 
-def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_baseline_commit: str, evaluation_commit: str, limit: int | None = None, offset: int = 0, resume: bool = False, verify_hashes: bool = True, derive_ktdb_features: bool = False, branch: str = "eval/seoul-synthetic-v1") -> dict[str, Any]:
+def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_baseline_commit: str, evaluation_commit: str, limit: int | None = None, offset: int = 0, resume: bool = False, verify_hashes: bool = True, derive_ktdb_features: bool = False, branch: str = "eval/seoul-synthetic-v1", geolife_model_path: str | Path | None = None, window_seconds: int = 120) -> dict[str, Any]:
     dataset = discover_dataset(dataset_root)
     frozen_validation = validate_frozen_dataset(dataset, verify_hashes=verify_hashes)
     if frozen_validation["status"] != "PASS":
@@ -355,7 +357,7 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
     if limit is not None:
         rows = rows[:limit]
     references = TransitRuntimeReferences.from_directory()
-    geolife_model = ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"
+    geolife_model = Path(geolife_model_path) if geolife_model_path else ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"
     ktdb_model = ROOT / "models/expected_behaviour/ktdb_population_baseline.pkl"
     factors_csv = ROOT / "data/processed/emission_factors/emission_factors_2026.csv"
     fallback_expected = _default_expected_features() or {}
@@ -372,7 +374,7 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
         "transit_resolver": "src/transit_context/resolver.py",
         "transit_settings": "config/transit_context.json",
         "transit_settings_sha256": _artifact_sha256(ROOT / "config/transit_context.json"),
-        "window_seconds": 120,
+        "window_seconds": window_seconds,
         "smoothing": "src/integration/segments.py::smooth_window_modes",
     }
     (output / "version_freeze.json").write_text(json.dumps(version_freeze, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -383,7 +385,7 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
     with predictions_path.open("a", encoding="utf-8") as predictions, traces_path.open("a", encoding="utf-8") as traces_file:
         for index, row in enumerate(rows, start=1):
             trip_id = str(row["trip_id"])
-            result = completed.get(trip_id) or _evaluate_trip(row, references=references, geolife_model=geolife_model, ktdb_model=ktdb_model, factors_csv=factors_csv, fallback_expected=fallback_expected, derive_ktdb_features=derive_ktdb_features)
+            result = completed.get(trip_id) or _evaluate_trip(row, references=references, geolife_model=geolife_model, ktdb_model=ktdb_model, factors_csv=factors_csv, fallback_expected=fallback_expected, derive_ktdb_features=derive_ktdb_features, window_seconds=window_seconds)
             if trip_id not in completed:
                 predictions.write(json.dumps(result, ensure_ascii=False, default=str) + "\n")
                 predictions.flush()

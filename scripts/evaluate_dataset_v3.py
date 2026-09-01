@@ -22,6 +22,8 @@ def main() -> int:
     parser.add_argument("--limit", type=int)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--skip-hash-verification", action="store_true")
+    parser.add_argument("--mobility-model", default=None, help="Optional model artifact path; default keeps the production GeoLife model")
+    parser.add_argument("--window-seconds", type=int, default=120)
     args = parser.parse_args()
     summary = run_evaluation(
         args.dataset_root,
@@ -32,6 +34,8 @@ def main() -> int:
         resume=args.resume,
         verify_hashes=not args.skip_hash_verification,
         branch="evaluation/seoul-synthetic-v3-baseline",
+        geolife_model_path=args.mobility_model,
+        window_seconds=args.window_seconds,
     )
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0
