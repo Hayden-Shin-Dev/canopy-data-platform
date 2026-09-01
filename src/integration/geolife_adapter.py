@@ -118,7 +118,14 @@ def _infer_aihub_windows(
             base_map = {name: float(base_probs[i]) for i, name in enumerate(base_classes)}
             ai_mode = max(ai_map, key=ai_map.get)
             base_mode = max(base_map, key=base_map.get)
-            predicted_mode = ai_mode if ai_mode in {"bus", "rail"} and base_mode not in {"walk", "bike"} else base_mode
+            min_confidence = float(bundle.get("min_aihub_confidence", 0.0))
+            predicted_mode = (
+                ai_mode
+                if ai_mode in {"bus", "rail"}
+                and base_mode not in {"walk", "bike"}
+                and ai_map[ai_mode] >= min_confidence
+                else base_mode
+            )
             probabilities = base_map if predicted_mode == base_mode else ai_map
         else:
             probabilities = bundle["model"].predict_proba(frame)[0]
