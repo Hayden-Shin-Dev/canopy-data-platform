@@ -17,6 +17,7 @@ from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
 from src.integration.replay import ReplayEngine, read_replay_csv
 from src.integration.gps_contract import validate_gps_event
 from src.integration.ktdb_context import build_expected_features
+from src.integration.model_config import default_mobility_model
 from src.ktdb.schema import MODEL_FEATURES
 
 
@@ -48,7 +49,7 @@ def main() -> int:
     parser.add_argument("fixture", type=Path, nargs="?", default=DEFAULT_MOCK)
     parser.add_argument("--speed", choices=("1", "5", "10", "30", "instant"), default="instant")
     parser.add_argument("--pipeline", action="store_true", help="run model/transit/emission integration after replay")
-    parser.add_argument("--geolife-model", type=Path, default=ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib")
+    parser.add_argument("--geolife-model", type=Path, default=default_mobility_model())
     parser.add_argument("--ktdb-model", type=Path, default=ROOT / "models/expected_behaviour/ktdb_population_baseline.pkl")
     parser.add_argument("--factors", type=Path, default=ROOT / "data/processed/emission_factors/emission_factors_2026.csv")
     parser.add_argument("--ktdb-features", type=Path, help="developer-only JSON with the existing KTDB feature contract")

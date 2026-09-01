@@ -1,0 +1,50 @@
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+import joblib
+from sklearn.ensemble import ExtraTreesClassifier
+
+from src.aihub.features import AIHUB_FEATURE_COLUMNS
+from src.aihub.runtime import predict_event_window
+from src.integration.gps_contract import GpsEvent
+
+
+def _event(index: int) -> GpsEvent:
+    return GpsEvent(
+        schema_version="1.0",
+        trip_id="trip",
+        device_id="device",
+        sequence=index,
+        timestamp=datetime(2024, 1, 1, tzinfo=timezone.utc) + timedelta(seconds=index),
+        latitude=37.5 + index * 0.0001,
+        longitude=126.9 + index * 0.0001,
+        horizontal_accuracy_m=5.0,
+        altitude_m=10.0,
+        vertical_accuracy_m=5.0,
+        speed_mps=1.0,
+        course_deg=45.0,
+    )
+
+
+def test_runtime_uses_same_feature_contract(tmp_path: Path) -> None:
+    model = ExtraTreesClassifier(n_estimators=2, random_state=1).fit(
+        [[0.0] * len(AIHUB_FEATURE_COLUMNS), [1.0] * len(AIHUB_FEATURE_COLUMNS)],
+        ["walk", "car"],
+    )
+    path = tmp_path / "model.joblib"
+    joblib.dump({"model": model, "feature_columns": list(AIHUB_FEATURE_COLUMNS), "classes": ["walk", "car"], "feature_version": "aihub-window-v1"}, path)
+    result = predict_event_window(path, [_event(index) for index in range(61)])
+    assert result["predicted_mode"] in {"walk", "car"}
+    assert abs(sum(result["probabilities"].values()) - 1.0) < 1e-9
+
+
+def test_runtime_waits_for_a_complete_aihub_window(tmp_path: Path) -> None:
+    model = ExtraTreesClassifier(n_estimators=2, random_state=1).fit(
+        [[0.0] * len(AIHUB_FEATURE_COLUMNS), [1.0] * len(AIHUB_FEATURE_COLUMNS)],
+        ["walk", "car"],
+    )
+    path = tmp_path / "model.joblib"
+    joblib.dump({"model": model, "feature_columns": list(AIHUB_FEATURE_COLUMNS), "classes": ["walk", "car"]}, path)
+    result = predict_event_window(path, [_event(0), _event(1)])
+    assert result["status"] == "COLLECTING"
+    assert result["predicted_mode"] is None

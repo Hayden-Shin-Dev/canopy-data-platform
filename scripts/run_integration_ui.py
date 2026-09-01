@@ -24,6 +24,7 @@ from src.predict_expected_behaviour import predict_expected_behaviour
 from src.integration.emissions import calculate_expected_emission, load_factor_resolver
 from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
 from src.integration.replay import ReplayEngine, read_replay_csv
+from src.integration.model_config import default_mobility_model
 from src.ktdb.schema import MODEL_FEATURES
 
 
@@ -277,7 +278,7 @@ class Runtime:
                     }
                     for window in infer_windows(
                         session.events,
-                        model_path=ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib",
+                        model_path=default_mobility_model(),
                         window_seconds=120,
                     )
                 ]
@@ -294,7 +295,7 @@ class Runtime:
                 session.events,
                 self.expected_features,
                 references=references,
-                geolife_model_path=ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib",
+                geolife_model_path=default_mobility_model(),
                 ktdb_model_path=ROOT / "models/expected_behaviour/ktdb_population_baseline.pkl",
                 factors_csv=ROOT / "data/processed/emission_factors/emission_factors_2026.csv",
             )
@@ -332,7 +333,7 @@ class Runtime:
             try:
                 windows = infer_windows(
                     inference_events,
-                    model_path=ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib",
+                    model_path=default_mobility_model(),
                     window_seconds=120,
                 )
                 payload = [

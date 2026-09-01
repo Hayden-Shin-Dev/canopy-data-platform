@@ -11,6 +11,7 @@ from scripts.replay_integration import _load_expected_features
 from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
 from src.integration.replay import ReplayEngine, read_replay_csv
 from src.integration.geolife_adapter import infer_windows
+from src.integration.model_config import default_mobility_model
 
 
 LABELS = {
@@ -34,14 +35,14 @@ def evaluate(fixture_dir: str | Path, output: str | Path) -> dict[str, object]:
         fixture = root / filename
         events = ReplayEngine(speed="instant").stream(read_replay_csv(fixture)).session.events
         expected_features = _load_expected_features(None, fixture=fixture, events=events)
-        windows = infer_windows(events, model_path=Path("models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"), window_seconds=120)
+        windows = infer_windows(events, model_path=default_mobility_model(), window_seconds=120)
         ready = [window for window in windows if window.status == "READY"]
         raw = _majority([str(window.predicted_mode) for window in ready if window.predicted_mode])
         pipeline = run_full_pipeline(
             events,
             expected_features,
             references=references,
-            geolife_model_path=Path("models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"),
+            geolife_model_path=default_mobility_model(),
             ktdb_model_path=Path("models/expected_behaviour/ktdb_population_baseline.pkl"),
             factors_csv=Path("data/processed/emission_factors/emission_factors_2026.csv"),
         )

@@ -1,0 +1,48 @@
+{
+  "dataset_root": "C:\\Users\\user\\Desktop\\canopy-project-pt\\data\\evaluation\\seoul-synthetic\\evaluation_dataset_v3",
+  "dataset_version": "evaluation_dataset_v3",
+  "dataset_validation": {
+    "root": "C:\\Users\\user\\Desktop\\canopy-project-pt\\data\\evaluation\\seoul-synthetic\\evaluation_dataset_v3",
+    "dataset_version": "evaluation_dataset_v3",
+    "frozen": "FROZEN",
+    "journey_count": 700,
+    "gps_file_count": 700,
+    "ground_truth_file_count": 700,
+    "validation_status": "PASS",
+    "hashes_checked": 0,
+    "hashes_passed": 0,
+    "hashes_missing_optional": [],
+    "checks": {
+      "dataset_version": true,
+      "frozen": true,
+      "journey_count": true,
+      "gps_count": true,
+      "ground_truth_count": true,
+      "validation_report_passed": true,
+      "manifest_hashes": true
+    },
+    "status": "PASS"
+  },
+  "canopy_baseline_commit": "7a193ed",
+  "evaluation_commit": "c76d4ad",
+  "branch": "evaluation/seoul-synthetic-v3-baseline",
+  "total_journeys": 700,
+  "successfully_evaluated": 698,
+  "failed": 2,
+  "skipped": 0,
+  "runtime_seconds": 2233.2799999999997,
+  "ground_truth_used_by_inference": false,
+  "gps_label_leakage": false,
+  "multimodal_journeys": 140,
+  "hard_case_journeys": 0,
+  "merged_from_shards": [
+    "reports\\evaluation_v3_baseline_shards\\shard_00",
+    "reports\\evaluation_v3_baseline_shards\\shard_01",
+    "reports\\evaluation_v3_baseline_shards\\shard_02",
+    "reports\\evaluation_v3_baseline_shards\\shard_03",
+    "reports\\evaluation_v3_baseline_shards\\shard_04",
+    "reports\\evaluation_v3_baseline_shards\\shard_05",
+    "reports\\evaluation_v3_baseline_shards\\shard_06",
+    "reports\\evaluation_v3_baseline_shards\\shard_07"
+  ]
+}

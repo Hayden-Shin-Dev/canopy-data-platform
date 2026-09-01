@@ -58,12 +58,16 @@ def _load_ground_truth(path: Path) -> dict[str, Any]:
         payload = json.load(handle)
     segments = []
     for segment in payload.get("segments", []):
+        start_value = segment.get("start_timestamp", segment.get("start_time"))
+        end_value = segment.get("end_timestamp", segment.get("end_time"))
+        if start_value is None or end_value is None:
+            raise ValueError(f"ground truth segment has no start/end timestamp: {path}")
         segments.append(
             {
                 **segment,
                 "mode": str(segment["mode"]),
-                "start": _parse_time(segment["start_timestamp"]),
-                "end": _parse_time(segment["end_timestamp"]),
+                "start": _parse_time(start_value),
+                "end": _parse_time(end_value),
             }
         )
     return {**payload, "segments": segments}
@@ -150,6 +154,7 @@ def _evaluate_trip(
     factors_csv: Path,
     fallback_expected: dict[str, object],
     derive_ktdb_features: bool = False,
+    window_seconds: int = 120,
 ) -> dict[str, Any]:
     """Run production inference, then load Ground Truth for scoring."""
 
@@ -177,6 +182,7 @@ def _evaluate_trip(
         geolife_model_path=geolife_model,
         ktdb_model_path=ktdb_model,
         factors_csv=factors_csv,
+        window_seconds=window_seconds,
     )
     # Ground Truth is intentionally opened only after run_full_pipeline.
     truth = _load_ground_truth(row["ground_truth_path"])
@@ -253,7 +259,7 @@ def _write_report(run_dir: Path, summary: dict[str, Any], metrics: dict[str, Any
 
     raw, final = metrics["raw"], metrics["final"]
     rows = [
-        "# Canopy dataset_v1 blind evaluation",
+        f"# Canopy {summary.get('dataset_version', 'dataset_v1')} blind evaluation",
         "",
         f"Dataset: `{summary['dataset_root']}`",
         f"Canopy Baseline Commit: `{summary['canopy_baseline_commit']}`",
@@ -314,7 +320,8 @@ def _write_report(run_dir: Path, summary: dict[str, Any], metrics: dict[str, Any
             "- Distance-weighted metrics are marked NOT AVAILABLE because the frozen Ground Truth does not provide per-segment distance weights.",
         ]
     )
-    (run_dir / "CANOPY_DATASET_V1_EVALUATION.md").write_text("\n".join(rows) + "\n", encoding="utf-8")
+    report_name = "BASELINE_EVALUATION_V3.md" if summary.get("dataset_version") == "evaluation_dataset_v3" else "CANOPY_DATASET_V1_EVALUATION.md"
+    (run_dir / report_name).write_text("\n".join(rows) + "\n", encoding="utf-8")
 
 
 def _artifact_sha256(path: Path) -> str | None:
@@ -327,7 +334,7 @@ def _artifact_sha256(path: Path) -> str | None:
     return digest.hexdigest()
 
 
-def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_baseline_commit: str, evaluation_commit: str, limit: int | None = None, resume: bool = False, verify_hashes: bool = True, derive_ktdb_features: bool = False, branch: str = "eval/seoul-synthetic-v1") -> dict[str, Any]:
+def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_baseline_commit: str, evaluation_commit: str, limit: int | None = None, offset: int = 0, resume: bool = False, verify_hashes: bool = True, derive_ktdb_features: bool = False, branch: str = "eval/seoul-synthetic-v1", geolife_model_path: str | Path | None = None, window_seconds: int = 120) -> dict[str, Any]:
     dataset = discover_dataset(dataset_root)
     frozen_validation = validate_frozen_dataset(dataset, verify_hashes=verify_hashes)
     if frozen_validation["status"] != "PASS":
@@ -344,10 +351,13 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
                 value = json.loads(line)
                 completed[str(value["trip_id"])] = value
     rows = list(iter_manifest_rows(dataset))
+    if offset < 0:
+        raise ValueError("offset must be non-negative")
+    rows = rows[offset:]
     if limit is not None:
         rows = rows[:limit]
     references = TransitRuntimeReferences.from_directory()
-    geolife_model = ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"
+    geolife_model = Path(geolife_model_path) if geolife_model_path else ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"
     ktdb_model = ROOT / "models/expected_behaviour/ktdb_population_baseline.pkl"
     factors_csv = ROOT / "data/processed/emission_factors/emission_factors_2026.csv"
     fallback_expected = _default_expected_features() or {}
@@ -364,7 +374,7 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
         "transit_resolver": "src/transit_context/resolver.py",
         "transit_settings": "config/transit_context.json",
         "transit_settings_sha256": _artifact_sha256(ROOT / "config/transit_context.json"),
-        "window_seconds": 120,
+        "window_seconds": window_seconds,
         "smoothing": "src/integration/segments.py::smooth_window_modes",
     }
     (output / "version_freeze.json").write_text(json.dumps(version_freeze, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -375,7 +385,7 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
     with predictions_path.open("a", encoding="utf-8") as predictions, traces_path.open("a", encoding="utf-8") as traces_file:
         for index, row in enumerate(rows, start=1):
             trip_id = str(row["trip_id"])
-            result = completed.get(trip_id) or _evaluate_trip(row, references=references, geolife_model=geolife_model, ktdb_model=ktdb_model, factors_csv=factors_csv, fallback_expected=fallback_expected, derive_ktdb_features=derive_ktdb_features)
+            result = completed.get(trip_id) or _evaluate_trip(row, references=references, geolife_model=geolife_model, ktdb_model=ktdb_model, factors_csv=factors_csv, fallback_expected=fallback_expected, derive_ktdb_features=derive_ktdb_features, window_seconds=window_seconds)
             if trip_id not in completed:
                 predictions.write(json.dumps(result, ensure_ascii=False, default=str) + "\n")
                 predictions.flush()
@@ -386,7 +396,7 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
             (output / "checkpoint.json").write_text(
                 json.dumps(
                     {
-                        "dataset_version": "dataset_v1",
+                        "dataset_version": dataset.dataset_manifest.get("dataset_version"),
                         "canopy_baseline_commit": canopy_baseline_commit,
                         "evaluation_commit": evaluation_commit,
                         "completed_trip_ids": sorted(completed),
@@ -429,6 +439,7 @@ def run_evaluation(dataset_root: str | Path, run_dir: str | Path, *, canopy_base
     }
     summary = {
         "dataset_root": str(dataset.root),
+        "dataset_version": dataset.dataset_manifest.get("dataset_version"),
         "dataset_validation": frozen_validation,
         "canopy_baseline_commit": canopy_baseline_commit,
         "evaluation_commit": evaluation_commit,
@@ -501,11 +512,12 @@ def main() -> int:
     parser.add_argument("--evaluation-commit", required=True)
     parser.add_argument("--branch", default="eval/seoul-synthetic-v1")
     parser.add_argument("--limit", type=int)
+    parser.add_argument("--offset", type=int, default=0)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--skip-hash-verification", action="store_true")
     parser.add_argument("--derive-ktdb-features", action="store_true", help="derive route-specific KTDB features for each journey; slower and not needed for mode metrics")
     args = parser.parse_args()
-    summary = run_evaluation(args.dataset_root, args.run_dir, canopy_baseline_commit=args.canopy_baseline_commit, evaluation_commit=args.evaluation_commit, limit=args.limit, resume=args.resume, verify_hashes=not args.skip_hash_verification, derive_ktdb_features=args.derive_ktdb_features, branch=args.branch)
+    summary = run_evaluation(args.dataset_root, args.run_dir, canopy_baseline_commit=args.canopy_baseline_commit, evaluation_commit=args.evaluation_commit, limit=args.limit, offset=args.offset, resume=args.resume, verify_hashes=not args.skip_hash_verification, derive_ktdb_features=args.derive_ktdb_features, branch=args.branch)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0
 

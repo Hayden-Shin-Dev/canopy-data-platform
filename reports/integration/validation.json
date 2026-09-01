@@ -14,10 +14,18 @@
       "accepted_event_count": 433,
       "actual_geolife_window_sequence": [
         "walk",
+        "rail",
+        "walk",
+        "rail",
         "bike",
+        "rail",
+        "bike",
+        "rail",
         "walk"
       ],
       "production_mode_sequence": [
+        "walk",
+        "bike",
         "walk",
         "rail",
         "walk"
@@ -61,7 +69,7 @@
     },
     "geolife_model": {
       "status": "PASS",
-      "path": "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"
+      "path": "models\\mobility_recognition\\aihub_hist120.joblib"
     },
     "emission_factors": {
       "status": "PASS",
@@ -77,8 +85,8 @@
     "transit_fusion_evaluation": {
       "status": "PASS",
       "raw_accuracy": 0.5,
-      "fused_accuracy": 1.0,
-      "false_rail_raw": 2,
+      "fused_accuracy": 0.5,
+      "false_rail_raw": 0,
       "false_rail_fused": 0,
       "bike_support": 0
     },
@@ -103,14 +111,14 @@
           "status": "PASS",
           "accepted_event_count": 4,
           "rejected_event_count": 0,
-          "actual_mode": "bus",
+          "actual_mode": "bike",
           "distance_km": 0.9257038315071642
         },
         "seoul_car_no_transit.csv": {
           "status": "PASS",
           "accepted_event_count": 4,
           "rejected_event_count": 0,
-          "actual_mode": "car",
+          "actual_mode": "bike",
           "distance_km": 1.4146645565135663
         },
         "seoul_subway_line1.csv": {

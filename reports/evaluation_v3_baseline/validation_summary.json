@@ -1,0 +1,13 @@
+{
+  "dataset": "seoul_synthetic_evaluation_v3",
+  "dataset_root": "data/evaluation/seoul-synthetic/evaluation_dataset_v3",
+  "status": "PASS",
+  "journey_count": 700,
+  "gps_file_count": 700,
+  "ground_truth_file_count": 700,
+  "gps_points": 370650,
+  "hashes_checked": 2100,
+  "hashes_passed": 2100,
+  "ground_truth_leakage": false,
+  "note": "The supplied freeze manifest also lists generator-only files that are not included in the evaluation package; missing optional paths do not fail the frozen package check."
+}

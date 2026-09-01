@@ -16,6 +16,7 @@ from src.integration.emissions import load_factor_resolver
 from src.integration.gps_contract import validate_gps_event
 from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
 from src.integration.replay import ReplayEngine, read_replay_csv
+from src.integration.model_config import default_mobility_model
 from scripts.evaluate_mock_trip import evaluate as evaluate_mock_trip
 from scripts.evaluate_transit_fusion import evaluate as evaluate_transit_fusion
 from src.predict_expected_behaviour import predict_expected_behaviour
@@ -25,7 +26,7 @@ from src.ktdb.schema import MODEL_FEATURES
 def validate() -> dict[str, object]:
     ktdb_model = ROOT / "models/expected_behaviour/ktdb_population_baseline.pkl"
     ktdb_sample = ROOT / "data/processed/population_baseline/ktdb/01_population_model_training_all.csv"
-    geolife_model = ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"
+    geolife_model = default_mobility_model()
     factors = ROOT / "data/processed/emission_factors/emission_factors_2026.csv"
     result: dict[str, object] = {"checks": {}, "overall_status": "INCOMPLETE"}
     checks: dict[str, object] = result["checks"]  # type: ignore[assignment]
@@ -54,7 +55,7 @@ def validate() -> dict[str, object]:
             checks["ktdb_model"] = {"status": "PASS", "path": "models/expected_behaviour/ktdb_population_baseline.pkl", "predicted_mode": str(prediction["predicted_mode"]), "probabilities": {mode: float(prediction[f"{mode}_probability"]) for mode in ("walk", "bike", "car", "bus", "rail")}}
         except Exception as error:
             checks["ktdb_model"] = {"status": "FAIL", "path": "models/expected_behaviour/ktdb_population_baseline.pkl", "reason": f"model/sample contract mismatch: {error}"}
-    checks["geolife_model"] = {"status": "PASS" if geolife_model.is_file() else "FAIL", "path": "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"}
+    checks["geolife_model"] = {"status": "PASS" if geolife_model.is_file() else "FAIL", "path": str(geolife_model.relative_to(ROOT)) if geolife_model.is_relative_to(ROOT) else str(geolife_model)}
     try:
         resolver = load_factor_resolver(factors)
         checks["emission_factors"] = {"status": "PASS", "row_count": len(resolver._factors)}
