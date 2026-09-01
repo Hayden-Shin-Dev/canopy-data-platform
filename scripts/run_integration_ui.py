@@ -295,6 +295,18 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
 )
 
 
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<div class="card goal">',
+    '<div class="card"><div class="eyebrow">KTDB Population Baseline</div><div id="baselineActual" class="sub">실제 baseline을 불러오는 중...</div></div><div class="card goal">',
+    1,
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "function updateStatus(s){",
+    "function renderBaseline(data){if(data?.status!=='READY')return;const p=data.probabilities||{},names={walk:'도보',bike:'자전거',car:'자동차',bus:'버스',rail:'철도'},el=document.getElementById('baselineActual');if(el)el.innerHTML=Object.entries(p).map(([m,v])=>'<span style=\"display:inline-block;margin-right:10px\"><b>'+names[m]+'</b> '+(Number(v)*100).toFixed(1)+'%</span>').join('');if(route.origin&&route.destination){const r=Math.PI/180,a=route.origin.latitude*r,b=route.destination.latitude*r,c=(route.destination.latitude-route.origin.latitude)*r,d=(route.destination.longitude-route.origin.longitude)*r,km=6371*2*Math.asin(Math.sqrt(Math.sin(c/2)**2+Math.cos(a)*Math.cos(b)*Math.sin(d/2)**2));['homeDistance','planDistance'].forEach(id=>{const x=document.getElementById(id);if(x)x.textContent=km.toFixed(1)+' km'})}}function updateStatus(s){",
+    1,
+)
+
+
 class Runtime:
     def __init__(self) -> None:
         self.lock = Lock()
