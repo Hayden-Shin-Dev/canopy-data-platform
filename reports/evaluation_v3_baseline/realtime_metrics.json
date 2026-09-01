@@ -1,0 +1,84 @@
+{
+  "status": "PASS",
+  "definition": "raw GeoLife prediction at each completed window uses only GPS available through that window",
+  "raw_window_metrics": {
+    "count": 18179,
+    "accuracy": 0.5272017162660212,
+    "macro_precision": 0.632846278201203,
+    "macro_recall": 0.4410928362097658,
+    "macro_f1": 0.31971641186180944,
+    "weighted_f1": 0.5039016069215225,
+    "per_class": {
+      "walk": {
+        "precision": 0.9581176470588235,
+        "recall": 0.9353393821063513,
+        "f1": 0.946591503457895,
+        "support": 8707
+      },
+      "bike": {
+        "precision": 0.39037698412698413,
+        "recall": 0.6316211878009631,
+        "f1": 0.48252605763335377,
+        "support": 1246
+      },
+      "car": {
+        "precision": 0.07308970099667775,
+        "recall": 0.6186726659167604,
+        "f1": 0.13073449013548846,
+        "support": 889
+      },
+      "bus": {
+        "precision": 0.7426470588235294,
+        "recall": 0.018815201192250372,
+        "f1": 0.03670058139534884,
+        "support": 5368
+      },
+      "rail": {
+        "precision": 1.0,
+        "recall": 0.001015744032503809,
+        "f1": 0.0020294266869609334,
+        "support": 1969
+      }
+    }
+  },
+  "final_window_metrics": {
+    "count": 18179,
+    "accuracy": 0.5264866054238407,
+    "macro_precision": 0.4600401665249592,
+    "macro_recall": 0.4317901134445762,
+    "macro_f1": 0.34522078538589707,
+    "weighted_f1": 0.5106717212618899,
+    "per_class": {
+      "walk": {
+        "precision": 0.9587489225464845,
+        "recall": 0.8942230389341909,
+        "f1": 0.9253624910862848,
+        "support": 8707
+      },
+      "bike": {
+        "precision": 0.33454281567489114,
+        "recall": 0.36998394863563405,
+        "f1": 0.3513719512195122,
+        "support": 1246
+      },
+      "car": {
+        "precision": 0.0924869234427009,
+        "recall": 0.437570303712036,
+        "f1": 0.15269872423945044,
+        "support": 889
+      },
+      "bus": {
+        "precision": 0.7142857142857143,
+        "recall": 0.010245901639344262,
+        "f1": 0.020202020202020204,
+        "support": 5368
+      },
+      "rail": {
+        "precision": 0.20013645667500568,
+        "recall": 0.44692737430167595,
+        "f1": 0.276468740182218,
+        "support": 1969
+      }
+    }
+  }
+}

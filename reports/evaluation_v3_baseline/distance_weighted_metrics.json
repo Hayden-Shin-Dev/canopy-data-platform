@@ -1,0 +1,4 @@
+{
+  "status": "NOT_AVAILABLE",
+  "reason": "Frozen Ground Truth has journey-level distance only; no per-segment distance weights are provided."
+}
