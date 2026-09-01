@@ -18,6 +18,7 @@ def main() -> None:
     parser.add_argument("--n-estimators", type=int, default=300)
     parser.add_argument("--class-weight", choices=("balanced", "none"), default="balanced")
     parser.add_argument("--feature-set", choices=("all", "base"), default="all")
+    parser.add_argument("--split-manifest", default=None, help="Optional split manifest whose hash is recorded in the artifact")
     args = parser.parse_args()
     result = train_model(
         args.dataset_csv,
@@ -28,6 +29,7 @@ def main() -> None:
         n_estimators=args.n_estimators,
         class_weight=None if args.class_weight == "none" else args.class_weight,
         feature_set=args.feature_set,
+        split_manifest_path=args.split_manifest,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
 

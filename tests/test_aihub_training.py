@@ -24,3 +24,5 @@ def test_trains_and_persists_aihub_candidate(tmp_path: Path) -> None:
     assert model_path.is_file()
     assert metrics.is_file()
     assert set(joblib.load(model_path)["classes"]) == {"walk", "bike", "car", "bus", "rail"}
+    assert "brier_score" in result["metrics"]["validation"]
+    assert len(result["dataset_sha256"]) == 64

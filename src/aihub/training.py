@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,26 @@ from .features import AIHUB_FEATURE_COLUMNS
 
 
 BASE_FEATURE_COLUMNS = AIHUB_FEATURE_COLUMNS[:16]
+
+
+def _sha256(path: str | Path) -> str:
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _multiclass_brier_score(target: pd.Series, probabilities: Any, classes: list[str]) -> float:
+    """Average squared error of the complete class probability vector."""
+    class_index = {name: index for index, name in enumerate(classes)}
+    score = 0.0
+    for label, row in zip(target.astype(str), probabilities):
+        expected = [0.0] * len(classes)
+        if label in class_index:
+            expected[class_index[label]] = 1.0
+        score += sum((float(value) - expected[index]) ** 2 for index, value in enumerate(row))
+    return score / max(len(target), 1)
 
 
 def make_model(model_type: str, *, seed: int = 2021, n_estimators: int = 300, class_weight: str | None = "balanced") -> Any:
@@ -80,6 +101,7 @@ def _evaluate(model: Any, frame: pd.DataFrame, features: list[str]) -> dict[str,
         "macro_f1": float(f1_score(target, predicted, labels=list(CANOPY_MODES), average="macro", zero_division=0)),
         "weighted_f1": float(f1_score(target, predicted, labels=list(CANOPY_MODES), average="weighted", zero_division=0)),
         "log_loss": float(log_loss(target, probabilities, labels=model_classes)),
+        "brier_score": _multiclass_brier_score(target, probabilities, model_classes),
         "classification_report": report,
         "confusion_matrix_labels": list(CANOPY_MODES),
         "confusion_matrix": confusion_matrix(target, predicted, labels=list(CANOPY_MODES)).tolist(),
@@ -96,6 +118,7 @@ def train_model(
     n_estimators: int = 300,
     class_weight: str | None = "balanced",
     feature_set: str = "all",
+    split_manifest_path: str | Path | None = None,
 ) -> dict[str, object]:
     frame = pd.read_csv(dataset_csv, encoding="utf-8-sig", dtype={"user_id": "string"})
     required = {"user_id", "canonical_mode", "split", *AIHUB_FEATURE_COLUMNS}
@@ -129,6 +152,8 @@ def train_model(
         "window_duration_seconds": 60,
         "feature_columns": feature_columns,
         "classes": model_classes,
+        "dataset_sha256": _sha256(dataset_csv),
+        "split_manifest_sha256": _sha256(split_manifest_path) if split_manifest_path else None,
         "metrics": {
             "train": _evaluate(model, train, feature_columns),
             "validation": _evaluate(model, validation, feature_columns),
@@ -144,6 +169,8 @@ def train_model(
             "model": model,
             "feature_columns": feature_columns,
             "classes": model_classes,
+            "dataset_sha256": result["dataset_sha256"],
+            "split_manifest_sha256": result["split_manifest_sha256"],
             "feature_version": "aihub-window-v1",
             "window_duration_seconds": 60,
         },
