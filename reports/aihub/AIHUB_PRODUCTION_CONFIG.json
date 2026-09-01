@@ -1,0 +1,58 @@
+{
+  "model_name": "aihub_hist120",
+  "classifier": "HistGradientBoostingClassifier",
+  "hyperparameters": {
+    "max_iter": 250,
+    "learning_rate": 0.08,
+    "max_leaf_nodes": 31,
+    "random_state": 2021,
+    "class_weight": null
+  },
+  "window": {
+    "duration_seconds": 120,
+    "stride_seconds": 120,
+    "aggregation": "adjacent same-user same-mode 60s rows, gap <= 30s"
+  },
+  "feature_version": "aihub-window-v1",
+  "feature_columns": [
+    "point_count",
+    "observed_duration_sec",
+    "distance_m",
+    "displacement_m",
+    "straightness_ratio",
+    "mean_speed_mps",
+    "max_speed_mps",
+    "speed_std_mps",
+    "mean_abs_acceleration_mps2",
+    "acceleration_std_mps2",
+    "stop_ratio",
+    "mean_heading_change_deg",
+    "altitude_range_m",
+    "avg_sampling_interval_sec",
+    "valid_step_count",
+    "gap_step_count",
+    "accuracy_mean_m",
+    "accuracy_std_m",
+    "accuracy_missing_ratio",
+    "altitude_missing_ratio",
+    "valid_point_ratio"
+  ],
+  "class_mapping": {
+    "WALK": "walk",
+    "BIKE": "bike",
+    "CAR": "car",
+    "BUS": "bus",
+    "SUBWAY": "rail"
+  },
+  "quality_policy": {
+    "missing_coordinates": "exclude point from valid trajectory; do not synthesize coordinates",
+    "timestamp_gaps": "retain gap_step_count feature and reject windows below runtime duration contract",
+    "invalid_or_duplicate_timestamps": "exclude from valid point sequence",
+    "outliers": "no model-side coordinate fabrication; use shared window feature calculator",
+    "probability_calibration": "none; raw classifier probabilities are exposed and Brier score is reported"
+  },
+  "artifact": "models/mobility_recognition/aihub_hist120.joblib",
+  "rollback_artifact": "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib",
+  "selection": "validation Macro F1 on UID-disjoint AI-Hub split",
+  "v3_policy": "deprecated historical benchmark; excluded from model selection and release gate"
+}
