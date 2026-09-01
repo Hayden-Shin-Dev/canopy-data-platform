@@ -15,8 +15,16 @@ def main() -> None:
     parser.add_argument("output_json")
     parser.add_argument("--split", choices=("Training", "Validation"), default="Training")
     parser.add_argument("--gap-threshold-seconds", type=float, default=120)
+    parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument("--skip-label-content", action="store_true")
     args = parser.parse_args()
-    result = profile_split(args.source_root, args.split, gap_threshold_seconds=args.gap_threshold_seconds)
+    result = profile_split(
+        args.source_root,
+        args.split,
+        gap_threshold_seconds=args.gap_threshold_seconds,
+        workers=args.workers,
+        read_label_content=not args.skip_label_content,
+    )
     output = Path(args.output_json)
     output.parent.mkdir(parents=True, exist_ok=True)
     payload = {

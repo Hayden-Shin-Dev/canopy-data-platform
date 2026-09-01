@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 from collections import Counter, defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -280,8 +281,27 @@ def profile_split(
     split: str = "Training",
     *,
     gap_threshold_seconds: float = 120,
+    workers: int = 1,
+    read_label_content: bool = True,
 ) -> QualityProfile:
+    if workers < 1:
+        raise ValueError("workers must be at least 1")
     profile = QualityProfile()
-    for trajectory in iter_trajectories(root, split):
-        profile.add(trajectory, gap_threshold_seconds=gap_threshold_seconds)
+    files = iter_gps_files(root, split)
+    if workers == 1:
+        trajectories = (
+            read_trajectory(source_class, gps_path, label_path, read_label_content=read_label_content)
+            for source_class, gps_path, label_path in files
+        )
+        for trajectory in trajectories:
+            profile.add(trajectory, gap_threshold_seconds=gap_threshold_seconds)
+        return profile
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        trajectories = executor.map(
+            lambda item: read_trajectory(*item, read_label_content=read_label_content),
+            files,
+            buffersize=max(2, workers * 2),
+        )
+        for trajectory in trajectories:
+            profile.add(trajectory, gap_threshold_seconds=gap_threshold_seconds)
     return profile
