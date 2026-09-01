@@ -26,11 +26,14 @@ from src.integration.pipeline import TransitRuntimeReferences, run_full_pipeline
 from src.integration.replay import ReplayEngine, read_replay_csv
 from src.integration.model_config import default_mobility_model
 from src.ktdb.schema import MODEL_FEATURES
+from src.aihub.replay import load_split_manifest, validate_replay_uid
+from scripts.replay_aihub_test import replay_entry
 
 
 MOCK_DIR = ROOT / "mock"
 DEFAULT_MOCK = MOCK_DIR / "canopy_iphone_mock_yeongdeungpo_to_microsoft.csv"
 DEFAULT_KTDB_SAMPLE = ROOT / "data/processed/population_baseline/ktdb/01_population_model_training_all.csv"
+AIHUB_REPLAY_MANIFEST = ROOT / "data/replay/aihub_test/AIHUB_REPLAY_MANIFEST.json"
 
 
 HTML = """<!doctype html>
@@ -209,6 +212,21 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
 MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     '</section>\n</div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"',
     '</section><section id="mypage" class="screen profile-screen"><h2>마이페이지</h2><p class="muted">이번 데모에서 쌓은 Canopy Token을 확인할 수 있어요.</p><div class="profile-card"><div class="eyebrow">현재 보유 Token</div><div class="profile-token" id="myTokenBalance">0 Token</div></div><div class="profile-card"><div class="eyebrow">Token 받은 내역</div><div id="myRewardHistory"><p class="muted">아직 받은 Token이 없어요.</p></div></div></section><nav class="bottom-nav" aria-label="앱 메뉴"><button class="active" data-tab="home" onclick="navigateTab(\'home\')"><span>⌂</span>홈</button><button data-tab="journey" onclick="navigateTab(\'journey\')"><span>●</span>여정</button><button data-tab="mypage" onclick="navigateTab(\'mypage\')"><span>○</span>마이페이지</button></nav></div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"',
+)
+
+
+# AI-Hub replay controls are confined to Developer Mode; the existing user flow stays unchanged.
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    '<section id="developer" class="screen developer"><h2>Developer Mode</h2>',
+    '<section id="developer" class="screen developer"><h2>Developer Mode</h2><h3>AI-Hub Real GPS Replay</h3><p class="muted">Test UID만 선택합니다. Ground Truth는 inference 입력으로 전송하지 않습니다.</p><label>Test trajectory<select id="aihubReplay"></select></label><label>AI-Hub dataset root<input id="aihubRoot" style="width:100%;padding:8px;border:1px solid #ccd8d1;border-radius:8px" placeholder="외부 AI-Hub 데이터 폴더 경로"></label><button onclick="runAIHubReplay()">AI-Hub 결과 확인</button><pre id="aihubResult">WAITING</pre>',
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    'async function init(){let r={};',
+    "async function runAIHubReplay(){const id=document.getElementById('aihubReplay').value;const source_root=document.getElementById('aihubRoot').value.trim();const target=document.getElementById('aihubResult');target.textContent='REPLAYING...';try{const result=await api('/api/aihub/replay',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({replay_id:id,source_root,speed:document.getElementById('speed').value})});target.textContent=JSON.stringify(result,null,2)}catch(e){target.textContent=String(e)}}async function init(){let r={};",
+)
+MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
+    "document.getElementById('fixture').innerHTML=f.map(x=>`<option value=\"${x}\">${x}</option>`).join('');",
+    "document.getElementById('fixture').innerHTML=f.map(x=>`<option value=\"${x}\">${x}</option>`).join('');try{const replay=await api('/api/aihub/manifest');document.getElementById('aihubReplay').innerHTML=(replay.trajectories||[]).map(x=>`<option value=\"${x.replay_id}\">${x.replay_id} · ${x.ground_truth}</option>`).join('')}catch(e){document.getElementById('aihubReplay').innerHTML='<option>manifest unavailable</option>'}",
 )
 
 
@@ -392,6 +410,24 @@ def _default_expected_features() -> dict[str, object] | None:
     return build_expected_features(valid_events).features
 
 
+def _aihub_manifest_payload() -> dict[str, object]:
+    """Expose replay metadata only; raw GPS stays in the external dataset."""
+
+    if not AIHUB_REPLAY_MANIFEST.is_file():
+        return {"status": "WAITING", "reason": "AI-Hub replay manifest is unavailable", "trajectories": []}
+    manifest = json.loads(AIHUB_REPLAY_MANIFEST.read_text(encoding="utf-8"))
+    trajectories = []
+    for entry in manifest.get("trajectories", []):
+        trajectories.append({
+            "replay_id": entry.get("replay_id"),
+            "ground_truth": entry.get("ground_truth"),
+            "split": entry.get("split"),
+            "point_count": entry.get("point_count"),
+            "duration_seconds": entry.get("duration_seconds"),
+        })
+    return {"status": "READY", "selection_rule": manifest.get("selection_rule"), "trajectories": trajectories}
+
+
 def _baseline_payload() -> dict[str, object]:
     """Return the existing KTDB model output for the pre-trip card."""
 
@@ -430,6 +466,20 @@ def _route_payload() -> dict[str, object]:
     }
 
 
+def _run_aihub_replay(replay_id: str, source_root: str, speed: str) -> dict[str, object]:
+    if not AIHUB_REPLAY_MANIFEST.is_file():
+        raise ValueError("AI-Hub replay manifest is unavailable")
+    if not source_root:
+        raise ValueError("source_root must point to the local AI-Hub dataset root")
+    manifest = json.loads(AIHUB_REPLAY_MANIFEST.read_text(encoding="utf-8"))
+    entries = [entry for entry in manifest.get("trajectories", []) if entry.get("replay_id") == replay_id]
+    if not entries:
+        raise ValueError(f"unknown AI-Hub replay id: {replay_id}")
+    split_map = load_split_manifest(ROOT / "data/interim/aihub/aihub_split_manifest.json")
+    validate_replay_uid(str(entries[0]["uid"]), split_map)
+    return replay_entry(entries[0], source_root=source_root, speed=speed)
+
+
 class Handler(BaseHTTPRequestHandler):
     def _send(self, status: int, payload: object, content_type: str = "application/json") -> None:
         body = payload.encode("utf-8") if isinstance(payload, str) else json.dumps(payload, ensure_ascii=False, default=str).encode("utf-8")
@@ -453,6 +503,8 @@ class Handler(BaseHTTPRequestHandler):
             if DEFAULT_MOCK.is_file():
                 fixture_names.insert(0, "mock/" + DEFAULT_MOCK.name)
             self._send(200, fixture_names)
+        elif path == "/api/aihub/manifest":
+            self._send(200, _aihub_manifest_payload())
         elif path == "/api/baseline":
             self._send(200, _baseline_payload())
         elif path == "/api/route":
@@ -472,6 +524,16 @@ class Handler(BaseHTTPRequestHandler):
                 if expected is not None and not isinstance(expected, dict):
                     raise ValueError("expected_features must be a JSON object")
                 RUNTIME.start(str(body["fixture"]), str(body.get("speed", "instant")), expected, str(body.get("view_mode", "user")))
+            elif path == "/api/aihub/replay":
+                length = int(self.headers.get("Content-Length", "0"))
+                body = json.loads(self.rfile.read(length) or b"{}")
+                output = _run_aihub_replay(
+                    str(body.get("replay_id", "")),
+                    str(body.get("source_root", "")),
+                    str(body.get("speed", "instant")),
+                )
+                self._send(200, output)
+                return
             elif path == "/api/pause":
                 assert RUNTIME.engine is not None
                 RUNTIME.engine.pause()

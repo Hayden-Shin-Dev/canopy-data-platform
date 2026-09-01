@@ -35,6 +35,9 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     assert 'id="mypage"' in module.MOBILE_APP_HTML
     assert 'class="bottom-nav"' in module.MOBILE_APP_HTML
     assert "navigateTab" in module.MOBILE_APP_HTML
+    assert "AI-Hub Real GPS Replay" in module.MOBILE_APP_HTML
+    assert 'id="aihubReplay"' in module.MOBILE_APP_HTML
+    assert "runAIHubReplay" in module.MOBILE_APP_HTML
 
     assert module._fixture_path("insufficient_gps.csv").is_file()
     runtime.start("insufficient_gps.csv", "instant")
@@ -70,6 +73,35 @@ def test_ui_route_and_baseline_endpoints_use_real_local_inputs():
     assert baseline["status"] == "READY"
     assert set(baseline["probabilities"]) == {"walk", "bike", "car", "bus", "rail"}
     assert abs(sum(baseline["probabilities"].values()) - 1) < 1e-6
+
+
+def test_aihub_manifest_exposes_test_case_metadata_without_raw_paths():
+    module = _module()
+
+    payload = module._aihub_manifest_payload()
+
+    assert payload["status"] == "READY"
+    assert len(payload["trajectories"]) == 25
+    assert {row["ground_truth"] for row in payload["trajectories"]} == {"walk", "bike", "car", "bus", "rail"}
+    assert all("gps_file" not in row and "label_file" not in row for row in payload["trajectories"])
+
+
+def test_aihub_replay_requires_local_dataset_root_and_known_case():
+    module = _module()
+
+    try:
+        module._run_aihub_replay("UNKNOWN", "C:/missing", "instant")
+    except ValueError as error:
+        assert "unknown AI-Hub replay id" in str(error)
+    else:
+        raise AssertionError("unknown replay id must be rejected")
+
+    try:
+        module._run_aihub_replay("WALK-01", "", "instant")
+    except ValueError as error:
+        assert "source_root" in str(error)
+    else:
+        raise AssertionError("missing source root must be rejected")
 
 
 def test_ui_runs_existing_pipeline_for_repository_mock():
