@@ -1,5 +1,11 @@
 # Canopy Data Platform
 
+## 현재 Production Movement ML
+
+AI-Hub 실제 한국 GPS를 primary benchmark로 사용합니다. 사용자 UID가 겹치지 않는 train/validation/test split을 유지하며, 현재 champion은 120초 aggregate HistGradientBoosting입니다. Validation Accuracy 0.7235 / Macro F1 0.7276, Test Accuracy 0.7027 / Macro F1 0.6914를 기록했습니다.
+
+`evaluation_dataset_v3`는 synthetic historical benchmark로 보존하지만 Production 모델 선택과 Release Gate에서는 제외합니다. 정책과 근거는 [v3 benchmark deprecation](docs/evaluation/V3_BENCHMARK_DEPRECATION.md)에 정리되어 있습니다. 기존 GeoLife 모델은 rollback artifact로 유지합니다.
+
 ## 프로젝트 목적
 
 Canopy는 친환경 이동 자체를 보상하는 것이 아니라, 일반적으로 예상되는 이동행동과 실제 이동행동의 차이를 비교해 저탄소 방향의 Behaviour Shift를 측정하는 프로젝트입니다.
@@ -21,7 +27,7 @@ Canopy는 친환경 이동 자체를 보상하는 것이 아니라, 일반적으
 - Transit Context 서울 POC 완료
 - Integration v1 완료
 - iPhone 호환 GPS Event Contract, Replay Engine, Local User Mode 준비
-- Integration validation: 201 tests passed
+- Integration validation: 전체 테스트 248 passed
 
 ## 실행 순서
 
