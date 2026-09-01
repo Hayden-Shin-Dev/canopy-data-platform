@@ -13,6 +13,7 @@ def test_build_linked_vehicle_windows_labels_car_and_keeps_user_split(tmp_path: 
         rows.append(f"{1_700_000_000_000 + index * 1000},37.5,{126.9 + index * 0.00001}")
     with zipfile.ZipFile(archive_path, "w") as archive:
         archive.writestr("TX-0000000A-0000000A_1700000000-Dataset.csv", "\n".join(rows))
+        archive.writestr("malformed.csv", "timestamp,lat\n1,2\n")
     output = tmp_path / "windows.csv"
     assert build([archive_path], output) >= 1
     frame = pd.read_csv(output)

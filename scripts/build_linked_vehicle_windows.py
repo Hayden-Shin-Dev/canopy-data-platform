@@ -28,13 +28,13 @@ def _split_for_user(user_id: str) -> str:
     return "test"
 
 
-def _read_points(archive: zipfile.ZipFile, entry: zipfile.ZipInfo) -> list[TrajectoryPoint]:
+def _read_points(archive: zipfile.ZipFile, entry: zipfile.ZipInfo) -> list[TrajectoryPoint] | None:
     with archive.open(entry) as stream:
         text = io.TextIOWrapper(stream, encoding="utf-8-sig", errors="replace", newline="")
         reader = csv.DictReader(text)
         required = {"timestamp", "latitude", "longitude"}
         if not required <= set(reader.fieldnames or ()):
-            raise ValueError(f"linked vehicle entry is missing columns: {entry.filename}")
+            return None
         points: list[TrajectoryPoint] = []
         user_id = Path(entry.filename).name.split("-")[1]
         trajectory_id = Path(entry.filename).stem
@@ -84,6 +84,8 @@ def build(archives: list[str | Path], output_csv: str | Path, *, max_files: int 
                 entries = entries[:remaining]
             for entry in entries:
                 points = _read_points(archive, entry)
+                if points is None:
+                    continue
                 for window in iter_time_windows(points, window_seconds=window_seconds, min_points=2):
                     rows.append(_feature_row(window))
             if remaining is not None:
