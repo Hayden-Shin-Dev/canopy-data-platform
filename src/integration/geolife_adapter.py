@@ -19,6 +19,22 @@ from .gps_contract import GpsEvent
 
 
 DEFAULT_GEOLIFE_MODEL = PROJECT_ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"
+_MODEL_CACHE: dict[tuple[str, int], object] = {}
+
+
+def _load_artifact(path: Path) -> object:
+    key = (str(path.resolve()), path.stat().st_mtime_ns)
+    cached = _MODEL_CACHE.get(key)
+    if cached is not None:
+        return cached
+    loaded = joblib.load(path)
+    # A single realtime window does not benefit from spawning one worker per
+    # tree; keeping prediction single-process makes replay latency predictable.
+    if isinstance(loaded, dict) and hasattr(loaded.get("model"), "n_jobs"):
+        loaded["model"].n_jobs = 1
+    _MODEL_CACHE.clear()
+    _MODEL_CACHE[key] = loaded
+    return loaded
 
 
 @dataclass(frozen=True)
@@ -62,7 +78,7 @@ def _infer_aihub_windows(
     """Run the opt-in AI-Hub contract without changing the GeoLife default."""
     from src.aihub.runtime import event_features
 
-    bundle = joblib.load(model_path)
+    bundle = _load_artifact(model_path)
     feature_columns = list(bundle["feature_columns"])
     classes = [str(value) for value in bundle["classes"]]
     expected_seconds = int(bundle.get("window_duration_seconds", window_seconds))
@@ -117,7 +133,7 @@ def infer_windows(
     if not model.is_file():
         raise FileNotFoundError(f"GeoLife model artifact not found: {model}")
     try:
-        contract = joblib.load(model)
+        contract = _load_artifact(model)
     except Exception:
         contract = None
     if isinstance(contract, dict) and str(contract.get("feature_version", "")).startswith("aihub-window-v1"):
