@@ -1,5 +1,9 @@
 # AI-Hub Experiment A 결과
 
+## Production selection policy
+
+이 문서에 남아 있는 v3 결과는 과거 확인을 위한 historical evidence다. `evaluation_dataset_v3`는 **DEPRECATED FOR PRODUCTION MODEL SELECTION**이며 학습, 튜닝, feature/window 선택, Release Gate에 사용하지 않는다. 현재 primary benchmark는 사용자 UID가 겹치지 않는 AI-Hub 실제 GPS split이다. Champion은 validation으로 고정한 뒤 test를 최종 확인에만 사용한다.
+
 이 문서는 AI-Hub 실제 GPS만으로 학습한 후보를 기존 GeoLife production과 비교한 기록이다. `evaluation_dataset_v3`는 학습이나 튜닝에 사용하지 않고 마지막 blind 확인에만 사용했다.
 
 ## 내부 UID 분리 결과

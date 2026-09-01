@@ -1,5 +1,11 @@
 # AI-Hub 이동수단 모델 v2
 
+## Current production policy
+
+AI-Hub 실제 한국 GPS를 Production 모델의 primary benchmark로 사용한다. `data/evaluation/seoul-synthetic/evaluation_dataset_v3`는 deprecated synthetic benchmark이며 학습, 튜닝, feature/window 선택, Release Gate에서 제외한다. 기존 v3 보고서는 historical evidence로만 보존한다.
+
+120초 aggregate HistGradientBoosting 후보는 사용자 UID-disjoint split에서 validation Accuracy 0.7235 / Macro F1 0.7276, test Accuracy 0.7027 / Macro F1 0.6914를 기록했다. Production 반영 전에는 artifact contract와 전체 regression을 다시 통과해야 하며, 기존 GeoLife artifact는 rollback용으로 유지한다.
+
 이 브랜치는 AI-Hub 한국 GPS 데이터를 기존 GeoLife 모델과 분리해 검증하는 작업 공간입니다. 원본은 저장소 밖에 두고, 실행할 때 원본에서 feature와 모델을 다시 만듭니다.
 
 ## 데이터 위치와 규칙

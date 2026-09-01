@@ -1,5 +1,22 @@
 # AI-Hub Mobility v2 Release Gate
 
+## 현재 Release 정책
+
+`evaluation_dataset_v3`는 **DEPRECATED FOR PRODUCTION MODEL SELECTION**입니다. v3 성능은 Release Gate, 모델 선택, 파라미터·feature·window 튜닝에 사용하지 않습니다. 기존 v3 결과와 hash 검사는 historical evidence로 보존하며, 자세한 정책은 `docs/evaluation/V3_BENCHMARK_DEPRECATION.md`에 기록했습니다.
+
+Primary gate는 AI-Hub 실제 GPS의 사용자 UID-disjoint split입니다. Champion은 validation 결과로 선택하고, test는 champion 고정 후 최종 확인에만 사용합니다.
+
+## AI-Hub primary candidate
+
+현재 검증된 HistGradientBoosting 120초 aggregate 후보의 결과:
+
+| Split | Accuracy | Macro F1 | Weighted F1 |
+|---|---:|---:|---:|
+| Validation | 0.7235 | 0.7276 | 0.7178 |
+| Test | 0.7027 | 0.6914 | 0.6972 |
+
+제안된 내부 gate(Accuracy >= 0.70, Macro F1 >= 0.65)는 위 AI-Hub test 결과로 충족합니다. 단, artifact contract, UID overlap, feature/window contract, replay 및 전체 regression 검사를 모두 통과하기 전에는 Production Release를 완료로 표시하지 않습니다.
+
 ## Experiment A 추가 결과
 
 120초 aggregate HistGradientBoosting은 AI-Hub UID-disjoint Test에서 Accuracy 0.7027, Macro F1 0.6914를 기록했다. 그러나 frozen v3 최종은 Accuracy 0.4761, Macro F1 0.3131로 기존 0.5265, 0.3452보다 낮았다. 재현 가능한 기존 모델+AI-Hub 결합 후보도 Accuracy 0.5260, Macro F1 0.3440으로 기준을 넘지 못해 release gate를 통과하지 못했다. 상세 수치는 `reports/aihub/AIHUB_EXPERIMENT_A_RESULTS.md`와 로컬 `reports/evaluation_v3_aihub_ensemble120_rebuilt/metrics.json`에 기록했다.
