@@ -1,0 +1,493 @@
+{
+  "archives": [
+    {
+      "archive": "C:\\Users\\user\\Downloads\\186.교통수단판별 데이터\\01-1.정식개방데이터\\Other\\01.연계데이터_003.차량이동궤적_1.zip",
+      "archive_size_bytes": 20888092640,
+      "entry_count": 2653108,
+      "uncompressed_bytes": 104857598648,
+      "sample_count": 5,
+      "sample_headers": {
+        "timestamp,latitude,longitude": 5
+      },
+      "samples": [
+        {
+          "name": "/TX-000006C5-000006C5_1669851035-Dataset.csv",
+          "size_bytes": 55530,
+          "columns": [
+            "timestamp",
+            "latitude",
+            "longitude"
+          ],
+          "rows": [
+            {
+              "timestamp": "1669851036000",
+              "latitude": "37.584818",
+              "longitude": "126.948337"
+            },
+            {
+              "timestamp": "1669851037000",
+              "latitude": "37.584817",
+              "longitude": "126.948338"
+            },
+            {
+              "timestamp": "1669851038000",
+              "latitude": "37.584807",
+              "longitude": "126.948349"
+            }
+          ]
+        },
+        {
+          "name": "/TX-00000356-00000356_1666833300-Dataset.csv",
+          "size_bytes": 23372,
+          "columns": [
+            "timestamp",
+            "latitude",
+            "longitude"
+          ],
+          "rows": [
+            {
+              "timestamp": "1666833301000",
+              "latitude": "37.512973",
+              "longitude": "127.110698"
+            },
+            {
+              "timestamp": "1666833302000",
+              "latitude": "37.512972",
+              "longitude": "127.110701"
+            },
+            {
+              "timestamp": "1666833303000",
+              "latitude": "37.512971",
+              "longitude": "127.110705"
+            }
+          ]
+        },
+        {
+          "name": "/TX-0000039A-0000039A_1662890409-Dataset.csv",
+          "size_bytes": 37281,
+          "columns": [
+            "timestamp",
+            "latitude",
+            "longitude"
+          ],
+          "rows": [
+            {
+              "timestamp": "1662890410000",
+              "latitude": "37.531101",
+              "longitude": "127.089042"
+            },
+            {
+              "timestamp": "1662890411000",
+              "latitude": "37.531101",
+              "longitude": "127.089042"
+            },
+            {
+              "timestamp": "1662890412000",
+              "latitude": "37.531099",
+              "longitude": "127.089044"
+            }
+          ]
+        },
+        {
+          "name": "/TX-0000095E-0000095E_1661310516-Dataset.csv",
+          "size_bytes": 11592,
+          "columns": [
+            "timestamp",
+            "latitude",
+            "longitude"
+          ],
+          "rows": [
+            {
+              "timestamp": "1661310517000",
+              "latitude": "37.531417",
+              "longitude": "127.086384"
+            },
+            {
+              "timestamp": "1661310518000",
+              "latitude": "37.531431",
+              "longitude": "127.086378"
+            },
+            {
+              "timestamp": "1661310519000",
+              "latitude": "37.531445",
+              "longitude": "127.086368"
+            }
+          ]
+        },
+        {
+          "name": "/TX-0000052F-0000052F_1670807131-Dataset.csv",
+          "size_bytes": 21447,
+          "columns": [
+            "timestamp",
+            "latitude",
+            "longitude"
+          ],
+          "rows": [
+            {
+              "timestamp": "1670807132000",
+              "latitude": "37.567401",
+              "longitude": "127.052239"
+            },
+            {
+              "timestamp": "1670807133000",
+              "latitude": "37.567412",
+              "longitude": "127.052222"
+            },
+            {
+              "timestamp": "1670807134000",
+              "latitude": "37.567427",
+              "longitude": "127.052204"
+            }
+          ]
+        }
+      ],
+      "contains_station_metadata": false
+    },
+    {
+      "archive": "C:\\Users\\user\\Downloads\\186.교통수단판별 데이터\\01-1.정식개방데이터\\Other\\01.연계데이터_003.차량이동궤적_2.zip",
+      "archive_size_bytes": 3930629334,
+      "entry_count": 499927,
+      "uncompressed_bytes": 19751367566,
+      "sample_count": 5,
+      "sample_headers": {
+        "timestamp,latitude,longitude": 5
+      },
+      "samples": [
+        {
+          "name": "/TX-00000206-00000206_1661143517-Dataset.csv",
+          "size_bytes": 37689,
+          "columns": [
+            "timestamp",
+            "latitude",
+            "longitude"
+          ],
+          "rows": [
+            {
+              "timestamp": "1661143518000",
+              "latitude": "37.524651",
+              "longitude": "127.027503"
+            },
+            {
+              "timestamp": "1661143519000",
+              "latitude": "37.524643",
+              "longitude": "127.027518"
+            },
+            {
+              "timestamp": "1661143520000",
+              "latitude": "37.524639",
+              "longitude": "127.027528"
+            }
+          ]
+        },
+        {
+          "name": "/TX-000009F2-000009F2_1666059305-Dataset.csv",
+          "size_bytes": 124340,
+          "columns": [
+            "timestamp",
+            "latitude",
+            "longitude"
+          ],
+          "rows": [
+            {
+              "timestamp": "1666059306000",
+              "latitude": "37.508032",
+              "longitude": "127.058568"
+            },
+            {
+              "timestamp": "1666059307000",
+              "latitude": "37.508038",
+              "longitude": "127.058493"
+            },
+            {
+              "timestamp": "1666059308000",
+              "latitude": "37.507998",
+              "longitude": "127.05844"
+            }
+          ]
+        },
+        {
+          "name": "/TX-00000812-00000812_1670107480-Dataset.csv",
+          "size_bytes": 15347,
+          "columns": [
+            "timestamp",
+            "latitude",
+            "longitude"
+          ],
+          "rows": [
+            {
+              "timestamp": "1670107481000",
+              "latitude": "37.58709",
+              "longitude": "126.912731"
+            },
+            {
+              "timestamp": "1670107482000",
+              "latitude": "37.587106",
+              "longitude": "126.91274"
+            },
+            {
+              "timestamp": "1670107483000",
+              "latitude": "37.58712",
+              "longitude": "126.912748"
+            }
+          ]
+        },
+        {
+          "name": "/TX-00000AF2-00000AF2_1669962562-Dataset.csv",
+          "size_bytes": 46621,
+          "columns": [
+            "timestamp",
+            "latitude",
+            "longitude"
+          ],
+          "rows": [
+            {
+              "timestamp": "1669962563000",
+              "latitude": "37.505128",
+              "longitude": "127.024403"
+            },
+            {
+              "timestamp": "1669962564000",
+              "latitude": "37.50513",
+              "longitude": "127.024401"
+            },
+            {
+              "timestamp": "1669962565000",
+              "latitude": "37.505138",
+              "longitude": "127.024396"
+            }
+          ]
+        },
+        {
+          "name": "/TX-00000241-00000241_1665985232-Dataset.csv",
+          "size_bytes": 22751,
+          "columns": [
+            "timestamp",
+            "latitude",
+            "longitude"
+          ],
+          "rows": [
+            {
+              "timestamp": "1665985233000",
+              "latitude": "37.463609",
+              "longitude": "127.020858"
+            },
+            {
+              "timestamp": "1665985234000",
+              "latitude": "37.463628",
+              "longitude": "127.020918"
+            },
+            {
+              "timestamp": "1665985235000",
+              "latitude": "37.463646",
+              "longitude": "127.020951"
+            }
+          ]
+        }
+      ],
+      "contains_station_metadata": false
+    },
+    {
+      "archive": "C:\\Users\\user\\Downloads\\186.교통수단판별 데이터\\01-1.정식개방데이터\\Other\\01.연계데이터_004.대중교통궤적.zip",
+      "archive_size_bytes": 755399799,
+      "entry_count": 1051114,
+      "uncompressed_bytes": 1178806117,
+      "sample_count": 5,
+      "sample_headers": {
+        "timestamp,station_id,station_latitude,station_longitude,station_name,station_line": 5
+      },
+      "samples": [
+        {
+          "name": "/6148028-6148028_1664591400-Dataset.csv",
+          "size_bytes": 1079,
+          "columns": [
+            "timestamp",
+            "station_id",
+            "station_latitude",
+            "station_longitude",
+            "station_name",
+            "station_line"
+          ],
+          "rows": [
+            {
+              "timestamp": "1664591400000",
+              "station_id": "20144",
+              "station_latitude": "37.4999225067",
+              "station_longitude": "126.9215700736",
+              "station_name": "서울공업고등학교",
+              "station_line": "153"
+            },
+            {
+              "timestamp": "1664591460000",
+              "station_id": "20006",
+              "station_latitude": "37.50380795",
+              "station_longitude": "126.9218342651",
+              "station_name": "강남중학교",
+              "station_line": "153"
+            },
+            {
+              "timestamp": "1664591520000",
+              "station_id": "20106",
+              "station_latitude": "37.506889108",
+              "station_longitude": "126.9230906508",
+              "station_name": "서울지방병무청앞",
+              "station_line": "153"
+            }
+          ]
+        },
+        {
+          "name": "/4900247-4900247_1657416600-Dataset.csv",
+          "size_bytes": 2282,
+          "columns": [
+            "timestamp",
+            "station_id",
+            "station_latitude",
+            "station_longitude",
+            "station_name",
+            "station_line"
+          ],
+          "rows": [
+            {
+              "timestamp": "1657416600000",
+              "station_id": "18512",
+              "station_latitude": "37.4756224548",
+              "station_longitude": "126.9058884498",
+              "station_name": "문성중학교",
+              "station_line": "금천08"
+            },
+            {
+              "timestamp": "1657416660000",
+              "station_id": "18519",
+              "station_latitude": "37.4736651894",
+              "station_longitude": "126.9059567885",
+              "station_name": "남문교회",
+              "station_line": "금천08"
+            },
+            {
+              "timestamp": "1657416720000",
+              "station_id": "18525",
+              "station_latitude": "37.4718234305",
+              "station_longitude": "126.9063371856",
+              "station_name": "태영빌라",
+              "station_line": "금천08"
+            }
+          ]
+        },
+        {
+          "name": "/4249388-4249388_1657169400-Dataset.csv",
+          "size_bytes": 2277,
+          "columns": [
+            "timestamp",
+            "station_id",
+            "station_latitude",
+            "station_longitude",
+            "station_name",
+            "station_line"
+          ],
+          "rows": [
+            {
+              "timestamp": "1657169400000",
+              "station_id": "19118",
+              "station_latitude": "37.5201641062",
+              "station_longitude": "126.9030508456",
+              "station_name": "김안과병원",
+              "station_line": "5620"
+            },
+            {
+              "timestamp": "1657169520000",
+              "station_id": "19109",
+              "station_latitude": "37.5195558939",
+              "station_longitude": "126.9064863879",
+              "station_name": "영등포시장",
+              "station_line": "5620"
+            },
+            {
+              "timestamp": "1657169580000",
+              "station_id": "19107",
+              "station_latitude": "37.5189891292",
+              "station_longitude": "126.9091946808",
+              "station_name": "영등포시장로터리방면",
+              "station_line": "5620"
+            }
+          ]
+        },
+        {
+          "name": "/20288659-20288659_1665608400-Dataset.csv",
+          "size_bytes": 2178,
+          "columns": [
+            "timestamp",
+            "station_id",
+            "station_latitude",
+            "station_longitude",
+            "station_name",
+            "station_line"
+          ],
+          "rows": [
+            {
+              "timestamp": "1665608400000",
+              "station_id": "1542",
+              "station_latitude": "37.587764",
+              "station_longitude": "126.996533",
+              "station_name": "새마을금고",
+              "station_line": "종로08"
+            },
+            {
+              "timestamp": "1665608400000",
+              "station_id": "1228",
+              "station_latitude": "37.584037766",
+              "station_longitude": "127.0014345133",
+              "station_name": "혜화역.서울연극센터(장면총리가옥)",
+              "station_line": "109"
+            },
+            {
+              "timestamp": "1665608460000",
+              "station_id": "1512",
+              "station_latitude": "37.5890947727",
+              "station_longitude": "126.9972253431",
+              "station_name": "서울국제고등학교",
+              "station_line": "종로08"
+            }
+          ]
+        },
+        {
+          "name": "/3130255-3130255_1641388800-Dataset.csv",
+          "size_bytes": 945,
+          "columns": [
+            "timestamp",
+            "station_id",
+            "station_latitude",
+            "station_longitude",
+            "station_name",
+            "station_line"
+          ],
+          "rows": [
+            {
+              "timestamp": "1641388800000",
+              "station_id": "19199",
+              "station_latitude": "37.5197558478",
+              "station_longitude": "126.8848677282",
+              "station_name": "문래중학교",
+              "station_line": "641"
+            },
+            {
+              "timestamp": "1641388860000",
+              "station_id": "19317",
+              "station_latitude": "37.5200836963",
+              "station_longitude": "126.8878994354",
+              "station_name": "영문초등학교",
+              "station_line": "641"
+            },
+            {
+              "timestamp": "1641388980000",
+              "station_id": "19849",
+              "station_latitude": "37.519501972",
+              "station_longitude": "126.8915156254",
+              "station_name": "문래힐스테이트아파트",
+              "station_line": "641"
+            }
+          ]
+        }
+      ],
+      "contains_station_metadata": true
+    }
+  ]
+}
