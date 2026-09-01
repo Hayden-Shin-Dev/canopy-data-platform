@@ -16,9 +16,10 @@ from src.geolife.window_features import compute_window_features
 from src.geolife.windows import TimeWindow, iter_time_windows
 
 from .gps_contract import GpsEvent
+from .model_config import default_mobility_model
 
 
-DEFAULT_GEOLIFE_MODEL = PROJECT_ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"
+DEFAULT_GEOLIFE_MODEL = default_mobility_model()
 _MODEL_CACHE: dict[tuple[str, int], object] = {}
 
 
