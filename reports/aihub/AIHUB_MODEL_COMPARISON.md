@@ -23,9 +23,9 @@
 | ExtraTrees (200) | 0.6638 | 0.6654 | 0.6508 | 0.6280 |
 | RandomForest (200) | **0.6789** | **0.6825** | **0.6640** | **0.6444** |
 | HistGradientBoosting | 0.6730 | 0.6628 | 0.6491 | 0.6181 |
-| CatBoost (400 iterations) | 비교 실행 필요 | 비교 실행 필요 | 비교 실행 필요 | 비교 실행 필요 |
+| CatBoost (400 iterations) | 0.6732 | 0.6613 | 0.6475 | 0.6137 |
 
-현재 Validation 기준 후보는 RandomForest다. Test에서도 RandomForest가 세 후보 중 가장 높았지만, Test를 보고 모델을 고른 것은 아니다.
+현재 Validation 기준 후보는 RandomForest다. CatBoost까지 포함해도 RandomForest의 Validation Macro F1 0.6825가 가장 높았다. Test에서도 RandomForest가 가장 높았지만, Test를 보고 모델을 고른 것은 아니다.
 
 ## RandomForest class별 F1
 
