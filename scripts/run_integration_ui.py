@@ -592,18 +592,20 @@ def _run_aihub_replay(replay_id: str, source_root: str, speed: str) -> dict[str,
 
 
 class Handler(BaseHTTPRequestHandler):
+    def _send_bytes(self, status: int, body: bytes, content_type: str) -> None:
+        try:
+            self.send_response(status)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError):
+            # 브라우저가 새로고침하거나 요청을 취소하면 header 전송 중에도 연결이 닫힐 수 있다.
+            return
+
     def _send(self, status: int, payload: object, content_type: str = "application/json") -> None:
         body = payload.encode("utf-8") if isinstance(payload, str) else json.dumps(payload, ensure_ascii=False, default=str).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", f"{content_type}; charset=utf-8")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        try:
-            self.wfile.write(body)
-        except (BrokenPipeError, ConnectionAbortedError):
-            # 브라우저 새로고침이나 요청 취소로 소켓이 먼저 닫힐 수 있다.
-            # 해당 상황은 서버 오류가 아니므로 traceback 없이 응답만 종료한다.
-            return
+        self._send_bytes(status, body, f"{content_type}; charset=utf-8")
 
     def do_GET(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
@@ -616,14 +618,7 @@ class Handler(BaseHTTPRequestHandler):
                 self._send(404, {"error": "UI asset not found"})
                 return
             payload = asset.read_bytes()
-            self.send_response(200)
-            self.send_header("Content-Type", mimetypes.guess_type(asset.name)[0] or "application/octet-stream")
-            self.send_header("Content-Length", str(len(payload)))
-            self.end_headers()
-            try:
-                self.wfile.write(payload)
-            except (BrokenPipeError, ConnectionAbortedError):
-                return
+            self._send_bytes(200, payload, mimetypes.guess_type(asset.name)[0] or "application/octet-stream")
         elif path.startswith("/assets/"):
             asset = (ROOT / "assets" / path.removeprefix("/assets/")).resolve()
             asset_root = (ROOT / "assets").resolve()
@@ -631,14 +626,7 @@ class Handler(BaseHTTPRequestHandler):
                 self._send(404, {"error": "asset not found"})
                 return
             payload = asset.read_bytes()
-            self.send_response(200)
-            self.send_header("Content-Type", mimetypes.guess_type(asset.name)[0] or "application/octet-stream")
-            self.send_header("Content-Length", str(len(payload)))
-            self.end_headers()
-            try:
-                self.wfile.write(payload)
-            except (BrokenPipeError, ConnectionAbortedError):
-                return
+            self._send_bytes(200, payload, mimetypes.guess_type(asset.name)[0] or "application/octet-stream")
         elif path == "/api/fixtures":
             fixture_names = sorted(path.name for path in FIXTURE_DIR.glob("*.csv"))
             if DEFAULT_MOCK.is_file():

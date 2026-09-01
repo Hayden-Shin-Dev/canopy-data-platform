@@ -1,6 +1,7 @@
 import importlib.util
 from pathlib import Path
 import time
+from unittest.mock import Mock
 
 
 def _module():
@@ -85,6 +86,19 @@ def test_ui_static_files_keep_the_five_screen_flow_and_real_data_hooks():
     assert "ground_truth_mode" not in javascript.lower()
     assert "393px" in stylesheet
     assert "852px" in stylesheet
+
+
+def test_ui_ignores_browser_disconnect_during_response_headers():
+    module = _module()
+    handler = object.__new__(module.Handler)
+    handler.send_response = Mock()
+    handler.send_header = Mock()
+    handler.end_headers = Mock(side_effect=ConnectionResetError("browser closed"))
+    handler.wfile = Mock()
+
+    handler._send(200, {"status": "READY"})
+
+    handler.wfile.write.assert_not_called()
 
 
 def test_aihub_manifest_exposes_test_case_metadata_without_raw_paths():
