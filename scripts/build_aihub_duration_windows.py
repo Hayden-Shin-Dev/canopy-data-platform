@@ -73,7 +73,7 @@ def _join(
         return None
     window_start = left.points[0].timestamp
     window_end = window_start + timedelta(seconds=120)
-    points = tuple(point for point in (*left.points, *right.points) if window_start <= point.timestamp < window_end)
+    points = joined_window_points(left, right)
     if cadence_seconds is not None and points:
         points = _downsample(points, cadence_seconds)
     if len(points) < 2:
@@ -113,6 +113,20 @@ def _join(
         "raw_label_values": "|".join(combined.raw_label_values),
         **features,
     }
+
+
+def joined_window_points(left: AiHubTrajectory, right: AiHubTrajectory) -> tuple:
+    """Return only raw points inside the same fixed window used for Feature rows."""
+
+    if not left.points or not right.points:
+        return tuple()
+    window_start = left.points[0].timestamp
+    window_end = window_start + timedelta(seconds=120)
+    return tuple(
+        point
+        for point in (*left.points, *right.points)
+        if window_start <= point.timestamp < window_end
+    )
 
 
 def build_dataset(
