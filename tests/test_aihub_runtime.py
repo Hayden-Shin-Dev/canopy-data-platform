@@ -71,3 +71,19 @@ def test_runtime_handles_irregular_callback_cadence() -> None:
     assert rolling is not None
     assert rolling[0] == 1
     assert [event.sequence for event in rolling[1]] == [19, 45, 91, 121]
+
+
+def test_runtime_features_support_missing_accuracy_and_altitude() -> None:
+    from dataclasses import replace
+    from src.aihub.runtime import event_features
+
+    events = [
+        replace(_event(index), horizontal_accuracy_m=None, altitude_m=None)
+        for index in range(3)
+    ]
+
+    features = event_features(events)
+
+    assert features["accuracy_missing_ratio"] == 1
+    assert features["altitude_missing_ratio"] == 1
+    assert features["accuracy_mean_m"] == 0
