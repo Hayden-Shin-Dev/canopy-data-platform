@@ -49,6 +49,8 @@ def _read_without_labels(item: tuple[str, Path, Path]) -> AiHubTrajectory:
 def _join(left: AiHubTrajectory, right: AiHubTrajectory) -> dict[str, object] | None:
     if left.user_id != right.user_id or left.canonical_mode != right.canonical_mode:
         return None
+    if not left.points or not right.points:
+        return None
     if right.points[0].timestamp < left.points[-1].timestamp:
         return None
     gap = right.points[0].timestamp - left.points[-1].timestamp
