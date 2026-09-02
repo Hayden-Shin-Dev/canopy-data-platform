@@ -84,3 +84,21 @@ def test_join_rejects_window_with_less_than_90_seconds_observed() -> None:
     shortened = replace(_trajectory("right", start + timedelta(seconds=60)), points=_trajectory("right", start + timedelta(seconds=60)).points[:2])
 
     assert _join(_trajectory("left", start), shortened) is None
+
+
+def test_cadence_view_is_recomputed_from_downsampled_raw_points() -> None:
+    start = datetime(2024, 1, 1)
+
+    native = _join(_trajectory("left", start), _trajectory("right", start + timedelta(seconds=60)))
+    cadence = _join(
+        _trajectory("left", start),
+        _trajectory("right", start + timedelta(seconds=60)),
+        cadence_seconds=5,
+    )
+
+    assert native is not None and cadence is not None
+    assert native["sampling_view"] == "native"
+    assert cadence["sampling_view"] == "5s"
+    assert cadence["point_count"] == 24
+    assert cadence["avg_sampling_interval_sec"] == 5
+    assert cadence["valid_point_ratio"] == 1

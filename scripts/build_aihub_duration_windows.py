@@ -21,7 +21,7 @@ from src.aihub.ingest import AiHubTrajectory, iter_gps_files, read_trajectory
 
 METADATA_COLUMNS = (
     "user_id", "trajectory_id", "source_class", "canonical_mode",
-    "window_start", "window_end", "split", "raw_point_count",
+    "window_start", "window_end", "split", "sampling_view", "raw_point_count",
     "missing_coordinate_count", "invalid_coordinate_count",
     "duplicate_timestamp_count", "backwards_timestamp_count", "gap_count",
     "raw_label_values",
@@ -46,7 +46,22 @@ def _read_without_labels(item: tuple[str, Path, Path]) -> AiHubTrajectory:
     )
 
 
-def _join(left: AiHubTrajectory, right: AiHubTrajectory) -> dict[str, object] | None:
+def _downsample(points: tuple, cadence_seconds: int) -> tuple:
+    if cadence_seconds <= 0:
+        raise ValueError("cadence_seconds must be positive")
+    selected = [points[0]]
+    for point in points[1:]:
+        if (point.timestamp - selected[-1].timestamp).total_seconds() >= cadence_seconds:
+            selected.append(point)
+    return tuple(selected)
+
+
+def _join(
+    left: AiHubTrajectory,
+    right: AiHubTrajectory,
+    *,
+    cadence_seconds: int | None = None,
+) -> dict[str, object] | None:
     if left.user_id != right.user_id or left.canonical_mode != right.canonical_mode:
         return None
     if not left.points or not right.points:
@@ -59,16 +74,19 @@ def _join(left: AiHubTrajectory, right: AiHubTrajectory) -> dict[str, object] | 
     window_start = left.points[0].timestamp
     window_end = window_start + timedelta(seconds=120)
     points = tuple(point for point in (*left.points, *right.points) if window_start <= point.timestamp < window_end)
+    if cadence_seconds is not None and points:
+        points = _downsample(points, cadence_seconds)
     if len(points) < 2:
         return None
     class _Combined:
         pass
     combined = _Combined()
     combined.user_id = left.user_id
-    combined.trajectory_id = f"{left.trajectory_id}__{right.trajectory_id}"
+    view = "native" if cadence_seconds is None else f"{cadence_seconds}s"
+    combined.trajectory_id = f"{left.trajectory_id}__{right.trajectory_id}__{view}"
     combined.canonical_mode = left.canonical_mode
     combined.points = points
-    combined.raw_point_count = left.raw_point_count + right.raw_point_count
+    combined.raw_point_count = left.raw_point_count + right.raw_point_count if cadence_seconds is None else len(points)
     combined.missing_coordinate_count = left.missing_coordinate_count + right.missing_coordinate_count
     combined.invalid_coordinate_count = left.invalid_coordinate_count + right.invalid_coordinate_count
     combined.duplicate_timestamp_count = left.duplicate_timestamp_count + right.duplicate_timestamp_count
@@ -85,6 +103,7 @@ def _join(left: AiHubTrajectory, right: AiHubTrajectory) -> dict[str, object] | 
         "canonical_mode": combined.canonical_mode,
         "window_start": window_start.isoformat(sep=" "),
         "window_end": window_end.isoformat(sep=" "),
+        "sampling_view": view,
         "raw_point_count": combined.raw_point_count,
         "missing_coordinate_count": combined.missing_coordinate_count,
         "invalid_coordinate_count": combined.invalid_coordinate_count,
@@ -102,6 +121,7 @@ def build_dataset(
     output_csv: str | Path,
     *,
     workers: int = 16,
+    train_cadences: tuple[int, ...] = (),
 ) -> dict[str, object]:
     if workers < 1:
         raise ValueError("workers must be at least 1")
@@ -139,11 +159,19 @@ def build_dataset(
                                 writer.writerow(row)
                                 seen.add(key)
                                 selected[trajectory.canonical_mode] += 1
+                                if user_split == "train":
+                                    for cadence in train_cadences:
+                                        cadence_row = _join(prior, trajectory, cadence_seconds=cadence)
+                                        if cadence_row is not None:
+                                            cadence_row["split"] = user_split
+                                            writer.writerow(cadence_row)
+                                            selected[f"{trajectory.canonical_mode}:{cadence}s"] += 1
                     previous[trajectory.user_id] = trajectory
     summary = {"source_root": str(source_root), "output_csv": str(output), "window_seconds": 120,
                "group_column": "user_id", "source_trajectory_count": sum(counts.values()),
                "selected_window_count": sum(selected.values()),
                "workers": workers,
+               "train_cadences": list(train_cadences),
                "source_class_counts": dict(sorted(counts.items())),
                "selected_class_counts": dict(sorted(selected.items())),
                "feature_columns": list(AIHUB_FEATURE_COLUMNS)}
@@ -157,8 +185,14 @@ def main() -> None:
     parser.add_argument("split_manifest")
     parser.add_argument("output_csv")
     parser.add_argument("--workers", type=int, default=16)
+    parser.add_argument(
+        "--train-cadences",
+        default="",
+        help="comma-separated deterministic train-only cadence views, for example 2,5,10",
+    )
     args = parser.parse_args()
-    print(json.dumps(build_dataset(args.source_root, args.split_manifest, args.output_csv, workers=args.workers), ensure_ascii=False, indent=2))
+    cadences = tuple(int(value) for value in args.train_cadences.split(",") if value.strip())
+    print(json.dumps(build_dataset(args.source_root, args.split_manifest, args.output_csv, workers=args.workers, train_cadences=cadences), ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
