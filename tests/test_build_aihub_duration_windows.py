@@ -65,3 +65,22 @@ def test_join_excludes_trajectory_without_valid_coordinates() -> None:
     empty = replace(_trajectory("empty", start), points=tuple())
 
     assert _join(empty, _trajectory("right", start + timedelta(seconds=60))) is None
+
+
+def test_join_clips_points_to_the_runtime_120_second_boundary() -> None:
+    start = datetime(2024, 1, 1)
+    delayed = _trajectory("right", start + timedelta(seconds=80))
+
+    row = _join(_trajectory("left", start), delayed)
+
+    assert row is not None
+    assert row["point_count"] == 100
+    assert row["window_end"] == (start + timedelta(seconds=120)).isoformat(sep=" ")
+    assert row["observed_duration_sec"] == 119
+
+
+def test_join_rejects_window_with_less_than_90_seconds_observed() -> None:
+    start = datetime(2024, 1, 1)
+    shortened = replace(_trajectory("right", start + timedelta(seconds=60)), points=_trajectory("right", start + timedelta(seconds=60)).points[:2])
+
+    assert _join(_trajectory("left", start), shortened) is None

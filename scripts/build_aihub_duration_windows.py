@@ -56,7 +56,9 @@ def _join(left: AiHubTrajectory, right: AiHubTrajectory) -> dict[str, object] | 
     gap = right.points[0].timestamp - left.points[-1].timestamp
     if gap > timedelta(seconds=30):
         return None
-    points = tuple([*left.points, *right.points])
+    window_start = left.points[0].timestamp
+    window_end = window_start + timedelta(seconds=120)
+    points = tuple(point for point in (*left.points, *right.points) if window_start <= point.timestamp < window_end)
     if len(points) < 2:
         return None
     class _Combined:
@@ -73,13 +75,16 @@ def _join(left: AiHubTrajectory, right: AiHubTrajectory) -> dict[str, object] | 
     combined.backwards_timestamp_count = left.backwards_timestamp_count + right.backwards_timestamp_count
     combined.gap_count = left.gap_count + right.gap_count
     combined.raw_label_values = tuple(sorted(set(left.raw_label_values) | set(right.raw_label_values)))
+    features = compute_aihub_features(combined)
+    if float(features["observed_duration_sec"]) < 90:
+        return None
     return {
         "user_id": combined.user_id,
         "trajectory_id": combined.trajectory_id,
         "source_class": left.source_class,
         "canonical_mode": combined.canonical_mode,
-        "window_start": points[0].timestamp.isoformat(sep=" "),
-        "window_end": points[-1].timestamp.isoformat(sep=" "),
+        "window_start": window_start.isoformat(sep=" "),
+        "window_end": window_end.isoformat(sep=" "),
         "raw_point_count": combined.raw_point_count,
         "missing_coordinate_count": combined.missing_coordinate_count,
         "invalid_coordinate_count": combined.invalid_coordinate_count,
@@ -87,7 +92,7 @@ def _join(left: AiHubTrajectory, right: AiHubTrajectory) -> dict[str, object] | 
         "backwards_timestamp_count": combined.backwards_timestamp_count,
         "gap_count": combined.gap_count,
         "raw_label_values": "|".join(combined.raw_label_values),
-        **compute_aihub_features(combined),
+        **features,
     }
 
 
