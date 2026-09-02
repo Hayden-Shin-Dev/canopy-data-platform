@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canopy.example/schemas/manual-segment-ground-truth-v1.json",
+  "title": "Canopy Manual Segment Ground Truth Row",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["segment_start", "segment_end", "true_mode"],
+  "properties": {
+    "segment_start": {"type": "string", "format": "date-time"},
+    "segment_end": {"type": "string", "format": "date-time"},
+    "true_mode": {"enum": ["walk", "bike", "car", "bus", "rail"]}
+  }
+}

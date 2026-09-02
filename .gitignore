@@ -43,6 +43,7 @@ data/evaluation/**
 
 # Local logs and editor files
 *.log
+data/local/iphone_mobility/**
 .idea/
 .vscode/
 ~$*
