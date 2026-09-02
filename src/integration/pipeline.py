@@ -69,8 +69,8 @@ class TransitRuntimeReferences:
 def _observed_bus_stops(events: Sequence[GpsEvent], references: TransitRuntimeReferences) -> list[str]:
     radius = 300.0
     observed: list[str] = []
-    for event in events:
-        nearest = references.bus_stop_index.nearest(event.latitude, event.longitude)
+    coordinates = [(event.latitude, event.longitude) for event in events]
+    for _, nearest in references.bus_stop_index.nearest_many(coordinates).iterrows():
         if float(nearest["distance_m"]) <= radius:
             stop_id = str(nearest["stop_id"])
             if not observed or observed[-1] != stop_id:
@@ -87,10 +87,8 @@ def _reference_applicability(
     if index is None:
         return "INSUFFICIENT_REFERENCE"
     try:
-        nearest_distance = min(
-            float(index.nearest(event.latitude, event.longitude)["distance_m"])
-            for event in events
-        )
+        coordinates = [(event.latitude, event.longitude) for event in events]
+        nearest_distance = float(index.nearest_many(coordinates)["distance_m"].min())
     except (KeyError, ValueError, IndexError):
         return "INSUFFICIENT_REFERENCE"
     return "APPLICABLE" if nearest_distance <= coverage_radius_m else "NOT_APPLICABLE"
