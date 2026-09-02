@@ -1,7 +1,7 @@
 param(
-    [string]$SplitWindows = "data/interim/aihub/aihub_split_windows.csv",
+    [string]$SourceRoot = $env:AIHUB_DATA_ROOT,
     [string]$SplitManifest = "data/interim/aihub/aihub_split_manifest.json",
-    [string]$AggregateWindows = "data/interim/aihub/aihub_120_agg_rebuilt.csv",
+    [string]$TrueWindows = "data/interim/aihub/aihub_120s_canonical.csv",
     [string[]]$VehicleArchives = @(),
     [int]$MaxVehicleFiles = 10000,
     [string]$Model = "models/mobility_recognition/aihub_hist120.joblib",
@@ -10,24 +10,26 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-# Keep the rebuild deterministic: aggregate adjacent same-mode 60s rows, then train
-# the validation-selected HistGradientBoosting contract used by production.
+# 120초 Feature는 60초 요약값을 합치지 않고 원본 GPS point에서 다시 계산한다.
+if (-not $SourceRoot -or -not (Test-Path -LiteralPath $SourceRoot)) {
+    throw "Set -SourceRoot or AIHUB_DATA_ROOT to the AI-Hub 01-1.정식개방데이터 directory."
+}
+
+python -m scripts.build_aihub_duration_windows $SourceRoot $SplitManifest $TrueWindows
+
 if ($VehicleArchives.Count -gt 0) {
     $linked = "data/interim/aihub/linked_vehicle_car_windows_$MaxVehicleFiles.csv"
     $augmented = "data/interim/aihub/aihub_120_agg_linked_car_train3.csv"
     $augmentedManifest = "data/interim/aihub/aihub_linked_car_train3_manifest.json"
     python -m scripts.build_linked_vehicle_windows $VehicleArchives $linked --max-files $MaxVehicleFiles --window-seconds 120
-    python -m scripts.prepare_linked_car_experiment $AggregateWindows $linked $augmented $augmentedManifest --max-windows-per-user 3
-    $AggregateWindows = $augmented
+    python -m scripts.prepare_linked_car_experiment $TrueWindows $linked $augmented $augmentedManifest --max-windows-per-user 3
+    $TrueWindows = $augmented
     $SplitManifest = $augmentedManifest
 }
-else {
-    python -m scripts.aggregate_aihub_windows $SplitWindows $AggregateWindows
-}
-python -m scripts.train_aihub_model $AggregateWindows $Model $Metrics `
+python -m scripts.train_aihub_model $TrueWindows $Model $Metrics `
     --model-type hist_gradient_boosting `
     --class-weight none `
-    --feature-set all `
+    --feature-set robust `
     --split-manifest $SplitManifest `
     --window-seconds 120
-python -m scripts.validate_aihub_release $AggregateWindows $SplitManifest $Model --window-seconds 120
+python -m scripts.validate_aihub_release $TrueWindows $SplitManifest $Model --window-seconds 120
