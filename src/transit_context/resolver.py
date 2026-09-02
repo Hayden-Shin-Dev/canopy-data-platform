@@ -35,6 +35,8 @@ def resolve_mode(
     margin = settings.resolver["ambiguity_margin"]
     candidates = {"bus": bus_score, "rail": rail_score}
     evidence_mode, evidence_score = max(candidates.items(), key=lambda item: item[1])
+    bus_applicability = str(context.get("bus_applicability", "APPLICABLE"))
+    rail_applicability = str(context.get("rail_applicability", "APPLICABLE"))
     subway_sequence = float(context.get("subway_sequence_score", 0.0) or 0.0)
     subway_line = float(context.get("subway_line_score", 0.0) or 0.0)
     subway_station_count = int(context.get("subway_observed_station_count", 0) or 0)
@@ -51,7 +53,7 @@ def resolve_mode(
     rail_subtype = None
 
     rail_has_structured_evidence = structured_subway or train_score >= strong
-    if ml_mode == "rail" and not rail_has_structured_evidence:
+    if ml_mode == "rail" and rail_applicability == "APPLICABLE" and not rail_has_structured_evidence:
         # Station proximity alone is not enough to turn a high-speed car/bus
         # window into rail. Keep rail only when ordered subway evidence or a
         # strong KORAIL context is present.
@@ -64,12 +66,16 @@ def resolve_mode(
         correction_applied = final_mode != ml_mode
         decision_status = "insufficient_context"
         correction_reason = "rail prediction requires structured transit evidence"
-    elif structured_subway and probs["rail"] < probs[ml_mode] + margin:
+    elif rail_applicability == "APPLICABLE" and structured_subway and probs["rail"] < probs[ml_mode] + margin:
         final_mode = "rail"
         correction_applied = final_mode != ml_mode
         decision_status = "corrected" if correction_applied else "confirmed"
         correction_reason = "trajectory showed ordered stations on one subway line"
-    elif evidence_score >= strong and evidence_score > probs[evidence_mode] + margin:
+    elif (
+        evidence_score >= strong
+        and evidence_score > probs[evidence_mode] + margin
+        and ((evidence_mode == "bus" and bus_applicability == "APPLICABLE") or (evidence_mode == "rail" and rail_applicability == "APPLICABLE"))
+    ):
         final_mode = evidence_mode
         correction_applied = final_mode != ml_mode
         decision_status = "corrected" if correction_applied else "confirmed"
@@ -84,7 +90,9 @@ def resolve_mode(
     # A non-rail model prediction must not be promoted to rail on a marginal
     # station/trajectory score.  The threshold is versioned in transit config.
     rail_confirmation_score = settings.resolver.get("rail_confirmation_score", strong)
-    if final_mode == "rail" and ml_mode != "rail" and rail_score < rail_confirmation_score:
+    if final_mode == "rail" and ml_mode != "rail" and (
+        rail_applicability != "APPLICABLE" or rail_score < rail_confirmation_score
+    ):
         non_rail_modes = {mode: value for mode, value in probs.items() if mode != "rail"}
         final_mode = max(non_rail_modes, key=non_rail_modes.get)
         correction_applied = True
@@ -112,6 +120,9 @@ def resolve_mode(
         "subway_end_station_id": context.get("subway_end_station_id"),
         "matched_train_start_station": context.get("matched_train_start_station"),
         "matched_train_end_station": context.get("matched_train_end_station"),
+        "transit_applicability": context.get("transit_applicability", "APPLICABLE"),
+        "bus_applicability": bus_applicability,
+        "rail_applicability": rail_applicability,
         "final_mode": final_mode,
         "rail_subtype": rail_subtype,
         "correction_applied": correction_applied,

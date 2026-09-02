@@ -54,3 +54,33 @@ def test_non_rail_prediction_requires_strong_rail_confirmation() -> None:
     )
     assert result["final_mode"] == "car"
     assert result["decision_status"] == "insufficient_context"
+
+
+def test_rail_prediction_is_not_suppressed_outside_reference_coverage() -> None:
+    result = resolve_mode(
+        {"walk": 0.05, "bike": 0.02, "car": 0.20, "bus": 0.13, "rail": 0.60},
+        context={
+            "transit_applicability": "NOT_APPLICABLE",
+            "rail_applicability": "NOT_APPLICABLE",
+            "subway_context_score": 0.0,
+            "train_context_score": 0.0,
+        },
+    )
+
+    assert result["final_mode"] == "rail"
+    assert result["correction_applied"] is False
+    assert result["rail_applicability"] == "NOT_APPLICABLE"
+
+
+def test_transit_evidence_cannot_promote_mode_when_reference_is_not_applicable() -> None:
+    result = resolve_mode(
+        {"walk": 0.05, "bike": 0.05, "car": 0.70, "bus": 0.10, "rail": 0.10},
+        context={
+            "transit_applicability": "NOT_APPLICABLE",
+            "bus_applicability": "NOT_APPLICABLE",
+            "rail_applicability": "NOT_APPLICABLE",
+            "bus_context_score": 0.95,
+        },
+    )
+
+    assert result["final_mode"] == "car"
