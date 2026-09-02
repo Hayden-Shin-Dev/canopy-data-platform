@@ -10,22 +10,18 @@ import pandas as pd
 
 from src.integration.gps_contract import GpsEvent
 
-from .features import AIHUB_FEATURE_COLUMNS, _std
+from .features import AIHUB_FEATURE_COLUMNS, canonical_window_features
+from .ingest import AiHubPoint
 from .training import BASE_FEATURE_COLUMNS, ROBUST_FEATURE_COLUMNS
 from .training import _biased_probabilities
-from src.geolife.raw import TrajectoryPoint
-from src.geolife.window_features import compute_window_features
-
-
-def _event_points(events: Sequence[GpsEvent]) -> list[TrajectoryPoint]:
+def _event_points(events: Sequence[GpsEvent]) -> list[AiHubPoint]:
     return [
-        TrajectoryPoint(
-            user_id=event.device_id,
-            trajectory_id=event.trip_id,
+        AiHubPoint(
+            timestamp=event.timestamp.replace(tzinfo=None),
             latitude=event.latitude,
             longitude=event.longitude,
-            altitude_ft=(event.altitude_m or 0.0) / 0.3048,
-            timestamp=event.timestamp.replace(tzinfo=None),
+            accuracy_m=event.horizontal_accuracy_m,
+            altitude_m=event.altitude_m,
         )
         for event in events
     ]
@@ -34,20 +30,12 @@ def _event_points(events: Sequence[GpsEvent]) -> list[TrajectoryPoint]:
 def event_features(events: Sequence[GpsEvent]) -> dict[str, float | int]:
     if len(events) < 2:
         raise ValueError("At least two GPS events are required")
-    points = _event_points(events)
-    features = dict(compute_window_features(points))
-    accuracy = [event.horizontal_accuracy_m for event in events if event.horizontal_accuracy_m is not None]
-    altitude_missing = sum(event.altitude_m is None for event in events)
-    features.update(
-        {
-            "accuracy_mean_m": sum(accuracy) / len(accuracy) if accuracy else 0.0,
-            "accuracy_std_m": _std([float(value) for value in accuracy]),
-            "accuracy_missing_ratio": 1 - len(accuracy) / len(events),
-            "altitude_missing_ratio": altitude_missing / len(events),
-            "valid_point_ratio": 1.0,
-        }
+    return canonical_window_features(
+        _event_points(events),
+        user_id=events[0].device_id,
+        trajectory_id=events[0].trip_id,
+        raw_point_count=len(events),
     )
-    return features
 
 
 def predict_event_window(model_path: str | Path, events: Sequence[GpsEvent]) -> dict[str, object]:
