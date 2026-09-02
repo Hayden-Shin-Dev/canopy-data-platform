@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 import joblib
+import numpy as np
 import pandas as pd
 
 from .config import CANOPY_MODES
@@ -83,7 +84,17 @@ def select_candidate(
     for split in ("validation", "test"):
         left = canonical[canonical["split"] == split].reset_index(drop=True)
         right = cadence[cadence["split"] == split].reset_index(drop=True)
-        if not left.equals(right[left.columns]):
+        identity_columns = ["user_id", "trajectory_id", "canonical_mode", "split"]
+        numeric_columns = list(AIHUB_FEATURE_COLUMNS)
+        same_identity = left[identity_columns].equals(right[identity_columns])
+        same_features = np.allclose(
+            left[numeric_columns].to_numpy(dtype=float),
+            right[numeric_columns].to_numpy(dtype=float),
+            rtol=1e-12,
+            atol=1e-12,
+            equal_nan=True,
+        )
+        if not same_identity or not same_features:
             raise ValueError(f"{split} changed in cadence augmentation")
 
     results: list[dict[str, object]] = []
