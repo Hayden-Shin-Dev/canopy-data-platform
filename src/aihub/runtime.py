@@ -15,6 +15,27 @@ from .features import AIHUB_FEATURE_COLUMNS, canonical_window_features
 from .ingest import AiHubPoint
 from .training import BASE_FEATURE_COLUMNS, ROBUST_FEATURE_COLUMNS
 from .training import _biased_probabilities
+
+
+_MODEL_CACHE: dict[tuple[str, int], object] = {}
+
+
+def _load_bundle(model_path: str | Path) -> object:
+    """Load an artifact once and invalidate it when the file changes."""
+
+    path = Path(model_path)
+    key = (str(path.resolve()), path.stat().st_mtime_ns)
+    cached = _MODEL_CACHE.get(key)
+    if cached is not None:
+        return cached
+    bundle = joblib.load(path)
+    if isinstance(bundle, dict) and hasattr(bundle.get("model"), "n_jobs"):
+        bundle["model"].n_jobs = 1
+    _MODEL_CACHE.clear()
+    _MODEL_CACHE[key] = bundle
+    return bundle
+
+
 def _event_points(events: Sequence[GpsEvent]) -> list[AiHubPoint]:
     return [
         AiHubPoint(
@@ -64,7 +85,7 @@ def latest_rolling_window(
 
 
 def predict_event_window(model_path: str | Path, events: Sequence[GpsEvent]) -> dict[str, object]:
-    bundle = joblib.load(model_path)
+    bundle = _load_bundle(model_path)
     if not isinstance(bundle, dict) or not {"model", "feature_columns", "classes"} <= set(bundle):
         raise ValueError("Invalid AI-Hub model artifact")
     allowed_feature_sets = {
