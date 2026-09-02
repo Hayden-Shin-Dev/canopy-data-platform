@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from scripts.build_aihub_duration_windows import _join
+from scripts.build_aihub_duration_windows import _join, _normalized_uid
 from src.aihub.ingest import AiHubPoint, AiHubTrajectory
 from src.aihub.filenames import TmcIdentifier
 
@@ -52,3 +52,8 @@ def test_join_rejects_non_contiguous_raw_trajectories() -> None:
     row = _join(_trajectory("left", start), _trajectory("right", start + timedelta(seconds=91)))
 
     assert row is None
+
+
+def test_uid_normalization_preserves_manifest_lookup_identity() -> None:
+    assert _normalized_uid("00000001") == "1"
+    assert _normalized_uid(1) == "1"

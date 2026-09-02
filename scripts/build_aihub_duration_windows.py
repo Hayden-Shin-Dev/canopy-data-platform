@@ -11,11 +11,12 @@ import argparse
 import csv
 import json
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 from pathlib import Path
 
 from src.aihub.features import AIHUB_FEATURE_COLUMNS, compute_aihub_features
-from src.aihub.ingest import AiHubTrajectory, iter_trajectories
+from src.aihub.ingest import AiHubTrajectory, iter_gps_files, read_trajectory
 
 
 METADATA_COLUMNS = (
@@ -29,7 +30,20 @@ METADATA_COLUMNS = (
 
 def _split_map(path: str | Path) -> dict[str, str]:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
-    return {str(item["user_id"]): str(item["split"]) for item in payload["groups"]}
+    return {_normalized_uid(item["user_id"]): str(item["split"]) for item in payload["groups"]}
+
+
+def _normalized_uid(value: object) -> str:
+    text = str(value).strip()
+    return str(int(text)) if text.isdigit() else text
+
+
+def _read_without_labels(item: tuple[str, Path, Path]) -> AiHubTrajectory:
+    return read_trajectory(
+        *item,
+        strict_label_timestamps=False,
+        read_label_content=False,
+    )
 
 
 def _join(left: AiHubTrajectory, right: AiHubTrajectory) -> dict[str, object] | None:
@@ -75,7 +89,15 @@ def _join(left: AiHubTrajectory, right: AiHubTrajectory) -> dict[str, object] | 
     }
 
 
-def build_dataset(source_root: str | Path, split_manifest: str | Path, output_csv: str | Path) -> dict[str, object]:
+def build_dataset(
+    source_root: str | Path,
+    split_manifest: str | Path,
+    output_csv: str | Path,
+    *,
+    workers: int = 16,
+) -> dict[str, object]:
+    if workers < 1:
+        raise ValueError("workers must be at least 1")
     split_by_user = _split_map(split_manifest)
     output = Path(output_csv)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -87,34 +109,34 @@ def build_dataset(source_root: str | Path, split_manifest: str | Path, output_cs
     with output.open("w", encoding="utf-8-sig", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=columns)
         writer.writeheader()
-        for source_split in ("Training", "Validation"):
-            # Label files were paired and timestamp-validated during the input
-            # audit.  Re-read only GPS here; this keeps the duration experiment
-            # focused on geometry and avoids duplicating that I/O.
-            for trajectory in iter_trajectories(
-                source_root,
-                source_split,
-                strict_label_timestamps=False,
-                read_label_content=False,
-            ):
-                user_split = split_by_user.get(str(int(trajectory.user_id)))
-                if user_split is None:
-                    continue
-                counts[trajectory.canonical_mode] += 1
-                prior = previous.get(trajectory.user_id)
-                if prior is not None:
-                    row = _join(prior, trajectory)
-                    if row is not None:
-                        key = row["trajectory_id"]
-                        if key not in seen:
-                            row["split"] = user_split
-                            writer.writerow(row)
-                            seen.add(key)
-                            selected[trajectory.canonical_mode] += 1
-                previous[trajectory.user_id] = trajectory
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            for source_split in ("Training", "Validation"):
+                # map은 입력 순서를 유지하므로 같은 사용자의 시간 순서도 바뀌지 않는다.
+                trajectories = executor.map(
+                    _read_without_labels,
+                    iter_gps_files(source_root, source_split),
+                    buffersize=max(2, workers * 2),
+                )
+                for trajectory in trajectories:
+                    user_split = split_by_user.get(_normalized_uid(trajectory.user_id))
+                    if user_split is None:
+                        continue
+                    counts[trajectory.canonical_mode] += 1
+                    prior = previous.get(trajectory.user_id)
+                    if prior is not None:
+                        row = _join(prior, trajectory)
+                        if row is not None:
+                            key = row["trajectory_id"]
+                            if key not in seen:
+                                row["split"] = user_split
+                                writer.writerow(row)
+                                seen.add(key)
+                                selected[trajectory.canonical_mode] += 1
+                    previous[trajectory.user_id] = trajectory
     summary = {"source_root": str(source_root), "output_csv": str(output), "window_seconds": 120,
                "group_column": "user_id", "source_trajectory_count": sum(counts.values()),
                "selected_window_count": sum(selected.values()),
+               "workers": workers,
                "source_class_counts": dict(sorted(counts.items())),
                "selected_class_counts": dict(sorted(selected.items())),
                "feature_columns": list(AIHUB_FEATURE_COLUMNS)}
@@ -127,8 +149,9 @@ def main() -> None:
     parser.add_argument("source_root")
     parser.add_argument("split_manifest")
     parser.add_argument("output_csv")
+    parser.add_argument("--workers", type=int, default=16)
     args = parser.parse_args()
-    print(json.dumps(build_dataset(args.source_root, args.split_manifest, args.output_csv), ensure_ascii=False, indent=2))
+    print(json.dumps(build_dataset(args.source_root, args.split_manifest, args.output_csv, workers=args.workers), ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
