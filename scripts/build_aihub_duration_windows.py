@@ -122,6 +122,7 @@ def build_dataset(
     *,
     workers: int = 16,
     train_cadences: tuple[int, ...] = (),
+    cadence_splits: tuple[str, ...] = ("train",),
 ) -> dict[str, object]:
     if workers < 1:
         raise ValueError("workers must be at least 1")
@@ -159,7 +160,7 @@ def build_dataset(
                                 writer.writerow(row)
                                 seen.add(key)
                                 selected[trajectory.canonical_mode] += 1
-                                if user_split == "train":
+                                if user_split in cadence_splits:
                                     for cadence in train_cadences:
                                         cadence_row = _join(prior, trajectory, cadence_seconds=cadence)
                                         if cadence_row is not None:
@@ -172,6 +173,7 @@ def build_dataset(
                "selected_window_count": sum(selected.values()),
                "workers": workers,
                "train_cadences": list(train_cadences),
+               "cadence_splits": list(cadence_splits),
                "source_class_counts": dict(sorted(counts.items())),
                "selected_class_counts": dict(sorted(selected.items())),
                "feature_columns": list(AIHUB_FEATURE_COLUMNS)}
@@ -190,9 +192,18 @@ def main() -> None:
         default="",
         help="comma-separated deterministic train-only cadence views, for example 2,5,10",
     )
+    parser.add_argument(
+        "--cadence-splits",
+        default="train",
+        help="comma-separated splits receiving cadence views; default train",
+    )
     args = parser.parse_args()
     cadences = tuple(int(value) for value in args.train_cadences.split(",") if value.strip())
-    print(json.dumps(build_dataset(args.source_root, args.split_manifest, args.output_csv, workers=args.workers, train_cadences=cadences), ensure_ascii=False, indent=2))
+    cadence_splits = tuple(value.strip() for value in args.cadence_splits.split(",") if value.strip())
+    unknown = sorted(set(cadence_splits) - {"train", "validation", "test"})
+    if unknown:
+        parser.error(f"unknown cadence splits: {unknown}")
+    print(json.dumps(build_dataset(args.source_root, args.split_manifest, args.output_csv, workers=args.workers, train_cadences=cadences, cadence_splits=cadence_splits), ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
