@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Sequence
+from datetime import timedelta
 
 import joblib
 import pandas as pd
@@ -36,6 +37,30 @@ def event_features(events: Sequence[GpsEvent]) -> dict[str, float | int]:
         trajectory_id=events[0].trip_id,
         raw_point_count=len(events),
     )
+
+
+def latest_rolling_window(
+    events: Sequence[GpsEvent],
+    *,
+    window_seconds: int = 120,
+    stride_seconds: int = 10,
+) -> tuple[int, list[GpsEvent]] | None:
+    """완료된 최신 120초 구간을 10초 간격으로 골라낸다."""
+
+    if window_seconds <= 0 or stride_seconds <= 0:
+        raise ValueError("window_seconds and stride_seconds must be positive")
+    if len(events) < 2:
+        return None
+    ordered = sorted(events, key=lambda event: event.timestamp)
+    anchor = ordered[0].timestamp
+    elapsed = (ordered[-1].timestamp - anchor).total_seconds()
+    if elapsed < window_seconds:
+        return None
+    slot = int((elapsed - window_seconds) // stride_seconds)
+    start = anchor + timedelta(seconds=slot * stride_seconds)
+    end = start + timedelta(seconds=window_seconds)
+    selected = [event for event in ordered if start <= event.timestamp < end]
+    return (slot, selected) if len(selected) >= 2 else None
 
 
 def predict_event_window(model_path: str | Path, events: Sequence[GpsEvent]) -> dict[str, object]:

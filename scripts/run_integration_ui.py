@@ -325,31 +325,24 @@ class Runtime:
             if self._live_inference_enabled and event is not None and update.decision.accepted and self.engine is not None:
                 session = self.engine.ingestor.sessions.get(event.trip_id)
                 if session and len(session.events) >= 2:
-                    elapsed_bucket = int((event.timestamp - session.events[0].timestamp).total_seconds() // 120)
-                    if elapsed_bucket > self._last_window_bucket:
-                        self._last_window_bucket = elapsed_bucket
-                        inference_events = list(session.events)
+                    from src.aihub.runtime import latest_rolling_window
+
+                    rolling = latest_rolling_window(session.events, window_seconds=120, stride_seconds=10)
+                    if rolling is not None and rolling[0] > self._last_window_bucket:
+                        self._last_window_bucket = rolling[0]
+                        inference_events = rolling[1]
         if inference_events is not None:
             try:
-                windows = infer_windows(
-                    inference_events,
-                    model_path=default_mobility_model(),
-                    window_seconds=120,
-                )
-                payload = [
-                    {
-                        "window_start": window.window_start.isoformat(),
-                        "window_end": window.window_end.isoformat(),
-                        "status": window.status,
-                        "predicted_mode": window.predicted_mode,
-                        "confidence": window.confidence,
-                        "probabilities": window.probabilities,
-                        "features": window.features,
-                    }
-                    for window in windows
-                ]
+                from src.aihub.runtime import predict_event_window
+
+                result = predict_event_window(default_mobility_model(), inference_events)
+                payload = {
+                    "window_start": inference_events[0].timestamp.isoformat(),
+                    "window_end": inference_events[-1].timestamp.isoformat(),
+                    **result,
+                }
                 with self.lock:
-                    self.window_predictions = payload
+                    self.window_predictions.append(payload)
             except Exception:
                 pass
 
