@@ -344,7 +344,7 @@ button { color: inherit; }
 .expected-block .section-heading { margin-top: 15px; }
 .large { min-height: 54px; margin-top: 12px; }
 
-.active-header { position: absolute; z-index: 500; top: 0; left: 0; right: 0; height: 192px; padding: 19px 18px 12px; background: #fff; }
+.active-header { position: absolute; z-index: 500; top: 0; left: 0; right: 0; height: 150px; padding: 19px 18px 12px; background: #fff; }
 .active-header .active-title-row { display: flex; align-items: center; justify-content: center; gap: 7px; }
 .active-header h1 { margin: 0; font-size: 16px; }
 .active-header > .plain-icon { position: absolute; right: 8px; top: 16px; }
@@ -360,7 +360,7 @@ button { color: inherit; }
 .live-badge { padding: 3px 6px; border-radius: 7px; color: #fff; background: var(--red); font-size: 8px; font-weight: 800; }
 .compact-chain { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; font-size: 23px; }
 .compact-chain .ph-arrow-right { color: transparent; }
-.active-map { position: absolute; inset: 192px 0 264px; background: #e7eee9; }
+.active-map { position: absolute; inset: 150px 0 264px; background: #e7eee9; }
 .map-buttons { position: absolute; z-index: 600; right: 14px; top: 395px; display: grid; overflow: hidden; border: 1px solid #dce4df; border-radius: 24px; background: #fff; box-shadow: var(--shadow); }
 .map-buttons button { width: 44px; height: 44px; border: 0; border-bottom: 1px solid #e7ece9; background: #fff; font-size: 20px; }
 .map-buttons button:last-child { border-bottom: 0; }
