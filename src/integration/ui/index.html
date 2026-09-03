@@ -158,9 +158,12 @@
         <button class="plain-icon" type="button" id="active-menu-button" aria-label="여정 메뉴"><i class="ph-fill ph-dots-three-vertical"></i></button>
         <div class="active-route-name">오늘의 출근 경로</div>
         <div class="journey-progress active-progress" id="active-journey-progress" aria-label="현재 위치">
-          <i class="ph-fill ph-house progress-home"></i><span class="progress-rail"><b class="progress-fill"></b><i class="journey-traveler unknown" id="active-traveler"></i></span><i class="ph-fill ph-buildings progress-office"></i>
+          <button class="progress-endpoint progress-home" type="button" data-address-popover="origin" aria-label="출발지 주소 보기"><i class="ph-fill ph-house"></i></button><span class="progress-rail"><b class="progress-fill"></b><i class="journey-traveler unknown" id="active-traveler"></i></span><button class="progress-endpoint progress-office" type="button" data-address-popover="destination" aria-label="목적지 주소 보기"><i class="ph-fill ph-buildings"></i></button>
         </div>
-        <p>서울 영등포구 → Microsoft Korea</p>
+        <div class="address-popover" id="active-address-popover" hidden>
+          <span class="address-popover-icon"><i class="ph-fill ph-house"></i></span>
+          <span><small id="active-address-kind">출발지</small><strong id="active-address-value">-</strong></span>
+        </div>
       </header>
       <div id="active-map" class="active-map" aria-label="실시간 이동 경로 지도"></div>
       <div class="map-buttons"><button type="button" id="locate-button" aria-label="현재 위치"><i class="ph ph-crosshair"></i></button><button type="button" id="zoom-in-button" aria-label="확대"><i class="ph ph-plus"></i></button><button type="button" id="zoom-out-button" aria-label="축소"><i class="ph ph-minus"></i></button></div>

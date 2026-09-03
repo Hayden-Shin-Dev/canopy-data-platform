@@ -314,7 +314,10 @@ button { color: inherit; }
 .address-row strong { font-size: 11px; line-height: 1.4; }
 .address-line { width: 1px; height: 11px; margin: 1px 0 1px 9px; background: #bfd8ca; }
 .journey-progress { display: flex; align-items: center; gap: 9px; margin: 18px 4px 20px; color: var(--green); }
-.journey-progress > i { flex: 0 0 auto; font-size: 20px; }
+.journey-progress > i, .journey-progress > .progress-endpoint { flex: 0 0 auto; font-size: 20px; }
+.progress-endpoint { width: 28px; height: 28px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; transition: transform .18s ease, background .18s ease; }
+.progress-endpoint:hover, .progress-endpoint:focus-visible { background: var(--mint); transform: scale(1.08); outline: none; }
+.progress-endpoint i { pointer-events: none; }
 .journey-progress .progress-office { color: var(--red); }
 .progress-rail { position: relative; flex: 1; height: 16px; }
 .progress-rail::before, .progress-rail .progress-fill { content: ""; position: absolute; left: 0; top: 7px; height: 2px; border-radius: 2px; }
@@ -351,13 +354,20 @@ button { color: inherit; }
 .active-header > strong { display: none; }
 .active-route-name { margin-top: 20px; font-size: 15px; font-weight: 700; }
 .active-header > p { margin: 9px 0 0; padding-top: 10px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
-.active-header > p { display: grid; gap: 3px; white-space: normal; overflow: hidden; }
+.active-header > p { display: none; }
 .route-address { min-width: 0; display: flex; align-items: flex-start; gap: 4px; line-height: 1.35; overflow: hidden; }
 .route-address-separator { margin-left: 6px; }
 .route-address i { flex: 0 0 auto; color: var(--green); font-size: 13px; }
 .route-address:last-child i { color: var(--red); }
 .route-address-separator { width: 20px; height: 2px; flex: 0 0 auto; position: relative; border-radius: 2px; background: #c9d9d0; }
 .route-address-separator::after { content: ""; position: absolute; right: 1px; top: -2px; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.address-popover { position: absolute; z-index: 4; top: 116px; left: 18px; right: 18px; display: flex; align-items: center; gap: 9px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.97); box-shadow: 0 8px 18px rgba(25, 60, 46, .14); animation: detailReveal .2s ease both; }
+.address-popover[hidden] { display: none; }
+.address-popover-icon { width: 27px; height: 27px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 50%; color: #fff; background: var(--green); font-size: 14px; }
+.address-popover.destination .address-popover-icon { background: var(--red); }
+.address-popover > span:last-child { min-width: 0; display: grid; gap: 2px; }
+.address-popover small { color: var(--muted); font-size: 9px; }
+.address-popover strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
 .live-badge { padding: 3px 6px; border-radius: 7px; color: #fff; background: var(--red); font-size: 8px; font-weight: 800; }
 .compact-chain { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; font-size: 23px; }
 .compact-chain .ph-arrow-right { color: transparent; }

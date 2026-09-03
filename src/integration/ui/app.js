@@ -209,6 +209,16 @@ function renderRoute(payload) {
   if (activeAddress && payload.origin?.label && payload.destination?.label) {
     activeAddress.innerHTML = `<span class="route-address"><i class="ph-fill ph-house"></i>${payload.origin.label}</span><span class="route-address-separator" aria-hidden="true"></span><span class="route-address"><i class="ph-fill ph-buildings"></i>${payload.destination.label}</span>`;
   }
+  const originButton = document.querySelector('[data-address-popover="origin"]');
+  const destinationButton = document.querySelector('[data-address-popover="destination"]');
+  if (originButton && payload.origin?.label) {
+    originButton.dataset.address = payload.origin.label;
+    originButton.title = payload.origin.label;
+  }
+  if (destinationButton && payload.destination?.label) {
+    destinationButton.dataset.address = payload.destination.label;
+    destinationButton.title = payload.destination.label;
+  }
   const distanceKm = Number(payload.distance_km || 0);
   if (distanceKm) $("#start-distance").textContent = `${number(distanceKm, 1)} km`;
   ensureMap();
@@ -406,6 +416,17 @@ async function runAIHubReplay() {
 
 function bindInteractions() {
   document.addEventListener("click", async event => {
+    const endpoint = event.target.closest("[data-address-popover]");
+    const addressPopover = $("#active-address-popover");
+    if (endpoint && addressPopover) {
+      const destination = endpoint.dataset.addressPopover === "destination";
+      $("#active-address-kind").textContent = destination ? "목적지" : "출발지";
+      $("#active-address-value").textContent = endpoint.dataset.address || "주소 정보를 불러오는 중";
+      addressPopover.classList.toggle("destination", destination);
+      addressPopover.hidden = false;
+      return;
+    }
+    if (addressPopover && !event.target.closest("#active-address-popover")) addressPopover.hidden = true;
     const nav = event.target.closest("[data-nav]");
     if (nav) { showScreen(nav.dataset.nav); return; }
     const action = event.target.closest("[data-action]");
