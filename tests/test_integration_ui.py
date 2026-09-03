@@ -33,9 +33,15 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     assert "/assets/canopy-ui/home-landscape.png" in static_html
     for asset in (
         "journey-start-backdrop.png",
-        "journey-start-sprite.png",
+        "journey-start-frame-1.png",
+        "journey-start-frame-2.png",
+        "journey-start-frame-3.png",
+        "journey-start-frame-4.png",
         "journey-complete-confetti.png",
-        "journey-complete-celebration-sprite.png",
+        "journey-complete-frame-1.png",
+        "journey-complete-frame-2.png",
+        "journey-complete-frame-3.png",
+        "journey-complete-frame-4.png",
         "confetti-particle-sprite.png",
     ):
         assert f"/assets/canopy-ui/{asset}" in static_css
