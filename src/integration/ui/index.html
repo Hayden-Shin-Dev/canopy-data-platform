@@ -14,7 +14,9 @@
   <link rel="stylesheet" href="/ui/styles.css">
 </head>
 <body>
-  <main id="phone" data-phone-screen data-testid="device-screen" aria-live="polite">
+  <div class="iphone-frame" data-testid="iphone-frame">
+    <div class="iphone-island" aria-hidden="true"></div>
+    <main id="phone" data-phone-screen data-testid="device-screen" aria-live="polite">
     <section class="app-screen is-active" id="home" data-screen="home">
       <div class="screen-scroll home-scroll">
         <header class="home-header">
@@ -270,7 +272,8 @@
     </section>
 
     <div id="toast" class="toast" role="status"></div>
-  </main>
+    </main>
+  </div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin></script>
   <script src="/ui/app.js"></script>
 </body>
