@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import mimetypes
 from pathlib import Path
 import sys
 from threading import Lock, Thread
@@ -31,6 +32,7 @@ from src.ktdb.schema import MODEL_FEATURES
 MOCK_DIR = ROOT / "mock"
 DEFAULT_MOCK = MOCK_DIR / "canopy_iphone_mock_yeongdeungpo_to_microsoft.csv"
 DEFAULT_KTDB_SAMPLE = ROOT / "data/processed/population_baseline/ktdb/01_population_model_training_all.csv"
+UI_DIR = ROOT / "src/integration/ui"
 
 
 HTML = """<!doctype html>
@@ -210,6 +212,11 @@ MOBILE_APP_HTML = MOBILE_APP_HTML.replace(
     '</section>\n</div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"',
     '</section><section id="mypage" class="screen profile-screen"><h2>마이페이지</h2><p class="muted">이번 데모에서 쌓은 Canopy Token을 확인할 수 있어요.</p><div class="profile-card"><div class="eyebrow">현재 보유 Token</div><div class="profile-token" id="myTokenBalance">0 Token</div></div><div class="profile-card"><div class="eyebrow">Token 받은 내역</div><div id="myRewardHistory"><p class="muted">아직 받은 Token이 없어요.</p></div></div></section><nav class="bottom-nav" aria-label="앱 메뉴"><button class="active" data-tab="home" onclick="navigateTab(\'home\')"><span>⌂</span>홈</button><button data-tab="journey" onclick="navigateTab(\'journey\')"><span>●</span>여정</button><button data-tab="mypage" onclick="navigateTab(\'mypage\')"><span>○</span>마이페이지</button></nav></div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"',
 )
+
+# The five-screen consumer UI is kept as static files so layout changes do not
+# get mixed into the replay and inference runtime.
+if UI_DIR.joinpath("index.html").is_file():
+    MOBILE_APP_HTML = UI_DIR.joinpath("index.html").read_text(encoding="utf-8")
 
 
 class Runtime:
@@ -398,10 +405,26 @@ def _baseline_payload() -> dict[str, object]:
     valid_events = [event for event in events if event is not None]
     scenario = build_expected_features(valid_events)
     prediction = predict_expected_behaviour(pd.DataFrame([scenario.features]), model_path=model).iloc[0]
+    probabilities = {
+        mode: float(prediction[f"{mode}_probability"])
+        for mode in ("walk", "bike", "car", "bus", "rail")
+    }
+    distance_km = trajectory_distance_km(valid_events)
+    resolver = load_factor_resolver(ROOT / "data/processed/emission_factors/emission_factors_2026.csv")
+    expected_emission = calculate_expected_emission(probabilities, distance_km, resolver=resolver)
+    duration_sec = (
+        max(0.0, (valid_events[-1].timestamp - valid_events[0].timestamp).total_seconds())
+        if len(valid_events) >= 2
+        else 0.0
+    )
     return {
         "status": "READY",
         "predicted_mode": str(prediction["predicted_mode"]),
-        "probabilities": {mode: float(prediction[f"{mode}_probability"]) for mode in ("walk", "bike", "car", "bus", "rail")},
+        "probabilities": probabilities,
+        "distance_km": distance_km,
+        "duration_sec": duration_sec,
+        "expected_co2e_g": expected_emission["expected_co2e_g"],
+        "recommended_co2e_g": expected_emission["contributions"]["rail"]["co2e_g"],
         "source": "existing KTDB population baseline model",
         "features": scenario.features,
         "provenance": scenario.provenance,
@@ -416,14 +439,38 @@ def _route_payload() -> dict[str, object]:
     rows = read_replay_csv(DEFAULT_MOCK)
     if not rows:
         return {"status": "WAITING"}
+    valid_events = [
+        event
+        for event in (validate_gps_event(row).event for row in rows)
+        if event is not None
+    ]
+    sample_step = max(1, len(rows) // 80)
+    sampled = rows[::sample_step]
+    if sampled[-1] is not rows[-1]:
+        sampled.append(rows[-1])
     return {
         "status": "READY",
+        "distance_km": trajectory_distance_km(valid_events),
+        "polyline": [
+            {"latitude": float(row["latitude"]), "longitude": float(row["longitude"])}
+            for row in sampled
+        ],
         "origin": {"label": "서울 영등포구 버드나루로10길 7", "latitude": float(rows[0]["latitude"]), "longitude": float(rows[0]["longitude"])},
         "destination": {"label": "Microsoft Korea · 서울 종로구 종로1길 50", "latitude": float(rows[-1]["latitude"]), "longitude": float(rows[-1]["longitude"])},
     }
 
 
 class Handler(BaseHTTPRequestHandler):
+    def _send_bytes(self, status: int, body: bytes, content_type: str) -> None:
+        try:
+            self.send_response(status)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError):
+            return
+
     def _send(self, status: int, payload: object, content_type: str = "application/json") -> None:
         body = payload.encode("utf-8") if isinstance(payload, str) else json.dumps(payload, ensure_ascii=False, default=str).encode("utf-8")
         self.send_response(status)
@@ -441,6 +488,22 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         if path == "/":
             self._send(200, MOBILE_APP_HTML, "text/html")
+        elif path.startswith("/ui/"):
+            asset = (UI_DIR / path.removeprefix("/ui/")).resolve()
+            ui_root = UI_DIR.resolve()
+            if ui_root not in asset.parents or not asset.is_file():
+                self._send(404, {"error": "UI asset not found"})
+                return
+            payload = asset.read_bytes()
+            self._send_bytes(200, payload, mimetypes.guess_type(asset.name)[0] or "application/octet-stream")
+        elif path.startswith("/assets/"):
+            asset = (ROOT / "assets" / path.removeprefix("/assets/")).resolve()
+            asset_root = (ROOT / "assets").resolve()
+            if asset_root not in asset.parents or not asset.is_file():
+                self._send(404, {"error": "asset not found"})
+                return
+            payload = asset.read_bytes()
+            self._send_bytes(200, payload, mimetypes.guess_type(asset.name)[0] or "application/octet-stream")
         elif path == "/api/fixtures":
             fixture_names = sorted(path.name for path in FIXTURE_DIR.glob("*.csv"))
             if DEFAULT_MOCK.is_file():

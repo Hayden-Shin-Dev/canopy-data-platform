@@ -19,22 +19,19 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     assert "Baseline Preview" in module.IPHONE_HTML
     assert "Trip Detail" in module.IPHONE_HTML
     assert "developer-only" in module.IPHONE_HTML
-    assert "openstreetmap.org" in module.MOBILE_APP_HTML
-    assert "startTrip()" in module.MOBILE_APP_HTML
-    assert 'class="screen active"' in module.MOBILE_APP_HTML
-    assert "resultSegments" in module.MOBILE_APP_HTML
-    assert "renderSegments" in module.MOBILE_APP_HTML
-    assert "modeVisual" in module.MOBILE_APP_HTML
-    assert "renderModeVisual" in module.MOBILE_APP_HTML
-    assert 'id="reward"' in module.MOBILE_APP_HTML
-    assert "결과 확인" in module.MOBILE_APP_HTML
-    assert 'id="homeTokenBalance"' in module.MOBILE_APP_HTML
-    assert "showReward" in module.MOBILE_APP_HTML
-    assert "TOKEN_GRAMS_PER_TOKEN" in module.MOBILE_APP_HTML
-    assert "tokenEarned" in module.MOBILE_APP_HTML
-    assert 'id="mypage"' in module.MOBILE_APP_HTML
-    assert 'class="bottom-nav"' in module.MOBILE_APP_HTML
-    assert "navigateTab" in module.MOBILE_APP_HTML
+    assert "/ui/app.js" in module.MOBILE_APP_HTML
+    static_js = (Path(__file__).resolve().parents[1] / "src/integration/ui/app.js").read_text(encoding="utf-8")
+    assert "openstreetmap.org" in static_js
+    assert "/ui/styles.css" in module.MOBILE_APP_HTML
+    static_html = module.MOBILE_APP_HTML
+    for marker in ('id="result-segments"', 'id="result-token"', 'id="profile"', 'class="bottom-nav"'):
+        assert marker in static_html
+    for screen in ("home", "plan", "start", "active", "complete", "profile", "developer"):
+        assert f'id="{screen}"' in static_html
+    for asset in ("home-landscape.png", "journey-start.png", "journey-complete.png"):
+        assert f"/assets/canopy-ui/{asset}" in static_html
+    assert "startTrip" in static_js
+    assert "renderResult" in static_js
 
     assert module._fixture_path("insufficient_gps.csv").is_file()
     runtime.start("insufficient_gps.csv", "instant")
