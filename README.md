@@ -66,6 +66,8 @@ Mock 결과는 `walk → rail → walk`로 나왔고, rail 구간은 서울 refe
 
 ![Canopy Active Trip](reports/integration/screenshots/active.png)
 
+![Canopy Active Trip Detail](reports/integration/screenshots/active1.png)
+
 ### 이동 완료
 
 ![Canopy Result](reports/integration/screenshots/result.png)
