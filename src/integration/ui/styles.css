@@ -514,7 +514,19 @@ button { color: inherit; }
   opacity: 0;
   will-change: opacity;
 }
-.start-character-animation { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: contain; filter: drop-shadow(0 6px 7px rgba(16, 64, 43, .12)); }
+.start-character-animation {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: url('/assets/canopy-ui/journey-start-animation-sprite.png') 0 center / auto 100% no-repeat;
+  filter: drop-shadow(0 6px 7px rgba(16, 64, 43, .12));
+  animation: startSprite 4.8s steps(24, end) infinite;
+  will-change: background-position;
+}
+@keyframes startSprite {
+  from { background-position: 0 center; }
+  to { background-position: -4075.5px center; }
+}
 .start-character-fallback { display: none; position: absolute; inset: 0; }
 .start-character .character-frame {
   /* A slower, readable story beat: walk, slip, recover, then walk again. */
