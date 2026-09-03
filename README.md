@@ -72,47 +72,6 @@ Mock 결과는 `walk → rail → walk`로 나왔고, rail 구간은 서울 refe
 
 ![Canopy Result](reports/integration/screenshots/result.png)
 
-## 실행 방법
-
-저장소 루트에서 실행한다.
-
-```powershell
-python -m pip install -r requirements.txt
-```
-
-AI-Hub 모델을 새로 만들 때는 원본 데이터 경로를 지정한다.
-
-```powershell
-$env:AIHUB_DATA_ROOT = "C:\path\to\01-1.정식개방데이터"
-.\scripts\rebuild_aihub_production.ps1
-```
-
-모델과 주요 reference를 확인한다.
-
-```powershell
-python scripts/validate_integration_artifacts.py
-```
-
-Mock GPS를 직접 확인한다.
-
-```powershell
-python -m scripts.evaluate_mock_trip --csv mock/canopy_iphone_mock_yeongdeungpo_to_microsoft.csv --ground-truth mock/canopy_iphone_mock_yeongdeungpo_to_microsoft_ground_truth.txt --output reports/aihub/AIHUB_RUNTIME_PARITY_MOCK_AFTER.json
-```
-
-Local UI를 실행한다.
-
-```powershell
-python scripts/run_integration_ui.py
-```
-
-브라우저에서 `http://127.0.0.1:8765`를 연다.
-
-전체 테스트는 다음 명령으로 실행한다.
-
-```powershell
-python -m pytest -q
-```
-
 
 ## Branch
 
