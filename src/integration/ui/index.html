@@ -29,7 +29,7 @@
             <strong class="hero-value"><span id="home-month-reduction">0.0</span><small> kg</small></strong>
             <p class="positive-copy"><i class="ph-fill ph-trend-up"></i> 지난 달 대비 <b id="home-growth">0%</b> 증가했어요!</p>
           </div>
-          <div class="co2-badge"><span>CO<sub>2</sub></span></div>
+          <div class="co2-badge" aria-label="탄소 절감량"><i class="ph-fill ph-cloud"></i><span>CO<sub>2</sub></span></div>
         </article>
 
         <img class="landscape-art" src="/assets/canopy-ui/home-landscape.png" alt="나무와 풍력 발전기가 있는 친환경 도시 풍경">
@@ -96,13 +96,20 @@
           </button>
         </div>
 
-        <article class="card comparison-card">
+        <article class="card comparison-card" id="baseline-comparison">
           <p class="card-kicker">KTDB 평균 선택 대비</p>
           <strong>추천 경로 선택 시</strong>
           <p class="saving-copy"><span id="plan-saving">계산 중</span> CO<sub>2</sub> 절감 <span id="plan-saving-percent"></span></p>
           <div class="bar-compare" aria-label="KTDB 평균과 추천 경로 탄소 배출 비교">
             <div><span id="baseline-bar"></span><small>KTDB 평균<br><b id="baseline-emission">계산 중</b></small></div>
             <div><span id="route-bar"></span><small>추천 경로<br><b id="route-emission">계산 중</b></small></div>
+          </div>
+          <button class="details-toggle" type="button" id="baseline-detail-toggle" aria-expanded="false">
+            <span>비슷한 조건의 이동수단 자세히 보기</span><i class="ph ph-caret-down"></i>
+          </button>
+          <div class="baseline-detail" id="baseline-detail-panel" hidden>
+            <p class="detail-caption">같은 시간·지역 조건에서 관측된 이동 비율</p>
+            <div id="baseline-mode-rows" class="baseline-mode-rows"></div>
           </div>
         </article>
       </div>
@@ -193,7 +200,9 @@
             <div><i class="ph ph-wallet"></i><span>이동 비용</span><strong>미연동</strong></div>
             <div><i class="ph ph-fire"></i><span>소모 칼로리</span><strong>미연동</strong></div>
           </div>
-          <p class="mode-sequence">감지된 이동수단 <strong id="result-modes">-</strong></p>
+          <button class="mode-sequence mode-sequence-toggle" type="button" id="result-mode-toggle" aria-expanded="true">
+            <span>감지된 이동수단</span><strong id="result-modes">-</strong><i class="ph ph-caret-down"></i>
+          </button>
           <div id="result-segments" class="segment-list"></div>
         </article>
         <article class="card tree-card">

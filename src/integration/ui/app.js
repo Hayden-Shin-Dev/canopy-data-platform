@@ -165,6 +165,18 @@ function renderBaseline(payload) {
   const maxG = Math.max(expectedG, recommendedG, 1);
   $("#baseline-bar").style.height = `${Math.max(12, expectedG / maxG * 52)}px`;
   $("#route-bar").style.height = `${Math.max(8, recommendedG / maxG * 52)}px`;
+  renderBaselineDetails(payload.probabilities || {});
+}
+
+function renderBaselineDetails(probabilities) {
+  const labels = { walk: "도보", bike: "자전거", car: "자동차", bus: "버스", rail: "지하철·철도" };
+  const icons = { walk: "ph-person-simple-walk", bike: "ph-bicycle", car: "ph-car", bus: "ph-bus", rail: "ph-train" };
+  const rows = $("#baseline-mode-rows");
+  if (!rows) return;
+  rows.innerHTML = Object.entries(labels).map(([mode, label]) => {
+    const percent = Math.max(0, Math.min(100, Number(probabilities[mode] || 0) * 100));
+    return `<div class="baseline-mode-row"><span><i class="ph ${icons[mode]}"></i> ${label}</span><div class="baseline-mode-track"><b style="width:${percent.toFixed(2)}%"></b></div><strong>${percent.toFixed(1)}%</strong></div>`;
+  }).join("");
 }
 
 function renderRoute(payload) {
@@ -294,7 +306,9 @@ function renderResult(snapshot) {
   $("#result-distance").textContent = `${number(pipeline.distance_km, 1)} km`;
   $("#result-modes").textContent = modes.join(" → ") || "-";
   $("#result-token").textContent = `+${token} Token`;
-  $("#result-segments").innerHTML = segments.map(segment => `<div class="segment-row"><span>${segmentLabel(segment)}</span><span>${number(segment.distance_km, 2)} km · ${number(segment.co2e_g, 1)} g</span></div>`).join("");
+  const modeIcons = { walk: "ph-person-simple-walk", bike: "ph-bicycle", car: "ph-car", bus: "ph-bus", rail: "ph-train" };
+  $("#result-segments").innerHTML = segments.map(segment => `<div class="segment-row"><span class="segment-icon"><i class="ph-fill ${modeIcons[segment.mode] || "ph-navigation-arrow"}"></i></span><span class="segment-main"><strong>${segmentLabel(segment)}</strong><small>${durationText(segment.duration_sec)} · ${number(segment.distance_km, 2)} km</small></span><span class="segment-emission"><b>${number(segment.co2e_g, 1)} g</b> CO<sub>2</sub></span></div>`).join("");
+  $("#result-segments").classList.toggle("is-visible", segments.length > 0);
   storeResult(pipeline, snapshot.fixture);
 }
 
@@ -369,6 +383,22 @@ function bindInteractions() {
     if (route) {
       $$("[data-route]").forEach(card => { card.classList.toggle("recommended", card === route); card.setAttribute("aria-pressed", card === route ? "true" : "false"); });
     }
+  });
+  const baselineToggle = $("#baseline-detail-toggle");
+  baselineToggle?.addEventListener("click", () => {
+    const panel = $("#baseline-detail-panel");
+    if (!panel) return;
+    const open = panel.hidden;
+    panel.hidden = !open;
+    baselineToggle.setAttribute("aria-expanded", String(open));
+  });
+  const resultModeToggle = $("#result-mode-toggle");
+  resultModeToggle?.addEventListener("click", () => {
+    const list = $("#result-segments");
+    if (!list) return;
+    const open = !list.classList.contains("is-visible");
+    list.classList.toggle("is-visible", open);
+    resultModeToggle.setAttribute("aria-expanded", String(open));
   });
   $("#start-trip-button").addEventListener("click", () => startTrip());
   $("#developer-start").addEventListener("click", () => startTrip({ developer: true }));
