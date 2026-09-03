@@ -36,6 +36,7 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
         "journey-start-sprite.png",
         "journey-complete-confetti.png",
         "journey-complete-celebration-sprite.png",
+        "confetti-particle-sprite.png",
     ):
         assert f"/assets/canopy-ui/{asset}" in static_css
     assert "startTrip" in static_js

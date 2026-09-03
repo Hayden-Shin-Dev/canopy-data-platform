@@ -381,6 +381,57 @@ button { color: inherit; }
   overflow: hidden;
   background: url('/assets/canopy-ui/journey-complete-confetti.png') center 55% / cover no-repeat;
 }
+.celebration-particles {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+.confetti-piece {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  width: 24px;
+  height: 24px;
+  display: block;
+  background-image: url('/assets/canopy-ui/confetti-particle-sprite.png');
+  background-repeat: no-repeat;
+  background-size: 96px 72px;
+  opacity: 0;
+  animation: confettiBurst 2.6s cubic-bezier(.2, .7, .25, 1) infinite;
+}
+.confetti-piece:nth-child(2) { background-position: -24px 0; }
+.confetti-piece:nth-child(3) { background-position: -48px 0; }
+.confetti-piece:nth-child(4) { background-position: -72px 0; }
+.confetti-piece:nth-child(5) { background-position: 0 -24px; }
+.confetti-piece:nth-child(6) { background-position: -24px -24px; }
+.confetti-piece:nth-child(7) { background-position: -48px -24px; }
+.confetti-piece:nth-child(8) { background-position: -72px -24px; }
+.confetti-piece:nth-child(9) { background-position: 0 -48px; }
+.confetti-piece:nth-child(10) { background-position: -24px -48px; }
+.confetti-piece:nth-child(11) { background-position: -48px -48px; }
+.confetti-piece:nth-child(12) { background-position: -72px -48px; }
+.confetti-piece:nth-child(2n) { animation-delay: .18s; }
+.confetti-piece:nth-child(3n) { animation-delay: .36s; }
+.confetti-piece:nth-child(4n) { animation-delay: .54s; }
+.confetti-piece:nth-child(1) { --burst-x: -132px; --burst-y: -78px; --burst-rotate: -210deg; }
+.confetti-piece:nth-child(2) { --burst-x: -94px; --burst-y: -112px; --burst-rotate: 180deg; }
+.confetti-piece:nth-child(3) { --burst-x: -55px; --burst-y: -94px; --burst-rotate: -130deg; }
+.confetti-piece:nth-child(4) { --burst-x: -15px; --burst-y: -126px; --burst-rotate: 230deg; }
+.confetti-piece:nth-child(5) { --burst-x: 32px; --burst-y: -120px; --burst-rotate: -170deg; }
+.confetti-piece:nth-child(6) { --burst-x: 77px; --burst-y: -104px; --burst-rotate: 210deg; }
+.confetti-piece:nth-child(7) { --burst-x: 124px; --burst-y: -74px; --burst-rotate: -240deg; }
+.confetti-piece:nth-child(8) { --burst-x: -150px; --burst-y: -26px; --burst-rotate: 160deg; }
+.confetti-piece:nth-child(9) { --burst-x: 150px; --burst-y: -20px; --burst-rotate: -190deg; }
+.confetti-piece:nth-child(10) { --burst-x: -104px; --burst-y: 6px; --burst-rotate: 220deg; }
+.confetti-piece:nth-child(11) { --burst-x: 103px; --burst-y: 9px; --burst-rotate: -170deg; }
+.confetti-piece:nth-child(12) { --burst-x: 0px; --burst-y: -142px; --burst-rotate: 190deg; }
+@keyframes confettiBurst {
+  0% { opacity: 0; transform: translate3d(0, 48px, 0) rotate(0deg) scale(.35); }
+  12% { opacity: 1; }
+  48% { opacity: 1; transform: translate3d(var(--burst-x), var(--burst-y), 0) rotate(var(--burst-rotate)) scale(1); }
+  100% { opacity: 0; transform: translate3d(calc(var(--burst-x) * 1.08), calc(var(--burst-y) + 108px), 0) rotate(calc(var(--burst-rotate) * 1.6)) scale(.72); }
+}
 .character-sprite {
   position: absolute;
   left: 50%;
@@ -498,6 +549,7 @@ button { color: inherit; }
 .complete-header { position: absolute; z-index: 20; top: 0; left: 0; right: 0; height: 58px; padding: 15px 15px 0; background: linear-gradient(#fff 72%, transparent); }
 .complete-scroll { padding-top: 22px; }
 .complete-character {
+  z-index: 2;
   width: 164px;
   height: 218px;
   bottom: -5px;
@@ -632,7 +684,8 @@ button { color: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   .start-character,
-  .complete-character { animation: none; }
+  .complete-character,
+  .confetti-piece { animation: none; }
 }
 
 @media (max-width: 600px) {
