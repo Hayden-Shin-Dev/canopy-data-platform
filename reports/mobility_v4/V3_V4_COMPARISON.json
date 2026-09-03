@@ -12,5 +12,5 @@
     "per_class_f1": null,
     "inference_latency_ms": null
   },
-  "reason": "Official standalone inference and a compatible independent holdout are not available yet."
+  "reason": "Official image, CPU runtime, and checkpoint load are verified, but the available Validation release lacks AP/BTS/IMU raw data required for real preprocessing and inference."
 }
