@@ -1,59 +1,46 @@
-# Mobility V4 공식 런타임 재현
+# AI-Hub official runtime reproduction
 
-이 문서는 `feature/mobility-multimodal-v4`에서 공식 AI-Hub 체크포인트를
-원본 방식으로 실행하기 위한 절차와 현재 상태를 기록한다. V3 Production
-artifact는 변경하지 않는다.
+Branch: `feature/mobility-multimodal-v4`
 
-## 현재 상태
+## Runtime check (2026-09-03)
 
-`reports/mobility_v4/OFFICIAL_MODEL_SMOKE.json`의 상태는 `BLOCKED`다.
-공식 `image.tar.gz` 로드를 실제 시도했지만 Docker API가 502로 실패했다.
-Docker 로그에는 WSL data disk를 준비하는 과정에서 “There is not enough space on
-the disk”가 기록돼 있다. 호스트 C: 여유 공간은 약 1.0GB, Docker data VHDX는
-약 13.3GB다. 따라서 checkpoint load 이후의 실제 preprocessing, tensor
-inference, output class, latency는 아직 측정하지 않았다.
+- Docker image: `nia56:latest` loaded successfully.
+- Image ID: `sha256:79e0dca74cafa291d510100554aba21f1e7eadbbc5949458ca0a888ede4b26a5`.
+- Container Python: 3.9.15.
+- PyTorch: 1.9.1 (CUDA 11.1 build).
+- CPU runtime: PASS.
+- GPU runtime: FAIL. `nvidia-container-cli` reports that the WSL environment has no adapters.
+- Checkpoint: `/ml/last.chk` deserialized on CPU; final layer is `(11, 2190)` and produces 11 logits.
+- Checkpoint deserialize latency: approximately 463 ms.
 
-체크포인트 자체는 읽기 전용으로 검사했고, Lightning archive와
-`model.fc.weight` 항목이 존재함을 확인했다. 원본 `last.chk`나 12GB Docker
-이미지는 저장소로 복사하지 않았다.
+## Official contract
 
-## 재현 명령
+The source uses `PER_SECTION=1` and `PER_MIN=60`. GPS and BTS are aggregated
+in 5-second bins and repeated over 60 timesteps, so the observation is 60 s.
 
-Docker Desktop Linux engine을 시작한 뒤 저장소 루트에서 실행한다.
+- Input tensor: `(340, 60)`
+- Output: 11 logits
+- Required raw modalities: GPS, IMU, AP/Wi-Fi, BTS/cell
+- The source label comments and the 11-logit checkpoint do not provide a
+  verified Canopy 5-class mapping; mapping remains unclaimed.
+
+## Input and inference status
+
+The local `186.교통수단판별 데이터/01-1.정식개방데이터/Validation` tree contains
+GPS and labels only. It does not contain the official `1.AP`, `2.BTS`, `3.GPS`,
+and `4.IMU` raw tree. AP/BTS/IMU values were not zero-filled or fabricated.
+
+Therefore image/CPU/checkpoint smoke is PASS, while official preprocessing,
+forward inference, prediction latency, and modality ablation are BLOCKED until
+the missing raw sensor files are supplied in the official layout. The current
+result is recorded in `reports/mobility_v4/OFFICIAL_MODEL_SMOKE.json`.
 
 ```powershell
-$env:AIHUB_OFFICIAL_ROOT = "C:\Users\user\Downloads\교통수단 ai모델\AI모델\AI모델 교통수단 판별 20231207"
 python -m scripts.run_aihub_official_smoke `
-  --official-root $env:AIHUB_OFFICIAL_ROOT `
+  --official-root "C:\path\to\official\20231207" `
+  --data-root "C:\path\to\raw\Validation" `
+  --image nia56:latest `
   --output reports/mobility_v4/OFFICIAL_MODEL_SMOKE.json
 ```
 
-이 명령은 daemon이 없거나 이미지가 로드되지 않으면 exit code 2와 `BLOCKED`를 반환한다. 센서나
-checkpoint를 임의 값으로 채우지 않는다. 실제 공식 `run.sh` 재현은 Docker
-이미지 로드 후 공식 안내의 `/ml/data/origin/3.Test` 마운트 명령으로 별도
-수행해야 한다.
-
-## 고정해야 할 계약
-
-- 공식 입력: 340 channels × 60 timesteps
-- 공식 출력: 11 logits
-- modality: GPS, IMU, Wi‑Fi/AP, BTS/cell
-- observation duration: 공식 preprocessing의 실제 sampling 간격을 실행 로그로
-  확인하기 전에는 초 단위로 단정하지 않는다.
-
-실제 inference가 성공하면 이 문서와 JSON에 입력·출력 shape, 예측 class,
-CPU/GPU, latency를 추가한다. 그 전에는 V4 selector나 기존 UI를 변경하지 않는다.
-# Runtime recheck (2026-09-03)
-
-Docker image `nia56:latest` is now loaded successfully. The official CPU
-environment is Python 3.9.15 with PyTorch 1.9.1; checkpoint deserialization
-works and the final layer has shape `(11, 2190)`. GPU startup is unavailable in
-this host because `nvidia-container-cli` reports that WSL has no adapters.
-
-The locally available Validation release contains GPS and labels only. The
-official preprocessing contract requires raw `1.AP`, `2.BTS`, `3.GPS`, and
-`4.IMU` trees, so AP/BTS/IMU values were not synthesized. Full preprocessing,
-forward inference, and modality ablation remain BLOCKED until those raw sensor
-files are supplied in the official layout. The official preprocessor uses one
-60-second section (`PER_SECTION=1`, `PER_MIN=60`) and emits `(340, 60)` input
-with 11 logits; V3 production code and artifacts remain unchanged.
+No V3 production code, selector, or artifact was modified.
