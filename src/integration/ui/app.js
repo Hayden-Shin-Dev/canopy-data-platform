@@ -457,7 +457,10 @@ async function initData() {
     try { $("#fixture").innerHTML = fixtures.value.map(value => `<option value="${value}">${value}</option>`).join(""); }
     catch (error) { console.error("Canopy fixture render failed", error); }
   }
-  if (manifest.status === "fulfilled") $("#aihub-replay").innerHTML = (manifest.value.trajectories || []).map(row => `<option value="${row.replay_id}">${row.replay_id} · ${row.ground_truth}</option>`).join("");
+  if (manifest.status === "fulfilled") {
+    try { $("#aihub-replay").innerHTML = (manifest.value.trajectories || []).map(row => `<option value="${row.replay_id}">${row.replay_id} · ${row.ground_truth}</option>`).join(""); }
+    catch (error) { console.error("Canopy replay manifest render failed", error); }
+  }
   // 선택적 요청 하나가 실패해도 기준선과 경로 화면은 계속 사용할 수 있어야 합니다.
   const coreRenderErrors = [];
   if (baseline.status === "fulfilled") {
