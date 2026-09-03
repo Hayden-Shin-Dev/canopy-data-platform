@@ -63,6 +63,13 @@
     "predicted_class": null,
     "latency_ms": null
   },
+  "official_run_attempt": {
+    "image": "nia56:latest",
+    "environment": "torch39 Python 3.9.15",
+    "preprocessing": "BLOCKED: raw /ml/data/origin tree was not mounted; official run.sh raised FileNotFoundError",
+    "cnn": "BLOCKED: official dataset directories were absent and test_lightning expects gadftc_test",
+    "forward_on_real_sample": false
+  },
   "policy": {
     "missing_modalities_synthesized": false,
     "production_model_changed": false,
