@@ -520,12 +520,12 @@ button { color: inherit; }
   display: block;
   background: url('/assets/canopy-ui/journey-start-animation-sprite.png') 0 center / auto 100% no-repeat;
   filter: drop-shadow(0 6px 7px rgba(16, 64, 43, .12));
-  animation: startSprite 4.8s steps(24, end) infinite;
+  animation: startSprite 4.8s steps(32, end) infinite;
   will-change: background-position;
 }
 @keyframes startSprite {
   from { background-position: 0 center; }
-  to { background-position: -4075.5px center; }
+  to { background-position: -5434px center; }
 }
 .start-character-fallback { display: none; position: absolute; inset: 0; }
 .start-character .character-frame {
