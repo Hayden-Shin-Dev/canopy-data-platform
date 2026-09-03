@@ -514,6 +514,8 @@ button { color: inherit; }
   opacity: 0;
   will-change: opacity;
 }
+.start-character-animation { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: contain; filter: drop-shadow(0 6px 7px rgba(16, 64, 43, .12)); }
+.start-character-fallback { display: none; position: absolute; inset: 0; }
 .start-character .character-frame {
   /* A slower, readable story beat: walk, slip, recover, then walk again. */
   animation-duration: 4.8s;
@@ -799,6 +801,8 @@ button { color: inherit; }
   .confetti-piece { animation: none; }
   .character-frame { animation: none !important; opacity: 0; }
   .character-frame:first-child { opacity: 1; }
+  .start-character-animation { display: none; }
+  .start-character-fallback { display: block; }
 }
 
 @media (max-width: 600px) {

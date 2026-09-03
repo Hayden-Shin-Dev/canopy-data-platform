@@ -31,6 +31,7 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     for screen in ("landing", "home", "plan", "start", "active", "complete", "profile", "developer"):
         assert f'id="{screen}"' in static_html
     assert "/assets/canopy-ui/home-landscape.png" in static_html
+    assert "/assets/canopy-ui/journey-start-animation.png" in static_html
     for asset in (
         "landing-mascot-walk-1.png",
         "landing-mascot-walk-2.png",
