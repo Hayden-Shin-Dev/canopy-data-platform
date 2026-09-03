@@ -517,7 +517,8 @@ async function init() {
   buildNavigation();
   bindInteractions();
   renderHistorySummary();
-  const requested = new URLSearchParams(location.search).get("screen") || "home";
+  // Show the branded intro only for a fresh root visit. Deep links (?screen=...) remain direct.
+  const requested = new URLSearchParams(location.search).get("screen") || "landing";
   showScreen(requested, { updateUrl: false });
   try { await initData(); } catch (error) { console.error(error); showToast("초기 데이터를 불러오지 못했습니다."); }
   state.pollTimer = window.setInterval(pollStatus, 1000);

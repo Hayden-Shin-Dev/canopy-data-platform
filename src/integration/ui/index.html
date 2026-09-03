@@ -17,7 +17,32 @@
   <div class="iphone-frame" data-testid="iphone-frame">
     <div class="iphone-island" aria-hidden="true"></div>
     <main id="phone" data-phone-screen data-testid="device-screen" aria-live="polite">
-    <section class="app-screen is-active" id="home" data-screen="home">
+    <section class="app-screen landing-screen is-active" id="landing" data-screen="landing" aria-label="Canopy 시작 화면">
+      <div class="landing-orbit landing-orbit-one" aria-hidden="true"></div>
+      <div class="landing-orbit landing-orbit-two" aria-hidden="true"></div>
+      <div class="landing-glow" aria-hidden="true"></div>
+      <div class="landing-content">
+        <p class="landing-kicker">YOUR EVERYDAY GREEN JOURNEY</p>
+        <div class="landing-logo" aria-label="CANOPY">
+          <span>C</span><span>A</span><span>N</span><span>O</span><span>P</span><span>Y</span>
+        </div>
+        <p class="landing-tagline">작은 이동이 만드는 더 큰 변화</p>
+      </div>
+      <div class="landing-stage" aria-hidden="true">
+        <span class="landing-trail landing-trail-one"></span><span class="landing-trail landing-trail-two"></span><span class="landing-trail landing-trail-three"></span>
+        <span class="landing-mascot">
+          <img class="landing-mascot-frame landing-mascot-walk-one" src="/assets/canopy-ui/landing-mascot-walk-1.png" alt="">
+          <img class="landing-mascot-frame landing-mascot-walk-two" src="/assets/canopy-ui/landing-mascot-walk-2.png" alt="">
+          <img class="landing-mascot-frame landing-mascot-pointer" src="/assets/canopy-ui/landing-mascot-point.png" alt="">
+          <i class="landing-pointer-spark ph-fill ph-sparkle"></i>
+        </span>
+      </div>
+      <button class="landing-enter" type="button" data-action="home" aria-label="Canopy 홈으로 시작">
+        <span>화면을 터치하면 시작합니다</span><i class="ph ph-arrow-up-right"></i>
+      </button>
+    </section>
+
+    <section class="app-screen" id="home" data-screen="home">
       <div class="screen-scroll home-scroll">
         <header class="home-header">
           <div class="brand"><i class="ph-fill ph-leaf"></i><span>CANOPY</span></div>

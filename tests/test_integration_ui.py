@@ -28,9 +28,15 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     assert 'data-testid="iphone-frame"' in static_html
     for marker in ('id="result-segments"', 'id="result-token"', 'id="profile"', 'class="bottom-nav"'):
         assert marker in static_html
-    for screen in ("home", "plan", "start", "active", "complete", "profile", "developer"):
+    for screen in ("landing", "home", "plan", "start", "active", "complete", "profile", "developer"):
         assert f'id="{screen}"' in static_html
     assert "/assets/canopy-ui/home-landscape.png" in static_html
+    for asset in (
+        "landing-mascot-walk-1.png",
+        "landing-mascot-walk-2.png",
+        "landing-mascot-point.png",
+    ):
+        assert f"/assets/canopy-ui/{asset}" in static_html
     for asset in (
         "journey-start-backdrop.png",
         "journey-start-frame-1.png",
