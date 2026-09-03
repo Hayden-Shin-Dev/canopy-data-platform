@@ -9,6 +9,11 @@ __pycache__/
 !.env.example
 catboost_info/
 
+# Local Windows demo launcher build output
+/build/
+/dist/
+/*.spec
+
 # Local source data (large and redistributed separately)
 data/raw/**
 !data/raw/README.md
