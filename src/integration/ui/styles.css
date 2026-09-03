@@ -520,41 +520,12 @@ button { color: inherit; }
   display: block;
   background: url('/assets/canopy-ui/journey-start-animation-sprite.png') 0 center / auto 100% no-repeat;
   filter: drop-shadow(0 6px 7px rgba(16, 64, 43, .12));
-  animation: startSprite 4.8s linear infinite;
+  animation: startSprite 6s steps(60, end) infinite;
   will-change: background-position;
 }
 @keyframes startSprite {
-  0% { background-position: 0 center; animation-timing-function: steps(1, end); }
-  2.717% { background-position: -170px center; animation-timing-function: steps(1, end); }
-  5.435% { background-position: -340px center; animation-timing-function: steps(1, end); }
-  8.152% { background-position: -509px center; animation-timing-function: steps(1, end); }
-  10.87% { background-position: -679px center; animation-timing-function: steps(1, end); }
-  13.587% { background-position: -849px center; animation-timing-function: steps(1, end); }
-  16.304% { background-position: -1019px center; animation-timing-function: steps(1, end); }
-  19.022% { background-position: -1189px center; animation-timing-function: steps(1, end); }
-  21.739% { background-position: -1359px center; animation-timing-function: steps(1, end); }
-  24.457% { background-position: -1528px center; animation-timing-function: steps(1, end); }
-  27.174% { background-position: -1698px center; animation-timing-function: steps(1, end); }
-  29.891% { background-position: -1868px center; animation-timing-function: steps(1, end); }
-  32.609% { background-position: -2038px center; animation-timing-function: steps(1, end); }
-  35.326% { background-position: -2208px center; animation-timing-function: steps(1, end); }
-  39.402% { background-position: -2377px center; animation-timing-function: steps(1, end); }
-  43.478% { background-position: -2547px center; animation-timing-function: steps(1, end); }
-  47.554% { background-position: -2717px center; animation-timing-function: steps(1, end); }
-  51.63% { background-position: -2887px center; animation-timing-function: steps(1, end); }
-  55.707% { background-position: -3057px center; animation-timing-function: steps(1, end); }
-  61.141% { background-position: -3226px center; animation-timing-function: steps(1, end); }
-  66.576% { background-position: -3396px center; animation-timing-function: steps(1, end); }
-  72.011% { background-position: -3566px center; animation-timing-function: steps(1, end); }
-  77.446% { background-position: -3736px center; animation-timing-function: steps(1, end); }
-  82.88% { background-position: -3906px center; animation-timing-function: steps(1, end); }
-  85.326% { background-position: -4076px center; animation-timing-function: steps(1, end); }
-  87.772% { background-position: -4245px center; animation-timing-function: steps(1, end); }
-  90.217% { background-position: -4415px center; animation-timing-function: steps(1, end); }
-  92.663% { background-position: -4585px center; animation-timing-function: steps(1, end); }
-  95.109% { background-position: -4755px center; animation-timing-function: steps(1, end); }
-  97.554% { background-position: -4925px center; animation-timing-function: steps(1, end); }
-  100% { background-position: -4925px center; }
+  from { background-position: 0 center; }
+  to { background-position: -10189px center; }
 }
 .start-character-fallback { display: none; position: absolute; inset: 0; }
 .start-character .character-frame {
