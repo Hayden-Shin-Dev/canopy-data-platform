@@ -453,11 +453,30 @@ async function initData() {
   const [fixtures, manifest, baseline, route, snapshot] = await Promise.allSettled([
     api("/api/fixtures"), api("/api/aihub/manifest"), api("/api/baseline"), api("/api/route"), api("/api/status"),
   ]);
-  if (fixtures.status === "fulfilled") $("#fixture").innerHTML = fixtures.value.map(value => `<option value="${value}">${value}</option>`).join("");
+  if (fixtures.status === "fulfilled") {
+    try { $("#fixture").innerHTML = fixtures.value.map(value => `<option value="${value}">${value}</option>`).join(""); }
+    catch (error) { console.error("Canopy fixture render failed", error); }
+  }
   if (manifest.status === "fulfilled") $("#aihub-replay").innerHTML = (manifest.value.trajectories || []).map(row => `<option value="${row.replay_id}">${row.replay_id} · ${row.ground_truth}</option>`).join("");
-  if (baseline.status === "fulfilled") renderBaseline(baseline.value);
-  if (route.status === "fulfilled") renderRoute(route.value);
-  if (snapshot.status === "fulfilled") renderSnapshot(snapshot.value);
+  // 선택적 요청 하나가 실패해도 기준선과 경로 화면은 계속 사용할 수 있어야 합니다.
+  const coreRenderErrors = [];
+  if (baseline.status === "fulfilled") {
+    try { renderBaseline(baseline.value); } catch (error) { coreRenderErrors.push("baseline"); console.error("Canopy baseline render failed", error); }
+  }
+  if (route.status === "fulfilled") {
+    try { renderRoute(route.value); } catch (error) { coreRenderErrors.push("route"); console.error("Canopy route render failed", error); }
+  }
+  if (snapshot.status === "fulfilled") {
+    try { renderSnapshot(snapshot.value); } catch (error) { console.error("Canopy status render failed", error); }
+  }
+  if (baseline.status !== "fulfilled" || route.status !== "fulfilled" || coreRenderErrors.length) {
+    console.warn("Canopy core startup data unavailable", {
+      baseline: baseline.status,
+      route: route.status,
+      renderErrors: coreRenderErrors,
+    });
+    showToast("기준선 또는 경로 데이터를 불러오지 못했습니다.");
+  }
 }
 
 async function init() {
