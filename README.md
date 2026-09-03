@@ -1,31 +1,35 @@
-Canopy
+# Canopy
 
 친환경 이동을 했을 때 얼마나 탄소를 줄였는지 보여주고, 실제 이동수단을 나눠서 기록하는 프로젝트임.
 
-데이터셋
+---
 
-KTDB 2021
+## 데이터셋
+
+### KTDB 2021
 비슷한 조건의 사람들이 보통 어떻게 이동했는지 계산하는 Population Baseline으로 사용함.
 
-GeoLife
+### GeoLife
 실제 GPS 기반 기본 이동수단 모델 학습 데이터로 사용함.
 
-AI-Hub 교통수단 판별 데이터
+### AI-Hub 교통수단 판별 데이터
 실제 GPS 원천 데이터로 120초 canonical window를 만들어 이동수단 모델을 보완함.
 예전에 60초 feature 두 개를 붙여서 120초처럼 쓰던 부분이 있었는데 train과 serving feature가 달라지는 문제가 있어서 raw GPS에서 같은 방식으로 다시 계산하도록 바꿈.
 
-서울 버스 정류장과 지하철, 철도 reference
+### 서울 버스 정류장과 지하철, 철도 reference
 GPS만으로 애매한 구간을 보완하는 Transit Context로 사용함.
 
-evaluation_dataset_v3
+### evaluation_dataset_v3
 generator로 만든 synthetic 데이터라 실제 사용자의 GPS와 같다고 보기 어려움.
 그래서 frozen blind evaluation 용도로만 보존하고 학습이나 튜닝에는 사용하지 않음.
 
-dataset_v1
+### dataset_v1
 이전 generator 데이터는 실제 서울 이동을 제대로 표현하지 못한다고 판단해서 학습과 평가에서 제외함.
 관련 audit와 report는 기록으로만 남겨둠.
 
-지금까지 한 작업
+---
+
+## 지금까지 한 작업
 
 처음에는 GeoLife만으로 기본 모델을 만들었는데 서울 이동수단을 그대로 설명하기에는 부족한 부분이 있었음.
 
@@ -43,7 +47,9 @@ Movement, Temporal, Transit, Final 결과와 CO2, Reward를 한 화면에서 확
 
 화면은 Home, 여정 계획, 여정 시작, 이동 중, 여정 완료 흐름으로 이어지게 만들었고 실제 앱처럼 보이도록 주소, 지도, 이동수단, 탄소 절감량을 같이 표시함.
 
-현재 성능
+---
+
+## 현재 성능
 
 최종 Test 기준임.
 
@@ -60,7 +66,9 @@ rail F1 0.704
 
 Validation Final Macro F1은 0.7307임.
 
-현재 데모에서 되는 것
+---
+
+## 현재 데모에서 되는 것
 
 Home에서 이번 달 탄소 절감량과 목표, 주간 이동 요약을 확인함.
 
@@ -74,7 +82,9 @@ Home에서 이번 달 탄소 절감량과 목표, 주간 이동 요약을 확인
 
 Mock 결과는 walk, rail, walk 흐름으로 나오고 rail 구간은 서울 reference와 연결해서 표시함.
 
-아직 남은 것
+---
+
+## 아직 남은 것
 
 현재 모델은 연구와 데모 기준으로 정리된 상태이고 모든 이동수단을 상용 수준으로 보장하는 단계는 아님.
 
@@ -86,18 +96,20 @@ evaluation_dataset_v3는 synthetic 데이터라 실제 서비스 성능을 대�
 
 모바일 앱 연동과 사용자별 집, 직장 주소 저장은 아직 별도 구현이 필요함.
 
-UI 확인 화면
+---
 
-Home
+## UI 확인 화면
+
+### Home
 
 ![Canopy Home](reports/integration/screenshots/home.png)
 
-이동 중
+### 이동 중
 
 ![Canopy Active Trip](reports/integration/screenshots/active.png)
 
 ![Canopy Active Trip Detail](reports/integration/screenshots/active1.png)
 
-이동 완료
+### 이동 완료
 
 ![Canopy Result](reports/integration/screenshots/result.png)
