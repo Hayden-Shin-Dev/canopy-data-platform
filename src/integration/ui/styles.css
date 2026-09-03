@@ -440,20 +440,33 @@ button { color: inherit; }
   width: 170px;
   height: 226px;
   transform: translateX(-50%);
+  filter: drop-shadow(0 6px 7px rgba(16, 64, 43, .12));
+  will-change: transform;
+}
+.character-frame {
+  position: absolute;
+  inset: 0;
+  display: block;
   background-repeat: no-repeat;
   background-size: 400% 100%;
-  background-position: 0 0;
-  filter: drop-shadow(0 6px 7px rgba(16, 64, 43, .12));
-  will-change: background-position, transform;
+  opacity: 0;
 }
-.start-character {
+.start-character .character-frame {
   background-image: url('/assets/canopy-ui/journey-start-sprite.png');
-  animation: startSpriteWalk .9s steps(4, end) infinite;
+  animation: startFrame .96s steps(1, end) infinite;
 }
-@keyframes startSpriteWalk {
-  from { background-position: 0 0; }
-  to { background-position: 100% 0; }
-}
+.character-frame:nth-child(1) { background-position: 0 0; }
+.character-frame:nth-child(2) { background-position: 33.3333% 0; }
+.character-frame:nth-child(3) { background-position: 66.6667% 0; }
+.character-frame:nth-child(4) { background-position: 100% 0; }
+.start-character .character-frame:nth-child(1) { animation-name: startFrame1; }
+.start-character .character-frame:nth-child(2) { animation-name: startFrame2; }
+.start-character .character-frame:nth-child(3) { animation-name: startFrame3; }
+.start-character .character-frame:nth-child(4) { animation-name: startFrame4; }
+@keyframes startFrame1 { 0%, 24.99% { opacity: 1; } 25%, 100% { opacity: 0; } }
+@keyframes startFrame2 { 0%, 24.99% { opacity: 0; } 25%, 49.99% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes startFrame3 { 0%, 49.99% { opacity: 0; } 50%, 74.99% { opacity: 1; } 75%, 100% { opacity: 0; } }
+@keyframes startFrame4 { 0%, 74.99% { opacity: 0; } 75%, 100% { opacity: 1; } }
 .start-title { margin: 4px 0 7px; text-align: center; font-size: 21px; }
 .journey-addresses { margin: 16px 0 14px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 16px; background: #fbfdfc; box-shadow: 0 5px 16px rgba(26, 67, 51, .05); }
 .address-row { display: flex; align-items: flex-start; gap: 10px; }
@@ -553,12 +566,24 @@ button { color: inherit; }
   width: 164px;
   height: 218px;
   bottom: -5px;
-  background-image: url('/assets/canopy-ui/journey-complete-celebration-sprite.png');
-  animation: completeSpriteCelebrate 1.45s steps(4, end) infinite;
+  animation: completeCharacterBounce 1.45s ease-in-out infinite;
 }
-@keyframes completeSpriteCelebrate {
-  0% { background-position: 0 0; transform: translateX(-50%) translateY(7px) scale(.98); }
-  100% { background-position: 100% 0; transform: translateX(-50%) translateY(-2px) scale(1); }
+.complete-character .character-frame {
+  background-image: url('/assets/canopy-ui/journey-complete-celebration-sprite.png');
+  animation-duration: 1.45s;
+}
+.complete-character .character-frame:nth-child(1) { animation-name: completeFrame1; }
+.complete-character .character-frame:nth-child(2) { animation-name: completeFrame2; }
+.complete-character .character-frame:nth-child(3) { animation-name: completeFrame3; }
+.complete-character .character-frame:nth-child(4) { animation-name: completeFrame4; }
+@keyframes completeFrame1 { 0%, 24.99% { opacity: 1; } 25%, 100% { opacity: 0; } }
+@keyframes completeFrame2 { 0%, 24.99% { opacity: 0; } 25%, 49.99% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes completeFrame3 { 0%, 49.99% { opacity: 0; } 50%, 74.99% { opacity: 1; } 75%, 100% { opacity: 0; } }
+@keyframes completeFrame4 { 0%, 74.99% { opacity: 0; } 75%, 100% { opacity: 1; } }
+@keyframes completeCharacterBounce {
+  0%, 100% { transform: translateX(-50%) translateY(1px); }
+  42% { transform: translateX(-50%) translateY(-4px) scale(1.01); }
+  72% { transform: translateX(-50%) translateY(0); }
 }
 .complete-title { margin: 0; text-align: center; font-size: 26px; letter-spacing: -.04em; }
 .complete-subtitle { margin: 5px 0 16px; text-align: center; color: #52655e; font-size: 11px; }
@@ -686,6 +711,8 @@ button { color: inherit; }
   .start-character,
   .complete-character,
   .confetti-piece { animation: none; }
+  .character-frame { animation: none !important; opacity: 0; }
+  .character-frame:first-child { opacity: 1; }
 }
 
 @media (max-width: 600px) {
