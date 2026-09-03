@@ -14,15 +14,10 @@
       "accepted_event_count": 433,
       "actual_geolife_window_sequence": [
         "walk",
-        "bike",
-        "walk",
         "rail",
-        "bike",
         "walk"
       ],
       "production_mode_sequence": [
-        "walk",
-        "bike",
         "walk",
         "rail",
         "walk"
@@ -66,7 +61,7 @@
     },
     "geolife_model": {
       "status": "PASS",
-      "path": "models\\mobility_recognition\\aihub_hist120.joblib"
+      "path": "models\\mobility_recognition\\aihub_canonical_raw120.joblib"
     },
     "emission_factors": {
       "status": "PASS",
@@ -81,7 +76,7 @@
     },
     "transit_fusion_evaluation": {
       "status": "PASS",
-      "raw_accuracy": 0.5,
+      "raw_accuracy": 0.25,
       "fused_accuracy": 0.5,
       "false_rail_raw": 0,
       "false_rail_fused": 0,
