@@ -24,6 +24,7 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     assert "openstreetmap.org" in static_js
     assert "/ui/styles.css" in module.MOBILE_APP_HTML
     static_html = module.MOBILE_APP_HTML
+    assert 'data-testid="iphone-frame"' in static_html
     for marker in ('id="result-segments"', 'id="result-token"', 'id="profile"', 'class="bottom-nav"'):
         assert marker in static_html
     for screen in ("home", "plan", "start", "active", "complete", "profile", "developer"):
