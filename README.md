@@ -1,80 +1,122 @@
 # Canopy Data Platform
 
-## 현재 Production Movement ML
+Canopy는 친환경 이동을 했다는 이유만으로 보상하는 서비스가 아니다. 비슷한 시간과 지역에서 사람들이 보통 어떻게 이동했는지와 사용자의 실제 이동을 비교해서 저탄소 방향으로 바뀌었는지를 계산한다.
 
-AI-Hub 실제 한국 GPS를 primary benchmark로 사용합니다. 사용자 UID가 겹치지 않는 train/validation/test split을 유지하며, 현재 champion은 linked vehicle 10,000-file 보강을 포함한 120초 aggregate HistGradientBoosting입니다. Validation Accuracy 0.7242 / Macro F1 0.7305, Test Accuracy 0.7071 / Macro F1 0.6992를 기록했습니다.
+## 지금 main에 들어온 작업
 
-`evaluation_dataset_v3`는 synthetic historical benchmark로 보존하지만 Production 모델 선택과 Release Gate에서는 제외합니다. 정책과 근거는 [v3 benchmark deprecation](docs/evaluation/V3_BENCHMARK_DEPRECATION.md)에 정리되어 있습니다. 기존 GeoLife 모델은 rollback artifact로 유지합니다.
+- KTDB 2021 데이터로 Expected Behaviour와 Population Baseline을 만든다.
+- GeoLife와 AI-Hub 실제 GPS로 이동수단을 예측한다.
+- 서울 버스, 지하철, 철도 reference로 GPS 결과를 보완한다.
+- GPS Replay로 iPhone 형식의 이벤트를 받아 120초 Window 단위로 처리한다.
+- Expected CO2, Actual CO2, CO2 Reduction과 Token Reward를 계산한다.
+- Local UI에서 출근 전, 이동 중, 이동 완료 화면을 확인할 수 있다.
 
-## 프로젝트 목적
+## 사용한 데이터
 
-Canopy는 친환경 이동 자체를 보상하는 것이 아니라, 일반적으로 예상되는 이동행동과 실제 이동행동의 차이를 비교해 저탄소 방향의 Behaviour Shift를 측정하는 프로젝트입니다.
+KTDB 개인통행실태조사 2021 데이터는 Population Baseline에 사용했다.
 
-## 전체 구조
+GeoLife는 기본 GPS 이동수단 학습 데이터로 남겨두었다.
 
-- KTDB: Expected Behaviour와 Population Baseline
-- GeoLife: Mobility Recognition Model 학습
-- Emission Factors: 교통수단별 CO2 환산 기준
-- Transit Context: GPS만으로 구분하기 어려운 bus와 car 등의 판단 보조
-- Realtime GPS: iOS GPS 수집과 Streaming
-- Integration: Expected Behaviour와 Actual Behaviour 비교, CO2 Reduction 및 Reward 계산
+AI-Hub 교통수단 판별 데이터는 실제 GPS 원본에서 고정 120초 Window를 다시 만들고 학습했다. 예전에 사용하던 60초 요약 행 두 개를 합치는 방식은 train-serving skew가 있어서 production 경로에서 제거했다.
 
-## 현재 진행 상태
+서울 버스와 지하철 reference는 Transit Context에서 사용한다. `evaluation_dataset_v3`는 synthetic 평가용으로만 보관하고 학습이나 모델 선택에는 사용하지 않는다.
 
-- KTDB Population Baseline v1 완료
-- GeoLife Mobility Recognition v1 완료
-- Emission Factors v1 완료
-- Transit Context 서울 POC 완료
-- Integration v1 완료
-- iPhone 호환 GPS Event Contract, Replay Engine, Local User Mode 준비
-- Integration validation: 전체 테스트 248 passed
+## 여기까지 만든 과정
 
-## 실행 순서
+1. 기존 모델과 처리 경로를 먼저 확인했다.
+2. 학습과 runtime의 Feature가 같은지 비교했다.
+3. AI-Hub 원본 GPS에서 120초 Window와 canonical Feature를 만들었다.
+4. 사용자 기준으로 Train, Validation, Test를 나누고 UID가 겹치지 않는지 확인했다.
+5. robust Feature와 cadence 학습 후보를 비교하고 Validation Macro F1로 모델을 골랐다.
+6. 실제 Test에서 Movement, Temporal, Transit, Final 단계를 각각 확인했다.
+7. Transit resolver가 고신뢰 rail 결과를 bus나 car로 바꾸던 문제를 수정했다.
+8. Mock GPS를 기존 Replay와 전체 Integration Pipeline에 넣어 결과를 확인했다.
+9. 전체 테스트를 돌린 뒤 main에 merge했다.
 
-저장소 루트에서 실행합니다.
+## 최종 성능
+
+최종 Test 단계 결과는 다음과 같다.
+
+- Movement Accuracy: 0.6984
+- Movement Macro F1: 0.6770
+- Final Accuracy: 0.7080
+- Final Macro F1: 0.6888
+- walk F1: 0.839
+- bike F1: 0.565
+- car F1: 0.706
+- bus F1: 0.629
+- rail F1: 0.704
+
+Validation Final Macro F1은 0.7307이었다.
+
+Mock 결과는 `walk → rail → walk`로 나왔고, rail 구간은 서울 reference의 5호선으로 연결됐다.
+
+상세 결과는 [AI-Hub runtime parity release](reports/aihub/AIHUB_RUNTIME_PARITY_RELEASE.md)와 [release checklist](reports/aihub/AIHUB_RUNTIME_PARITY_RELEASE_CHECKLIST.md)에 정리했다.
+
+## UI 확인 화면
+
+현재 저장된 Local UI 확인 화면이다.
+
+### Home
+
+![Canopy Home](reports/integration/screenshots/home.png)
+
+### 이동 중
+
+![Canopy Active Trip](reports/integration/screenshots/active.png)
+
+### 이동 완료
+
+![Canopy Result](reports/integration/screenshots/result.png)
+
+## 실행 방법
+
+저장소 루트에서 실행한다.
 
 ```powershell
 python -m pip install -r requirements.txt
+```
+
+AI-Hub 모델을 새로 만들 때는 원본 데이터 경로를 지정한다.
+
+```powershell
+$env:AIHUB_DATA_ROOT = "C:\path\to\01-1.정식개방데이터"
+.\scripts\rebuild_aihub_production.ps1
+```
+
+모델과 주요 reference를 확인한다.
+
+```powershell
 python scripts/validate_integration_artifacts.py
-python scripts/replay_integration.py --speed instant --pipeline
-python scripts/evaluate_mock_trip.py
+```
+
+Mock GPS를 직접 확인한다.
+
+```powershell
+python -m scripts.evaluate_mock_trip --csv mock/canopy_iphone_mock_yeongdeungpo_to_microsoft.csv --ground-truth mock/canopy_iphone_mock_yeongdeungpo_to_microsoft_ground_truth.txt --output reports/aihub/AIHUB_RUNTIME_PARITY_MOCK_AFTER.json
+```
+
+Local UI를 실행한다.
+
+```powershell
 python scripts/run_integration_ui.py
-pytest -q --disable-warnings
 ```
 
-AI-Hub Production 모델을 처음 준비하거나 다시 만들 때는 저장소 루트에서 다음 PowerShell 명령을 실행합니다.
+브라우저에서 `http://127.0.0.1:8765`를 연다.
+
+전체 테스트는 다음 명령으로 실행한다.
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/rebuild_aihub_production.ps1
+python -m pytest -q
 ```
 
-linked 차량 ZIP을 사용해 같은 후보를 다시 만들려면 다음처럼 실행합니다. ZIP은 로컬에만 두고, 기본 10,000개 파일을 train split에만 추가합니다.
+## 현재 제한
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/rebuild_aihub_production.ps1 `
-  -VehicleArchives "C:\path\01.연계데이터_003.차량이동궤적_2.zip"
-```
-
-모델 파일은 용량 때문에 Git에 저장하지 않습니다. 생성된 `models/mobility_recognition/aihub_hist120.joblib`이 있으면 production 경로가 이를 사용하고, 없으면 기존 GeoLife rollback 모델을 사용합니다.
-
-Local UI는 `http://127.0.0.1:8765`에서 확인합니다. 지도 Tile을 보려면 인터넷 연결이 필요합니다.
-
-Integration 실행 방법과 사용자 화면은 [Integration branch README](https://github.com/Hayden-Shin-Dev/canopy-data-platform/tree/dev/integration-v1)에서 확인할 수 있습니다. 실제 확인 화면은 [Home](reports/integration/screenshots/home.png), [Active](reports/integration/screenshots/active.png), [Result](reports/integration/screenshots/result.png)입니다.
-
-## 주요 문서
-
-- [Integration validation](reports/integration/FINAL_INTEGRATION_VALIDATION.md)
-- [GPS Event Contract](docs/integration/GPS_EVENT_CONTRACT.md)
-- [iPhone handoff](docs/integration/IPHONE_HANDOFF.md)
-- [Integration branch 실행 안내](https://github.com/Hayden-Shin-Dev/canopy-data-platform/tree/dev/integration-v1)
+- 모델 파일은 용량 때문에 Git에 올리지 않는다. 새 환경에서는 AI-Hub 원본으로 다시 만들어야 한다.
+- 10초 cadence에서는 성능이 떨어져 기본 학습 선택에서 제외했다.
+- 실제 장시간 iPhone GPS 로그와 bike-labelled Transit 데이터는 아직 없다.
+- 현재 수치는 개선됐지만 다섯 가지 이동수단을 항상 정확하게 맞히는 수준은 아니다.
 
 ## Branch
 
-- `main`: 전체 프로젝트 통합 상태
-- `dev/ktdb-v1`: KTDB Population Baseline
-- `dev/geolife-v1`: GeoLife Mobility Recognition
-- `dev/emission-factors-v1`: Emission Factors
-- `dev/transit-context-v1`: 서울 Transit Context POC
-- `dev/integration-v1`: GPS Replay와 Expected Behaviour, Actual Behaviour Integration
-
-대용량 raw data, generated processed data, model artifact, `.env`는 Git에 커밋하지 않고 로컬에서 재생성과 검증을 진행합니다.
+현재 결과는 `main`에 merge되어 있다. 모델 개선 과정과 평가 자료는 `feature/mobility-runtime-parity-v3`의 Git History에서 확인할 수 있다.
