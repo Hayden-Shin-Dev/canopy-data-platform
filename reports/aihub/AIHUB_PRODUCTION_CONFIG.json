@@ -1,5 +1,5 @@
 {
-  "model_name": "aihub_hist120",
+  "model_name": "aihub_canonical_raw120",
   "classifier": "HistGradientBoostingClassifier",
   "hyperparameters": {
     "max_iter": 250,
@@ -11,9 +11,9 @@
   "window": {
     "duration_seconds": 120,
     "stride_seconds": 120,
-    "aggregation": "adjacent same-user same-mode 60s rows, gap <= 30s"
+    "aggregation": "raw GPS points clipped to fixed [start, start + 120s) windows"
   },
-  "feature_version": "aihub-window-v1",
+  "feature_version": "aihub-canonical-raw120-v2",
   "feature_columns": [
     "point_count",
     "observed_duration_sec",
@@ -51,8 +51,8 @@
     "outliers": "no model-side coordinate fabrication; use shared window feature calculator",
     "probability_calibration": "none; raw classifier probabilities are exposed and Brier score is reported"
   },
-  "artifact": "models/mobility_recognition/aihub_hist120.joblib",
-  "rollback_artifact": "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib",
+  "artifact": "models/mobility_recognition/aihub_canonical_raw120.joblib",
+  "rollback_artifact": "models/mobility_recognition/aihub_hist120.joblib",
   "augmentation": {
     "enabled": true,
     "source": "AI-Hub linked vehicle archive",
@@ -60,5 +60,16 @@
     "rebuild_option": "scripts/rebuild_aihub_production.ps1 -VehicleArchives <vehicle_zip_paths>"
   },
   "selection": "validation Macro F1 on UID-disjoint AI-Hub split",
-  "v3_policy": "deprecated historical benchmark; excluded from model selection and release gate"
+  "v3_policy": "deprecated historical benchmark; excluded from model selection and release gate",
+  "cadence_training": {
+    "enabled": true,
+    "train_cadences_seconds": [2, 5, 10],
+    "validation_test_cadence_views": false
+  },
+  "release_metrics": {
+    "validation_macro_f1": 0.7260621688281039,
+    "test_macro_f1": 0.674879,
+    "test_stage_movement_macro_f1": 0.6770362827458707,
+    "test_stage_final_macro_f1": 0.6887505487489317
+  }
 }

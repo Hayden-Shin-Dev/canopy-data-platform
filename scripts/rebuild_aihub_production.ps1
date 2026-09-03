@@ -1,11 +1,11 @@
 param(
     [string]$SourceRoot = $env:AIHUB_DATA_ROOT,
     [string]$SplitManifest = "data/interim/aihub/aihub_split_manifest.json",
-    [string]$TrueWindows = "data/interim/aihub/aihub_120s_canonical.csv",
+    [string]$TrueWindows = "data/interim/aihub/aihub_120s_canonical_cadence_train.csv",
     [string[]]$VehicleArchives = @(),
     [int]$MaxVehicleFiles = 10000,
-    [string]$Model = "models/mobility_recognition/aihub_hist120.joblib",
-    [string]$Metrics = "data/interim/aihub/aihub_hist120_metrics.json"
+    [string]$Model = "models/mobility_recognition/aihub_canonical_raw120.joblib",
+    [string]$Metrics = "data/interim/aihub/aihub_canonical_raw120_metrics.json"
 )
 
 $ErrorActionPreference = "Stop"
@@ -15,7 +15,7 @@ if (-not $SourceRoot -or -not (Test-Path -LiteralPath $SourceRoot)) {
     throw "Set -SourceRoot or AIHUB_DATA_ROOT to the AI-Hub 01-1.정식개방데이터 directory."
 }
 
-python -m scripts.build_aihub_duration_windows $SourceRoot $SplitManifest $TrueWindows
+python -m scripts.build_aihub_duration_windows $SourceRoot $SplitManifest $TrueWindows --train-cadences 2,5,10
 
 if ($VehicleArchives.Count -gt 0) {
     $linked = "data/interim/aihub/linked_vehicle_car_windows_$MaxVehicleFiles.csv"
