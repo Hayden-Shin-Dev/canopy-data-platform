@@ -376,7 +376,8 @@ button { color: inherit; }
   width: calc(100% + 32px);
   height: 202px;
   display: block;
-  margin: 0 -16px -23px;
+  /* Leave a clear baseline before the heading; the animated canvas extends to the art edge. */
+  margin: 0 -16px -8px;
   position: relative;
   overflow: hidden;
   background: url('/assets/canopy-ui/journey-complete-confetti.png') center 55% / cover no-repeat;
@@ -609,8 +610,8 @@ button { color: inherit; }
   42% { transform: translateX(-50%) translateY(-4px) scale(1.01); }
   72% { transform: translateX(-50%) translateY(0); }
 }
-.complete-title { margin: 0; text-align: center; font-size: 26px; letter-spacing: -.04em; }
-.complete-subtitle { margin: 5px 0 16px; text-align: center; color: #52655e; font-size: 11px; }
+.complete-title { position: relative; z-index: 3; margin: 0; text-align: center; font-size: 26px; line-height: 1.2; letter-spacing: -.04em; }
+.complete-subtitle { position: relative; z-index: 3; margin: 5px 0 16px; text-align: center; color: #52655e; font-size: 11px; }
 .complete-subtitle i { color: var(--green); }
 .result-card { padding: 15px; }
 .result-card h2 { margin: 0 0 15px; font-size: 12px; }
