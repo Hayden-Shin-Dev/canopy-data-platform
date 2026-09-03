@@ -69,13 +69,29 @@ class TransitRuntimeReferences:
 def _observed_bus_stops(events: Sequence[GpsEvent], references: TransitRuntimeReferences) -> list[str]:
     radius = 300.0
     observed: list[str] = []
-    for event in events:
-        nearest = references.bus_stop_index.nearest(event.latitude, event.longitude)
+    coordinates = [(event.latitude, event.longitude) for event in events]
+    for _, nearest in references.bus_stop_index.nearest_many(coordinates).iterrows():
         if float(nearest["distance_m"]) <= radius:
             stop_id = str(nearest["stop_id"])
             if not observed or observed[-1] != stop_id:
                 observed.append(stop_id)
     return observed
+
+
+def _reference_applicability(
+    events: Sequence[GpsEvent],
+    index: GeoPointIndex | None,
+    *,
+    coverage_radius_m: float,
+) -> str:
+    if index is None:
+        return "INSUFFICIENT_REFERENCE"
+    try:
+        coordinates = [(event.latitude, event.longitude) for event in events]
+        nearest_distance = float(index.nearest_many(coordinates)["distance_m"].min())
+    except (KeyError, ValueError, IndexError):
+        return "INSUFFICIENT_REFERENCE"
+    return "APPLICABLE" if nearest_distance <= coverage_radius_m else "NOT_APPLICABLE"
 
 
 def build_transit_context(
@@ -86,7 +102,25 @@ def build_transit_context(
     station_history: Sequence[tuple[str, str]] = (),
 ) -> dict[str, object]:
     if len(events) < 2:
-        return {"bus_context_score": 0.0, "subway_context_score": 0.0, "train_context_score": 0.0, "context_status": "INSUFFICIENT_GPS"}
+        return {"bus_context_score": 0.0, "subway_context_score": 0.0, "train_context_score": 0.0, "context_status": "INSUFFICIENT_GPS", "transit_applicability": "INSUFFICIENT_REFERENCE"}
+    bus_applicability = _reference_applicability(events, references.bus_stop_index, coverage_radius_m=5_000)
+    subway_applicability = _reference_applicability(events, references.subway_index, coverage_radius_m=5_000)
+    train_applicability = _reference_applicability(events, references.korail_index, coverage_radius_m=20_000)
+    rail_applicability = (
+        "APPLICABLE"
+        if "APPLICABLE" in {subway_applicability, train_applicability}
+        else "INSUFFICIENT_REFERENCE"
+        if {subway_applicability, train_applicability} == {"INSUFFICIENT_REFERENCE"}
+        else "NOT_APPLICABLE"
+    )
+    applicability_values = {bus_applicability, rail_applicability}
+    transit_applicability = (
+        "APPLICABLE"
+        if "APPLICABLE" in applicability_values
+        else "INSUFFICIENT_REFERENCE"
+        if applicability_values == {"INSUFFICIENT_REFERENCE"}
+        else "NOT_APPLICABLE"
+    )
     start, end = events[0], events[-1]
     bus = bus_context(
         start_latitude=start.latitude,
@@ -117,7 +151,17 @@ def build_transit_context(
         station_index=references.korail_index,
         ml_rail_probability=probabilities.get("rail", 0.0),
     )
-    return {**bus, **subway, **korail, "context_status": "READY"}
+    return {
+        **bus,
+        **subway,
+        **korail,
+        "context_status": "READY",
+        "transit_applicability": transit_applicability,
+        "bus_applicability": bus_applicability,
+        "subway_applicability": subway_applicability,
+        "train_applicability": train_applicability,
+        "rail_applicability": rail_applicability,
+    }
 
 
 def run_full_pipeline(

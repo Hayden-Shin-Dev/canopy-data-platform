@@ -12,9 +12,9 @@ import zipfile
 import pandas as pd
 
 from src.geolife.raw import TrajectoryPoint
-from src.geolife.window_features import compute_window_features
 from src.geolife.windows import iter_time_windows
-from src.aihub.features import AIHUB_FEATURE_COLUMNS
+from src.aihub.features import AIHUB_FEATURE_COLUMNS, canonical_window_features
+from src.aihub.ingest import AiHubPoint
 
 
 def _split_for_user(user_id: str) -> str:
@@ -60,15 +60,21 @@ def _read_points(archive: zipfile.ZipFile, entry: zipfile.ZipInfo) -> list[Traje
 
 
 def _feature_row(window) -> dict[str, object]:
-    features = dict(compute_window_features(window.points))
-    features.update(
-        {
-            "accuracy_mean_m": 0.0,
-            "accuracy_std_m": 0.0,
-            "accuracy_missing_ratio": 1.0,
-            "altitude_missing_ratio": 1.0,
-            "valid_point_ratio": 1.0,
-        }
+    points = tuple(
+        AiHubPoint(
+            timestamp=point.timestamp,
+            latitude=point.latitude,
+            longitude=point.longitude,
+            accuracy_m=None,
+            altitude_m=None,
+        )
+        for point in window.points
+    )
+    features = canonical_window_features(
+        points,
+        user_id=window.user_id,
+        trajectory_id=window.trajectory_id,
+        raw_point_count=len(points),
     )
     return {
         "user_id": window.user_id,

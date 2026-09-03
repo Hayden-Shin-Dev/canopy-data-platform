@@ -27,13 +27,14 @@ def test_default_model_falls_back_to_legacy_artifact(monkeypatch, tmp_path: Path
     legacy.write_bytes(b"model")
     monkeypatch.delenv("CANOPY_MOBILITY_MODEL", raising=False)
     monkeypatch.setattr(model_config, "AIHUB_PRODUCTION_MODEL", aihub)
+    monkeypatch.setattr(model_config, "AIHUB_ROLLBACK_MODEL", tmp_path / "missing-rollback.joblib")
     monkeypatch.setattr(model_config, "LEGACY_MODEL", legacy)
     assert model_config.default_mobility_model() == legacy
 
 
 def test_production_config_records_runtime_feature_contract() -> None:
     config = json.loads(Path("reports/aihub/AIHUB_PRODUCTION_CONFIG.json").read_text(encoding="utf-8"))
-    assert config["feature_version"] == "aihub-window-v1"
+    assert config["feature_version"] == "aihub-canonical-raw120-v2"
     assert config["feature_columns"] == list(AIHUB_FEATURE_COLUMNS)
     assert config["window"]["duration_seconds"] == 120
     assert config["v3_policy"].startswith("deprecated")

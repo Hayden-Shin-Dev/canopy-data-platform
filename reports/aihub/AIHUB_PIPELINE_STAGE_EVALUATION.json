@@ -1,0 +1,398 @@
+{
+  "status": "PASS",
+  "policy": "Ground Truth is read only after Movement inference; it is never passed to feature, model, temporal or transit code.",
+  "split": "test",
+  "user_count": 158,
+  "transit_applicability_counts": {
+    "APPLICABLE": 7144,
+    "NOT_APPLICABLE": 187
+  },
+  "stages": {
+    "movement": {
+      "row_count": 7331,
+      "accuracy": 0.6984040376483427,
+      "macro_f1": 0.6770362827458707,
+      "weighted_f1": 0.6973371598376139,
+      "classification_report": {
+        "walk": {
+          "precision": 0.798879202988792,
+          "recall": 0.8674780256930358,
+          "f1-score": 0.8317666126418153,
+          "support": 1479.0
+        },
+        "bike": {
+          "precision": 0.47761194029850745,
+          "recall": 0.6956521739130435,
+          "f1-score": 0.5663716814159292,
+          "support": 184.0
+        },
+        "car": {
+          "precision": 0.72,
+          "recall": 0.6844606946983547,
+          "f1-score": 0.7017806935332709,
+          "support": 2735.0
+        },
+        "bus": {
+          "precision": 0.6542390194075587,
+          "recall": 0.5952602230483272,
+          "f1-score": 0.6233576642335766,
+          "support": 2152.0
+        },
+        "rail": {
+          "precision": 0.6184649610678532,
+          "recall": 0.7119078104993598,
+          "f1-score": 0.6619047619047619,
+          "support": 781.0
+        },
+        "accuracy": 0.6984040376483427,
+        "macro avg": {
+          "precision": 0.6538390247525422,
+          "recall": 0.7109517855704242,
+          "f1-score": 0.6770362827458707,
+          "support": 7331.0
+        },
+        "weighted avg": {
+          "precision": 0.6997089677526134,
+          "recall": 0.6984040376483427,
+          "f1-score": 0.6973371598376139,
+          "support": 7331.0
+        }
+      },
+      "confusion_matrix_labels": [
+        "walk",
+        "bike",
+        "car",
+        "bus",
+        "rail"
+      ],
+      "confusion_matrix": [
+        [
+          1283,
+          32,
+          43,
+          53,
+          68
+        ],
+        [
+          20,
+          128,
+          28,
+          7,
+          1
+        ],
+        [
+          108,
+          62,
+          1872,
+          548,
+          145
+        ],
+        [
+          88,
+          42,
+          612,
+          1281,
+          129
+        ],
+        [
+          107,
+          4,
+          45,
+          69,
+          556
+        ]
+      ]
+    },
+    "temporal": {
+      "row_count": 7331,
+      "accuracy": 0.6984040376483427,
+      "macro_f1": 0.6770362827458707,
+      "weighted_f1": 0.6973371598376139,
+      "classification_report": {
+        "walk": {
+          "precision": 0.798879202988792,
+          "recall": 0.8674780256930358,
+          "f1-score": 0.8317666126418153,
+          "support": 1479.0
+        },
+        "bike": {
+          "precision": 0.47761194029850745,
+          "recall": 0.6956521739130435,
+          "f1-score": 0.5663716814159292,
+          "support": 184.0
+        },
+        "car": {
+          "precision": 0.72,
+          "recall": 0.6844606946983547,
+          "f1-score": 0.7017806935332709,
+          "support": 2735.0
+        },
+        "bus": {
+          "precision": 0.6542390194075587,
+          "recall": 0.5952602230483272,
+          "f1-score": 0.6233576642335766,
+          "support": 2152.0
+        },
+        "rail": {
+          "precision": 0.6184649610678532,
+          "recall": 0.7119078104993598,
+          "f1-score": 0.6619047619047619,
+          "support": 781.0
+        },
+        "accuracy": 0.6984040376483427,
+        "macro avg": {
+          "precision": 0.6538390247525422,
+          "recall": 0.7109517855704242,
+          "f1-score": 0.6770362827458707,
+          "support": 7331.0
+        },
+        "weighted avg": {
+          "precision": 0.6997089677526134,
+          "recall": 0.6984040376483427,
+          "f1-score": 0.6973371598376139,
+          "support": 7331.0
+        }
+      },
+      "confusion_matrix_labels": [
+        "walk",
+        "bike",
+        "car",
+        "bus",
+        "rail"
+      ],
+      "confusion_matrix": [
+        [
+          1283,
+          32,
+          43,
+          53,
+          68
+        ],
+        [
+          20,
+          128,
+          28,
+          7,
+          1
+        ],
+        [
+          108,
+          62,
+          1872,
+          548,
+          145
+        ],
+        [
+          88,
+          42,
+          612,
+          1281,
+          129
+        ],
+        [
+          107,
+          4,
+          45,
+          69,
+          556
+        ]
+      ]
+    },
+    "transit": {
+      "row_count": 7331,
+      "accuracy": 0.6527076797162734,
+      "macro_f1": 0.5524739433902994,
+      "weighted_f1": 0.622401321828766,
+      "classification_report": {
+        "walk": {
+          "precision": 0.7855038302887448,
+          "recall": 0.9012846517917512,
+          "f1-score": 0.8394206549118388,
+          "support": 1479.0
+        },
+        "bike": {
+          "precision": 0.4758364312267658,
+          "recall": 0.6956521739130435,
+          "f1-score": 0.565121412803532,
+          "support": 184.0
+        },
+        "car": {
+          "precision": 0.6516172506738545,
+          "recall": 0.7071297989031079,
+          "f1-score": 0.6782395230580396,
+          "support": 2735.0
+        },
+        "bus": {
+          "precision": 0.5835122370115929,
+          "recall": 0.6315055762081785,
+          "f1-score": 0.6065610354831511,
+          "support": 2152.0
+        },
+        "rail": {
+          "precision": 0.45588235294117646,
+          "recall": 0.03969270166453265,
+          "f1-score": 0.07302709069493522,
+          "support": 781.0
+        },
+        "accuracy": 0.6527076797162734,
+        "macro avg": {
+          "precision": 0.5904704204284269,
+          "recall": 0.5950529804961227,
+          "f1-score": 0.5524739433902994,
+          "support": 7331.0
+        },
+        "weighted avg": {
+          "precision": 0.6333719411583382,
+          "recall": 0.6527076797162734,
+          "f1-score": 0.622401321828766,
+          "support": 7331.0
+        }
+      },
+      "confusion_matrix_labels": [
+        "walk",
+        "bike",
+        "car",
+        "bus",
+        "rail"
+      ],
+      "confusion_matrix": [
+        [
+          1333,
+          32,
+          45,
+          69,
+          0
+        ],
+        [
+          21,
+          128,
+          28,
+          7,
+          0
+        ],
+        [
+          119,
+          63,
+          1934,
+          592,
+          27
+        ],
+        [
+          98,
+          42,
+          643,
+          1359,
+          10
+        ],
+        [
+          126,
+          4,
+          318,
+          302,
+          31
+        ]
+      ]
+    },
+    "final": {
+      "row_count": 7331,
+      "accuracy": 0.6529804937934798,
+      "macro_f1": 0.5538331177500455,
+      "weighted_f1": 0.6231812015722396,
+      "classification_report": {
+        "walk": {
+          "precision": 0.7855038302887448,
+          "recall": 0.9012846517917512,
+          "f1-score": 0.8394206549118388,
+          "support": 1479.0
+        },
+        "bike": {
+          "precision": 0.4758364312267658,
+          "recall": 0.6956521739130435,
+          "f1-score": 0.565121412803532,
+          "support": 184.0
+        },
+        "car": {
+          "precision": 0.6520566419420094,
+          "recall": 0.7071297989031079,
+          "f1-score": 0.6784774600947202,
+          "support": 2735.0
+        },
+        "bus": {
+          "precision": 0.5838349097162511,
+          "recall": 0.6310408921933085,
+          "f1-score": 0.6065207682000894,
+          "support": 2152.0
+        },
+        "rail": {
+          "precision": 0.4657534246575342,
+          "recall": 0.04353393085787452,
+          "f1-score": 0.07962529274004684,
+          "support": 781.0
+        },
+        "accuracy": 0.6529804937934798,
+        "macro avg": {
+          "precision": 0.5925970475662611,
+          "recall": 0.5957282895318171,
+          "f1-score": 0.5538331177500455,
+          "support": 7331.0
+        },
+        "weighted avg": {
+          "precision": 0.6346821899360361,
+          "recall": 0.6529804937934798,
+          "f1-score": 0.6231812015722396,
+          "support": 7331.0
+        }
+      },
+      "confusion_matrix_labels": [
+        "walk",
+        "bike",
+        "car",
+        "bus",
+        "rail"
+      ],
+      "confusion_matrix": [
+        [
+          1333,
+          32,
+          45,
+          69,
+          0
+        ],
+        [
+          21,
+          128,
+          28,
+          7,
+          0
+        ],
+        [
+          119,
+          63,
+          1934,
+          591,
+          28
+        ],
+        [
+          98,
+          42,
+          643,
+          1358,
+          11
+        ],
+        [
+          126,
+          4,
+          316,
+          301,
+          34
+        ]
+      ]
+    }
+  },
+  "macro_f1_delta_vs_movement": {
+    "movement": 0.0,
+    "temporal": 0.0,
+    "transit": -0.12456233935557126,
+    "final": -0.12320316499582518
+  }
+}

@@ -175,6 +175,7 @@ def infer_windows(
     if isinstance(contract, dict) and (
         str(contract.get("feature_version", "")).startswith("aihub-window-v1")
         or str(contract.get("feature_version", "")).startswith("aihub-ensemble-v1")
+        or str(contract.get("feature_version", "")).startswith("aihub-canonical-")
     ):
         return _infer_aihub_windows(events, model_path=model, window_seconds=window_seconds)
     built = build_window_table(events, window_seconds=window_seconds)

@@ -11,6 +11,17 @@ def test_spatial_index_returns_sorted_nearby_points() -> None:
     assert result["distance_m"].iloc[0] == pytest.approx(0, abs=1)
 
 
+def test_spatial_index_returns_nearest_rows_in_input_order() -> None:
+    index = GeoPointIndex.from_frame(
+        pd.DataFrame({"id": ["south", "north"], "latitude": [37.5, 37.51], "longitude": [127, 127]})
+    )
+
+    result = index.nearest_many([(37.5099, 127), (37.5001, 127)])
+
+    assert result["id"].tolist() == ["north", "south"]
+    assert result["distance_m"].max() == pytest.approx(11.12, abs=0.2)
+
+
 def test_spatial_index_rejects_invalid_coordinates() -> None:
     with pytest.raises(ValueError, match="유효하지 않은"):
         GeoPointIndex.from_frame(pd.DataFrame({"latitude": [91], "longitude": [127]}))

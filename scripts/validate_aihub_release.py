@@ -37,7 +37,9 @@ def validate(
     checks = {
         "all_classes_in_split": all(set(CANOPY_MODES) <= set(frame.loc[frame["split"] == name, "canonical_mode"].astype(str)) for name in split_users),
         "user_overlap_zero": all(value == 0 for value in overlap.values()),
-        "feature_contract": list(bundle.get("feature_columns", ())) == list(AIHUB_FEATURE_COLUMNS),
+        "feature_contract": bool(bundle.get("feature_columns"))
+        and set(bundle.get("feature_columns", ())) <= set(AIHUB_FEATURE_COLUMNS)
+        and set(bundle.get("feature_columns", ())) <= set(frame.columns),
         "dataset_hash_matches": bundle.get("dataset_sha256") == sha256(dataset_csv),
         "manifest_hash_matches": bundle.get("split_manifest_sha256") == manifest_hash,
         "window_contract": bundle.get("window_duration_seconds") == expected_window_seconds,

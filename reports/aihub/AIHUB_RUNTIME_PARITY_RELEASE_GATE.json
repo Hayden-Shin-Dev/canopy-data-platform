@@ -1,0 +1,48 @@
+{
+  "release": "aihub-canonical-raw120-v2",
+  "branch": "feature/mobility-runtime-parity-v3",
+  "baseline_commit": "2e28ab1e94955d247fb967690e6745f579211e9b",
+  "status": "PASS_WITH_LIMITATIONS",
+  "checks": {
+    "raw_source_provenance": "PASS",
+    "deterministic_uid_split": "PASS",
+    "uid_overlap_zero": "PASS",
+    "raw_fixed_120s_windows": "PASS",
+    "summary_aggregation_removed_from_production_builder": "PASS",
+    "linked_car_uses_canonical_extractor": "PASS",
+    "canonical_training_runtime_parity": "PASS",
+    "robust_feature_candidate_evaluated": "PASS",
+    "cadence_stress_2_5_10_seconds": "PASS",
+    "rolling_history_120_seconds": "PASS",
+    "inference_stride_10_seconds": "PASS",
+    "irregular_cadence": "PASS",
+    "missing_altitude_accuracy": "PASS",
+    "timestamp_quality_policies": "PASS",
+    "movement_temporal_transit_final_evaluation": "PASS",
+    "ground_truth_not_used_by_inference": "PASS",
+    "mock_remains_integration_only": "PASS",
+    "iphone_log_schema_and_transition_evaluator": "PASS",
+    "full_regression": "PASS",
+    "ktdb_carbon_reward_regression": "PASS",
+    "rollback_artifacts_retained": "PASS",
+    "raw_data_not_committed": "PASS",
+    "long_duration_real_iphone_validation": "NOT_TESTED",
+    "bike_labelled_transit_evaluation": "NOT_TESTED"
+  },
+  "evidence": {
+    "validation_stages": "reports/aihub/AIHUB_PIPELINE_STAGE_EVALUATION_VALIDATION.json",
+    "test_stages_before": "reports/aihub/AIHUB_PIPELINE_STAGE_EVALUATION.json",
+    "test_stages_after": "reports/aihub/AIHUB_PIPELINE_STAGE_EVALUATION_AFTER.json",
+    "mock_before": "reports/aihub/AIHUB_RUNTIME_PARITY_MOCK.json",
+    "mock_after": "reports/aihub/AIHUB_RUNTIME_PARITY_MOCK_AFTER.json",
+    "cadence": "reports/aihub/AIHUB_CADENCE_STRESS.json",
+    "artifact_validation": "python -m scripts.validate_aihub_release data/interim/aihub/aihub_120s_canonical_cadence_train.csv data/interim/aihub/aihub_split_manifest.json models/mobility_recognition/aihub_canonical_raw120.joblib --window-seconds 120",
+    "full_regression": "275 passed"
+  },
+  "known_limitations": [
+    "10-second cadence view loses Macro F1 relative to native Test and is not used for validation/test training.",
+    "No long-duration real iPhone journey log is available in this repository.",
+    "Bike-labelled Transit Context support is not available in the supplied references."
+  ],
+  "main_merge": "HELD_UNTIL_LIMITATIONS_ARE_ACCEPTED"
+}

@@ -20,6 +20,7 @@ def test_build_linked_vehicle_windows_labels_car_and_keeps_user_split(tmp_path: 
     assert set(frame["canonical_mode"]) == {"car"}
     assert set(frame["source_class"]) == {"LINKED_VEHICLE"}
     assert frame["accuracy_missing_ratio"].iloc[0] == 1.0
+    assert frame["altitude_missing_ratio"].iloc[0] == 1.0
 
 
 def test_build_linked_vehicle_windows_skips_csv_error_entry(tmp_path: Path) -> None:

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canopy.example/schemas/iphone-mobility-prediction-v1.json",
+  "title": "Canopy iPhone Mobility Prediction Log",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "journey_id", "model_version", "git_sha", "timestamp",
+    "latitude", "longitude", "horizontal_accuracy_m", "altitude_m",
+    "movement_probabilities", "movement_prediction", "temporal_prediction",
+    "transit_applicability", "transit_evidence", "final_prediction"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "journey_id": {"type": "string", "minLength": 1},
+    "model_version": {"type": "string", "minLength": 1},
+    "git_sha": {"type": "string", "pattern": "^[0-9a-f]{7,40}$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "latitude": {"type": "number", "minimum": -90, "maximum": 90},
+    "longitude": {"type": "number", "minimum": -180, "maximum": 180},
+    "horizontal_accuracy_m": {"type": ["number", "null"], "minimum": 0},
+    "altitude_m": {"type": ["number", "null"]},
+    "movement_probabilities": {
+      "type": "object",
+      "required": ["walk", "bike", "car", "bus", "rail"],
+      "additionalProperties": false,
+      "properties": {
+        "walk": {"type": "number", "minimum": 0, "maximum": 1},
+        "bike": {"type": "number", "minimum": 0, "maximum": 1},
+        "car": {"type": "number", "minimum": 0, "maximum": 1},
+        "bus": {"type": "number", "minimum": 0, "maximum": 1},
+        "rail": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "movement_prediction": {"type": ["string", "null"], "enum": ["walk", "bike", "car", "bus", "rail", null]},
+    "temporal_prediction": {"type": ["string", "null"], "enum": ["walk", "bike", "car", "bus", "rail", null]},
+    "transit_applicability": {"enum": ["APPLICABLE", "NOT_APPLICABLE", "INSUFFICIENT_REFERENCE"]},
+    "transit_evidence": {"type": "object"},
+    "final_prediction": {"type": ["string", "null"], "enum": ["walk", "bike", "car", "bus", "rail", null]}
+  }
+}

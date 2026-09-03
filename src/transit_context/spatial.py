@@ -49,3 +49,14 @@ class GeoPointIndex:
         result = self.frame.iloc[int(indices[0, 0])].copy()
         result["distance_m"] = float(distances[0, 0] * EARTH_RADIUS_M)
         return result
+
+    def nearest_many(self, coordinates: list[tuple[float, float]]) -> pd.DataFrame:
+        """Return one nearest reference row per coordinate in input order."""
+
+        if not coordinates:
+            return self.frame.iloc[[]].assign(distance_m=pd.Series(dtype=float))
+        points = np.radians(np.asarray(coordinates, dtype=float))
+        distances, indices = self._tree.query(points, k=1)
+        result = self.frame.iloc[indices[:, 0]].copy().reset_index(drop=True)
+        result["distance_m"] = distances[:, 0] * EARTH_RADIUS_M
+        return result

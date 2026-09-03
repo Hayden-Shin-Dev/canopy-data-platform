@@ -9,7 +9,8 @@ from src.config import PROJECT_ROOT
 
 
 LEGACY_MODEL = PROJECT_ROOT / "models/mobility_recognition/geolife_hardened_120s_purity_090.joblib"
-AIHUB_PRODUCTION_MODEL = PROJECT_ROOT / "models/mobility_recognition/aihub_hist120.joblib"
+AIHUB_PRODUCTION_MODEL = PROJECT_ROOT / "models/mobility_recognition/aihub_canonical_raw120.joblib"
+AIHUB_ROLLBACK_MODEL = PROJECT_ROOT / "models/mobility_recognition/aihub_hist120.joblib"
 
 
 def default_mobility_model() -> Path:
@@ -21,4 +22,6 @@ def default_mobility_model() -> Path:
         return path if path.is_absolute() else PROJECT_ROOT / path
     if AIHUB_PRODUCTION_MODEL.is_file():
         return AIHUB_PRODUCTION_MODEL
+    if AIHUB_ROLLBACK_MODEL.is_file():
+        return AIHUB_ROLLBACK_MODEL
     return LEGACY_MODEL
