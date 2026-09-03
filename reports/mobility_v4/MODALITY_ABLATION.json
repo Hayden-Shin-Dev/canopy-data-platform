@@ -1,0 +1,14 @@
+{
+  "status": "NOT_RUN",
+  "reason": "Official Docker daemon is unavailable; no modality ablation was executed.",
+  "policy": {
+    "validation_only_for_selection": true,
+    "test_used_for_tuning": false,
+    "missing_values_synthesized": false
+  },
+  "conditions": {
+    "full": {"modalities": ["gps", "imu", "ap", "bts"], "macro_f1": null},
+    "gps_imu": {"modalities": ["gps", "imu"], "macro_f1": null},
+    "gps_only": {"modalities": ["gps"], "macro_f1": null}
+  }
+}

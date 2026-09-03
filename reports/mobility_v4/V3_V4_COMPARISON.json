@@ -1,0 +1,16 @@
+{
+  "status": "NOT_COMPARABLE_YET",
+  "baseline_v3": {
+    "contract": "GPS-only canonical raw-120, 5 classes",
+    "movement_test_macro_f1": 0.6749,
+    "final_test_macro_f1": 0.6888,
+    "per_class_f1": {"walk": 0.839, "bike": 0.565, "car": 0.706, "bus": 0.629, "rail": 0.704}
+  },
+  "candidate_v4": {
+    "contract": "Official GPS+IMU+AP+BTS, 340x60, 11 logits",
+    "movement_macro_f1": null,
+    "per_class_f1": null,
+    "inference_latency_ms": null
+  },
+  "reason": "Official standalone inference and a compatible independent holdout are not available yet."
+}

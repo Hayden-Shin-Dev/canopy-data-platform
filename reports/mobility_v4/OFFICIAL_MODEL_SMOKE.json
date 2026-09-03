@@ -1,0 +1,43 @@
+{
+  "status": "BLOCKED",
+  "reason": "Docker daemon or official checkpoint runtime is unavailable",
+  "official_contract": {
+    "input_channels": 340,
+    "timesteps": 60,
+    "output_classes": 11,
+    "modalities": [
+      "gps",
+      "imu",
+      "ap",
+      "bts"
+    ],
+    "observation_duration_seconds": null,
+    "label_mapping_status": "unverified"
+  },
+  "checkpoint": {
+    "path": "C:\\Users\\user\\Downloads\\교통수단 ai모델\\AI모델\\AI모델 교통수단 판별 20231207\\학습모델파일\\last.chk",
+    "exists": true,
+    "archive_readable": true,
+    "has_data_pickle": true,
+    "has_version": true,
+    "state_dict_fc_weight": true
+  },
+  "docker": {
+    "available": false,
+    "server_version": null,
+    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified.",
+    "latency_ms": 1106.068
+  },
+  "inference": {
+    "executed": false,
+    "input_shape": null,
+    "output_shape": null,
+    "predicted_class": null,
+    "latency_ms": null
+  },
+  "policy": {
+    "missing_modalities_synthesized": false,
+    "production_model_changed": false,
+    "test_used_for_tuning": false
+  }
+}

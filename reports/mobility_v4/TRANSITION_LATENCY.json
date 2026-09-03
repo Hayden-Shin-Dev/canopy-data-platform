@@ -1,0 +1,13 @@
+{
+  "status": "NOT_RUN",
+  "reason": "V4 standalone inference is blocked before runtime transition evaluation.",
+  "transitions": [
+    "WALK->BUS",
+    "WALK->RAIL",
+    "BUS->WALK",
+    "RAIL->WALK",
+    "BIKE->WALK",
+    "CAR->WALK"
+  ],
+  "latency_seconds": {}
+}
