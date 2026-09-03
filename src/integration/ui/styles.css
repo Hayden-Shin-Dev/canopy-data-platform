@@ -178,6 +178,7 @@ button { color: inherit; }
 
 /* Keep the app content below the hardware island when the desktop frame is shown. */
 @media (min-width: 431px) {
+  .iphone-frame { top: -72px; }
   .iphone-frame .center-header {
     height: 76px;
     padding-top: 31px;
