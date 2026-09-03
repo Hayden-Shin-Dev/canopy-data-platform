@@ -24,13 +24,20 @@ def test_ui_runtime_lists_fixture_and_reports_waiting_without_fabricated_inputs(
     assert "openstreetmap.org" in static_js
     assert "/ui/styles.css" in module.MOBILE_APP_HTML
     static_html = module.MOBILE_APP_HTML
+    static_css = (Path(__file__).resolve().parents[1] / "src/integration/ui/styles.css").read_text(encoding="utf-8")
     assert 'data-testid="iphone-frame"' in static_html
     for marker in ('id="result-segments"', 'id="result-token"', 'id="profile"', 'class="bottom-nav"'):
         assert marker in static_html
     for screen in ("home", "plan", "start", "active", "complete", "profile", "developer"):
         assert f'id="{screen}"' in static_html
-    for asset in ("home-landscape.png", "journey-start.png", "journey-complete.png"):
-        assert f"/assets/canopy-ui/{asset}" in static_html
+    assert "/assets/canopy-ui/home-landscape.png" in static_html
+    for asset in (
+        "journey-start-backdrop.png",
+        "journey-start-sprite.png",
+        "journey-complete-confetti.png",
+        "journey-complete-celebration-sprite.png",
+    ):
+        assert f"/assets/canopy-ui/{asset}" in static_css
     assert "startTrip" in static_js
     assert "renderResult" in static_js
 

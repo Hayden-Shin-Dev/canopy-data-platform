@@ -368,20 +368,40 @@ button { color: inherit; }
   height: 224px;
   display: block;
   margin: -26px -18px -11px;
-  object-fit: cover;
-  object-position: center 61%;
-  transform-origin: 50% 82%;
-  will-change: transform;
-  animation: startCharacterWalk 4.8s cubic-bezier(.4, 0, .2, 1) infinite;
+  position: relative;
+  overflow: hidden;
+  background: url('/assets/canopy-ui/journey-start-backdrop.png') center 61% / cover no-repeat;
 }
-@keyframes startCharacterWalk {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  16% { transform: translate3d(0, -3px, 0) rotate(-1deg); }
-  31% { transform: translate3d(2px, 0, 0) rotate(1deg); }
-  46% { transform: translate3d(-2px, 3px, 0) rotate(-2.5deg) scaleY(.985); }
-  56% { transform: translate3d(1px, 1px, 0) rotate(1.5deg); }
-  67% { transform: translate3d(0, -2px, 0) rotate(-.5deg); }
-  84% { transform: translate3d(0, -4px, 0) rotate(0deg); }
+.complete-art {
+  width: calc(100% + 32px);
+  height: 202px;
+  display: block;
+  margin: 0 -16px -23px;
+  position: relative;
+  overflow: hidden;
+  background: url('/assets/canopy-ui/journey-complete-confetti.png') center 55% / cover no-repeat;
+}
+.character-sprite {
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  display: block;
+  width: 170px;
+  height: 226px;
+  transform: translateX(-50%);
+  background-repeat: no-repeat;
+  background-size: 400% 100%;
+  background-position: 0 0;
+  filter: drop-shadow(0 6px 7px rgba(16, 64, 43, .12));
+  will-change: background-position, transform;
+}
+.start-character {
+  background-image: url('/assets/canopy-ui/journey-start-sprite.png');
+  animation: startSpriteWalk .9s steps(4, end) infinite;
+}
+@keyframes startSpriteWalk {
+  from { background-position: 0 0; }
+  to { background-position: 100% 0; }
 }
 .start-title { margin: 4px 0 7px; text-align: center; font-size: 21px; }
 .journey-addresses { margin: 16px 0 14px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 16px; background: #fbfdfc; box-shadow: 0 5px 16px rgba(26, 67, 51, .05); }
@@ -477,23 +497,16 @@ button { color: inherit; }
 
 .complete-header { position: absolute; z-index: 20; top: 0; left: 0; right: 0; height: 58px; padding: 15px 15px 0; background: linear-gradient(#fff 72%, transparent); }
 .complete-scroll { padding-top: 22px; }
-.complete-art {
-  width: calc(100% + 32px);
-  height: 202px;
-  display: block;
-  margin: 0 -16px -23px;
-  object-fit: cover;
-  object-position: center 55%;
-  transform-origin: 50% 78%;
-  will-change: transform, opacity;
-  animation: celebrationPop 1.8s cubic-bezier(.22, .75, .2, 1) both;
+.complete-character {
+  width: 164px;
+  height: 218px;
+  bottom: -5px;
+  background-image: url('/assets/canopy-ui/journey-complete-celebration-sprite.png');
+  animation: completeSpriteCelebrate 1.45s steps(4, end) infinite;
 }
-@keyframes celebrationPop {
-  0% { opacity: 0; transform: translate3d(0, 12px, 0) scale(.96) rotate(-1deg); }
-  28% { opacity: 1; transform: translate3d(0, -8px, 0) scale(1.015) rotate(1deg); }
-  53% { transform: translate3d(0, 2px, 0) scale(.995) rotate(-.6deg); }
-  74% { transform: translate3d(0, -3px, 0) scale(1.005) rotate(.3deg); }
-  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1) rotate(0); }
+@keyframes completeSpriteCelebrate {
+  0% { background-position: 0 0; transform: translateX(-50%) translateY(7px) scale(.98); }
+  100% { background-position: 100% 0; transform: translateX(-50%) translateY(-2px) scale(1); }
 }
 .complete-title { margin: 0; text-align: center; font-size: 26px; letter-spacing: -.04em; }
 .complete-subtitle { margin: 5px 0 16px; text-align: center; color: #52655e; font-size: 11px; }
@@ -618,8 +631,8 @@ button { color: inherit; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .start-art,
-  .complete-art { animation: none; }
+  .start-character,
+  .complete-character { animation: none; }
 }
 
 @media (max-width: 600px) {
