@@ -287,7 +287,28 @@ button { color: inherit; }
 .start-scroll { padding-left: 18px; padding-right: 18px; }
 .start-art { width: calc(100% + 36px); height: 224px; display: block; margin: -26px -18px -11px; object-fit: cover; object-position: center 61%; }
 .start-title { margin: 4px 0 7px; text-align: center; font-size: 21px; }
-.start-route { margin: 0; text-align: center; font-size: 12px; font-weight: 600; }
+.journey-addresses { margin: 16px 0 14px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 16px; background: #fbfdfc; box-shadow: 0 5px 16px rgba(26, 67, 51, .05); }
+.address-row { display: flex; align-items: flex-start; gap: 10px; }
+.address-row > i { flex: 0 0 auto; margin-top: 2px; font-size: 19px; }
+.address-row span { display: grid; gap: 3px; min-width: 0; }
+.address-row small { color: var(--muted); font-size: 9px; }
+.address-row strong { font-size: 11px; line-height: 1.4; }
+.address-line { width: 1px; height: 11px; margin: 1px 0 1px 9px; background: #bfd8ca; }
+.journey-progress { display: flex; align-items: center; gap: 9px; margin: 18px 4px 20px; color: var(--green); }
+.journey-progress > i { flex: 0 0 auto; font-size: 20px; }
+.journey-progress .progress-office { color: var(--red); }
+.progress-rail { position: relative; flex: 1; height: 16px; }
+.progress-rail::before, .progress-rail .progress-fill { content: ""; position: absolute; left: 0; top: 7px; height: 2px; border-radius: 2px; }
+.progress-rail::before { right: 0; background: #d7e5dd; }
+.progress-rail .progress-fill { width: 0; background: var(--green); transition: width .7s cubic-bezier(.22,.75,.2,1); }
+.journey-traveler { position: absolute; z-index: 1; top: -3px; left: 0; width: 22px; height: 22px; display: grid; place-items: center; color: var(--green); font-size: 18px; transform: translateX(-50%); transition: left .7s cubic-bezier(.22,.75,.2,1), color .25s ease; }
+.journey-traveler.bike { color: var(--red); }
+.journey-traveler.car { color: #263d51; }
+.journey-traveler.bus, .journey-traveler.rail { color: var(--blue); }
+.journey-traveler.unknown { color: var(--muted); }
+.active-progress { margin: 12px 0 0; }
+.active-progress .progress-rail { max-width: none; }
+.active-progress .journey-traveler { font-size: 17px; }
 .journey-chain { display: flex; align-items: center; justify-content: center; gap: 5px; margin: 22px 0 20px; }
 .journey-chain > span { min-width: 44px; display: grid; justify-items: center; gap: 4px; }
 .journey-chain span i { font-size: 24px; }

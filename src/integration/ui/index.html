@@ -125,13 +125,13 @@
       <div class="screen-scroll header-scroll start-scroll">
         <img class="start-art" src="/assets/canopy-ui/journey-start.png" alt="출근을 준비하며 손을 흔드는 Canopy 캐릭터">
         <h2 class="start-title">여정을 시작할까요?</h2>
-        <p class="start-route">집 → 직장</p>
-        <div class="journey-chain" aria-label="예상 이동 단계">
-          <span><i class="ph ph-person-simple-walk green-text"></i><small>걷기</small></span><i class="ph ph-arrow-right"></i>
-          <span><i class="ph ph-bicycle red"></i><small>자전거</small></span><i class="ph ph-arrow-right"></i>
-          <span><i class="ph-fill ph-train blue"></i><small>대중교통</small></span><i class="ph ph-arrow-right"></i>
-          <span><i class="ph-fill ph-car"></i><small>자동차</small></span><i class="ph ph-arrow-right"></i>
-          <span><i class="ph ph-person-simple-walk"></i><small>도보</small></span>
+        <div class="journey-addresses" aria-label="출발지와 목적지">
+          <div class="address-row"><i class="ph-fill ph-house green-text"></i><span><small>출발지</small><strong id="start-origin-address">서울 영등포구 버드나루로10길 7</strong></span></div>
+          <div class="address-line"></div>
+          <div class="address-row"><i class="ph-fill ph-buildings red"></i><span><small>목적지</small><strong id="start-destination-address">Microsoft Korea · 서울 종로구 종로1길 50</strong></span></div>
+        </div>
+        <div class="journey-progress" id="start-journey-progress" aria-label="출발지에서 목적지까지 이동 거리">
+          <i class="ph-fill ph-house progress-home"></i><span class="progress-rail"><b class="progress-fill"></b><i class="journey-traveler unknown" id="start-traveler"></i></span><i class="ph-fill ph-buildings progress-office"></i>
         </div>
         <article class="card target-card">
           <p class="card-kicker">이번 여정 목표</p>
@@ -157,7 +157,9 @@
         <div class="active-title-row"><h1>여정 진행 중</h1><span class="live-badge">LIVE</span></div>
         <button class="plain-icon" type="button" id="active-menu-button" aria-label="여정 메뉴"><i class="ph-fill ph-dots-three-vertical"></i></button>
         <strong>집 → 직장</strong>
-        <div class="compact-chain"><i class="ph-fill ph-house green-text"></i><i class="ph ph-arrow-right"></i><i class="ph ph-person-simple-walk"></i><i class="ph ph-arrow-right"></i><i class="ph-fill ph-train blue"></i><i class="ph ph-arrow-right"></i><i class="ph ph-person-simple-walk"></i><i class="ph ph-arrow-right"></i><i class="ph-fill ph-buildings red"></i></div>
+        <div class="journey-progress active-progress" id="active-journey-progress" aria-label="현재 위치">
+          <i class="ph-fill ph-house progress-home"></i><span class="progress-rail"><b class="progress-fill"></b><i class="journey-traveler unknown" id="active-traveler"></i></span><i class="ph-fill ph-buildings progress-office"></i>
+        </div>
         <p>서울 영등포구 → Microsoft Korea</p>
       </header>
       <div id="active-map" class="active-map" aria-label="실시간 이동 경로 지도"></div>

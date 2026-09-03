@@ -29,6 +29,8 @@ const state = {
   destinationMarker: null,
   tripStarted: false,
   resultStored: false,
+  resultRenderKey: null,
+  activeMode: null,
   pollTimer: null,
 };
 
@@ -76,6 +78,19 @@ function showScreen(name, { updateUrl = true } = {}) {
 }
 
 function modeMeta(mode) { return MODE_META[mode] || { label: mode || "판정 중", live: "이동 패턴을 확인하고 있어요", icon: "ph-radar", color: "#347bf4" }; }
+function journeyIcon(mode) { return { walk: "ph-person-simple-walk", bike: "ph-bicycle", car: "ph-car", bus: "ph-bus", rail: "ph-train" }[mode] || "ph-navigation-arrow"; }
+function renderJourneyProgress(mode, ratio = 0) {
+  const percent = `${Math.max(0, Math.min(100, Number(ratio) * 100))}%`;
+  ["start", "active"].forEach(prefix => {
+    const traveler = $(`#${prefix}-traveler`);
+    const fill = $(`#${prefix}-journey-progress .progress-fill`);
+    if (!traveler) return;
+    traveler.className = `journey-traveler ${mode || "unknown"}`;
+    traveler.innerHTML = `<i class="ph-fill ${journeyIcon(mode)}"></i>`;
+    traveler.style.left = percent;
+    if (fill) fill.style.width = percent;
+  });
+}
 function number(value, digits = 1) { return Number.isFinite(Number(value)) ? Number(value).toFixed(digits) : "-"; }
 
 function durationText(seconds) {
@@ -166,6 +181,7 @@ function renderBaseline(payload) {
   $("#baseline-bar").style.height = `${Math.max(12, expectedG / maxG * 52)}px`;
   $("#route-bar").style.height = `${Math.max(8, recommendedG / maxG * 52)}px`;
   renderBaselineDetails(payload.probabilities || {});
+  renderJourneyProgress(payload.predicted_mode, 0);
 }
 
 function renderBaselineDetails(probabilities) {
@@ -182,6 +198,8 @@ function renderBaselineDetails(probabilities) {
 function renderRoute(payload) {
   if (payload?.status !== "READY") return;
   state.route = payload;
+  if (payload.origin?.label) $("#start-origin-address").textContent = payload.origin.label;
+  if (payload.destination?.label) $("#start-destination-address").textContent = payload.destination.label;
   const distanceKm = Number(payload.distance_km || 0);
   if (distanceKm) $("#start-distance").textContent = `${number(distanceKm, 1)} km`;
   ensureMap();
@@ -247,14 +265,19 @@ function renderActive(snapshot) {
   const prediction = latestMode(snapshot);
   const meta = modeMeta(prediction.mode);
   const icon = $("#active-mode-icon");
-  icon.style.background = meta.color;
-  icon.innerHTML = `<i class="ph ${meta.icon}"></i>`;
-  $("#active-mode-title").textContent = meta.live;
+  if (state.activeMode !== prediction.mode) {
+    state.activeMode = prediction.mode;
+    icon.style.background = meta.color;
+    icon.innerHTML = `<i class="ph ${meta.icon}"></i>`;
+    $("#active-mode-title").textContent = meta.live;
+  }
   $("#active-mode-detail").textContent = prediction.mode
     ? `현재 모델 confidence ${Math.round(Number(prediction.confidence || 0) * 100)}%`
     : "120초 Window 판정을 기다리는 중";
   $("#active-time").textContent = clockText(elapsedSeconds(snapshot.events));
   $("#active-distance").textContent = `${number(snapshot.live_distance_km || 0, 2)} km`;
+  const routeDistance = Number(state.route?.distance_km || 0);
+  renderJourneyProgress(prediction.mode, routeDistance ? Number(snapshot.live_distance_km || 0) / routeDistance : 0);
   renderMap(snapshot.events);
 }
 
@@ -295,6 +318,9 @@ function renderResult(snapshot) {
   const reductionG = Number(pipeline.co2?.reduction_co2e_g || 0);
   const reductionPercent = expectedG ? reductionG / expectedG * 100 : 0;
   const segments = pipeline.actual_behaviour?.segments || [];
+  const renderKey = `${snapshot.fixture || ""}:${pipeline.accepted_event_count || 0}:${number(pipeline.distance_km, 4)}:${actualG}:${segments.length}`;
+  if (state.resultRenderKey === renderKey) return;
+  state.resultRenderKey = renderKey;
   const modes = segments.map(segmentLabel);
   const token = Math.max(0, Math.floor(reductionG / 10));
   $("#result-actual").textContent = `${number(actualG / 1000, 2)} kg`;
@@ -332,6 +358,8 @@ async function pollStatus() {
 async function startTrip({ developer = false } = {}) {
   try {
     state.resultStored = false;
+    state.resultRenderKey = null;
+    state.activeMode = null;
     state.tripStarted = true;
     state.mapLine?.remove(); state.mapLine = null;
     state.currentMarker?.remove(); state.currentMarker = null;
