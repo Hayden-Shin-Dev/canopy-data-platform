@@ -24,6 +24,7 @@ const state = {
   map: null,
   mapLine: null,
   routePreviewLine: null,
+  routeBounds: null,
   currentMarker: null,
   originMarker: null,
   destinationMarker: null,
@@ -72,7 +73,10 @@ function showScreen(name, { updateUrl = true } = {}) {
     const selected = button.dataset.nav === name || (name === "active" && button.dataset.nav === "plan");
     button.classList.toggle("is-active", selected);
   });
-  if (name === "active") window.setTimeout(() => state.map?.invalidateSize(), 80);
+  if (name === "active") window.setTimeout(() => {
+    state.map?.invalidateSize();
+    if (state.map && state.routeBounds) state.map.fitBounds(state.routeBounds, { padding: [28, 96], maxZoom: 15, animate: true });
+  }, 80);
   if (name === "profile") renderProfile();
   if (updateUrl) history.replaceState(null, "", `${location.pathname}?screen=${name}`);
 }
@@ -181,7 +185,8 @@ function renderBaseline(payload) {
   $("#baseline-bar").style.height = `${Math.max(12, expectedG / maxG * 52)}px`;
   $("#route-bar").style.height = `${Math.max(8, recommendedG / maxG * 52)}px`;
   renderBaselineDetails(payload.probabilities || {});
-  renderJourneyProgress(payload.predicted_mode, 0);
+  // 출발 전에는 수단을 미리 정하지 않고, 실제 Window 판정이 들어온 뒤 아이콘을 표시합니다.
+  renderJourneyProgress(null, 0);
 }
 
 function renderBaselineDetails(probabilities) {
@@ -200,12 +205,17 @@ function renderRoute(payload) {
   state.route = payload;
   if (payload.origin?.label) $("#start-origin-address").textContent = payload.origin.label;
   if (payload.destination?.label) $("#start-destination-address").textContent = payload.destination.label;
+  const activeAddress = document.querySelector(".active-header > p");
+  if (activeAddress && payload.origin?.label && payload.destination?.label) {
+    activeAddress.innerHTML = `<span class="route-address"><i class="ph-fill ph-house"></i>${payload.origin.label}</span><span class="route-address-separator" aria-hidden="true"></span><span class="route-address"><i class="ph-fill ph-buildings"></i>${payload.destination.label}</span>`;
+  }
   const distanceKm = Number(payload.distance_km || 0);
   if (distanceKm) $("#start-distance").textContent = `${number(distanceKm, 1)} km`;
   ensureMap();
   const points = payload.polyline || [];
   if (state.map && points.length > 1) {
     const latLngs = points.map(point => [point.latitude, point.longitude]);
+    state.routeBounds = L.latLngBounds(latLngs);
     state.routePreviewLine?.remove();
     state.routePreviewLine = L.polyline(latLngs, { color: "#b6c5bd", weight: 4, opacity: .75, dashArray: "5 8" }).addTo(state.map);
     addEndpointMarkers(latLngs[0], latLngs.at(-1));
@@ -251,8 +261,8 @@ function renderMap(events = []) {
   const current = latLngs.at(-1);
   if (!state.currentMarker) state.currentMarker = L.marker(current, { icon: markerIcon("ph-navigation-arrow", "current-marker") }).addTo(state.map);
   else state.currentMarker.setLatLng(current);
-  if (latLngs.length === 1) state.map.setView(current, 15);
-  else if (accepted.length % 12 === 0) state.map.panTo(current, { animate: true, duration: .4 });
+  if (accepted.length === 1 && state.routeBounds) state.map.fitBounds(state.routeBounds, { padding: [28, 96], maxZoom: 15, animate: true });
+  else if (accepted.length % 6 === 0) state.map.panTo(current, { animate: true, duration: .4 });
 }
 
 function latestMode(snapshot) {
