@@ -1,6 +1,6 @@
 {
   "status": "BLOCKED",
-  "reason": "Official image load failed: Docker/WSL data disk ran out of host disk space",
+  "reason": "Official preprocessing requires raw GPS, IMU, AP, and BTS files; missing modalities were not synthesized",
   "official_contract": {
     "input_channels": 340,
     "timesteps": 60,
@@ -11,35 +11,50 @@
       "ap",
       "bts"
     ],
-    "observation_duration_seconds": null,
+    "observation_duration_seconds": 60,
     "label_mapping_status": "unverified"
   },
   "checkpoint": {
-    "path": "C:\\Users\\user\\Downloads\\교통수단 ai모델\\AI모델\\AI모델 교통수단 판별 20231207\\학습모델파일\\last.chk",
+    "path": "C:\\Users\\user\\Downloads\\aihub_image_extract\\last.chk",
     "exists": true,
     "archive_readable": true,
     "has_data_pickle": true,
     "has_version": true,
     "state_dict_fc_weight": true
   },
+  "input_data": {
+    "provided": true,
+    "root": "C:\\Users\\user\\Downloads\\186.교통수단판별 데이터\\01-1.정식개방데이터\\Validation",
+    "present_modalities": [
+      "gps"
+    ],
+    "missing_modalities": [
+      "ap",
+      "bts",
+      "imu"
+    ],
+    "official_tree_present": [],
+    "format_compatible": false,
+    "full_modality_available": false
+  },
   "docker": {
-    "available": false,
-    "context": "desktop-linux",
-    "image_load": {
-      "attempted": true,
-      "result": "FAILED",
-      "error": "request returned 502 Bad Gateway during /images/load"
+    "available": true,
+    "server_version": "\"29.6.2\"",
+    "error": null,
+    "latency_ms": 304.648,
+    "image": "nia56:latest",
+    "image_available": true,
+    "image_inspect": "sha256:79e0dca74cafa291d510100554aba21f1e7eadbbc5949458ca0a888ede4b26a5 24130958005",
+    "cpu_runtime": {
+      "ok": true,
+      "stdout": "3.9.15\n1.9.1\nFalse",
+      "stderr": ""
     },
-    "host_disk": {
-      "docker_data_vhdx_bytes": 13325303808,
-      "host_free_bytes": 1024442368,
-      "error_evidence": "Docker log: There is not enough space on the disk"
-    },
-    "nvidia_runtime_declared": true,
-    "gpu_container_tested": false,
-    "server_version": null,
-    "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified.",
-    "latency_ms": 1106.068
+    "gpu_runtime": {
+      "ok": false,
+      "stdout": "",
+      "stderr": "docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: error running prestart hook #0: exit status 1, stdout: , stderr: Auto-detected mode as 'legacy'\nnvidia-container-cli: initialization error: WSL environment detected but no adapters were found\n\nRun 'docker run --help' for more information"
+    }
   },
   "inference": {
     "executed": false,

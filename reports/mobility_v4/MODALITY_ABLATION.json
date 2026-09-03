@@ -1,14 +1,19 @@
 {
-  "status": "NOT_RUN",
-  "reason": "Official Docker daemon is unavailable; no modality ablation was executed.",
+  "status": "BLOCKED",
+  "reason": "The available Validation release has GPS and labels only; official AP, BTS and IMU raw trees are absent. Missing modalities were not synthesized.",
+  "docker": {
+    "image": "nia56:latest",
+    "cpu_runtime": "PASS",
+    "gpu_runtime": "FAIL: WSL environment has no NVIDIA adapters"
+  },
   "policy": {
     "validation_only_for_selection": true,
     "test_used_for_tuning": false,
     "missing_values_synthesized": false
   },
   "conditions": {
-    "full": {"modalities": ["gps", "imu", "ap", "bts"], "macro_f1": null},
-    "gps_imu": {"modalities": ["gps", "imu"], "macro_f1": null},
-    "gps_only": {"modalities": ["gps"], "macro_f1": null}
+    "full": {"modalities": ["gps", "imu", "ap", "bts"], "status": "NOT_RUN", "macro_f1": null},
+    "gps_imu": {"modalities": ["gps", "imu"], "status": "NOT_RUN", "macro_f1": null},
+    "gps_only": {"modalities": ["gps"], "status": "NOT_RUN", "macro_f1": null}
   }
 }

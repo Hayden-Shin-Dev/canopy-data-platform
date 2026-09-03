@@ -15,7 +15,9 @@ OFFICIAL_CONTRACT = {
     "timesteps": 60,
     "output_classes": 11,
     "modalities": REQUIRED_MODALITIES,
-    "observation_duration_seconds": None,
+    # Official preprocessing aggregates GPS/BTS in 5-second bins and repeats
+    # one minute (PER_SECTION=1, PER_MIN=60) over 60 timesteps.
+    "observation_duration_seconds": 60,
     "label_mapping_status": "unverified",
 }
 

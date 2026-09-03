@@ -43,3 +43,17 @@ checkpoint를 임의 값으로 채우지 않는다. 실제 공식 `run.sh` 재�
 
 실제 inference가 성공하면 이 문서와 JSON에 입력·출력 shape, 예측 class,
 CPU/GPU, latency를 추가한다. 그 전에는 V4 selector나 기존 UI를 변경하지 않는다.
+# Runtime recheck (2026-09-03)
+
+Docker image `nia56:latest` is now loaded successfully. The official CPU
+environment is Python 3.9.15 with PyTorch 1.9.1; checkpoint deserialization
+works and the final layer has shape `(11, 2190)`. GPU startup is unavailable in
+this host because `nvidia-container-cli` reports that WSL has no adapters.
+
+The locally available Validation release contains GPS and labels only. The
+official preprocessing contract requires raw `1.AP`, `2.BTS`, `3.GPS`, and
+`4.IMU` trees, so AP/BTS/IMU values were not synthesized. Full preprocessing,
+forward inference, and modality ablation remain BLOCKED until those raw sensor
+files are supplied in the official layout. The official preprocessor uses one
+60-second section (`PER_SECTION=1`, `PER_MIN=60`) and emits `(340, 60)` input
+with 11 logits; V3 production code and artifacts remain unchanged.
