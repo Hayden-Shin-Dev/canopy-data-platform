@@ -50,7 +50,11 @@ def smooth_window_modes(
                 output.append(ml_mode)
                 continue
             same_line = active_line is None or line is None or str(line) == active_line
-            if same_line and context_score >= minimum_context_score and sequence >= 0.5 and ml_mode != "walk":
+            rail_continuity = (
+                context_score >= minimum_context_score
+                or (ml_mode == "rail" and ml_confidence >= minimum_ml_confidence * 0.75)
+            )
+            if same_line and rail_continuity and ml_mode == "rail":
                 output.append("rail")
                 continue
             rail_active = False

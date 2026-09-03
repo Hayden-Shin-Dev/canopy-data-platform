@@ -53,7 +53,13 @@ def resolve_mode(
     rail_subtype = None
 
     rail_has_structured_evidence = structured_subway or train_score >= strong
-    if ml_mode == "rail" and rail_applicability == "APPLICABLE" and not rail_has_structured_evidence:
+    rail_retention = settings.resolver.get("rail_ml_retention_confidence", strong)
+    if (
+        ml_mode == "rail"
+        and rail_applicability == "APPLICABLE"
+        and not rail_has_structured_evidence
+        and ml_confidence < rail_retention
+    ):
         # Station proximity alone is not enough to turn a high-speed car/bus
         # window into rail. Keep rail only when ordered subway evidence or a
         # strong KORAIL context is present.
@@ -66,6 +72,9 @@ def resolve_mode(
         correction_applied = final_mode != ml_mode
         decision_status = "insufficient_context"
         correction_reason = "rail prediction requires structured transit evidence"
+    elif ml_mode == "rail" and rail_applicability == "APPLICABLE" and not rail_has_structured_evidence:
+        decision_status = "high_confidence_ml"
+        correction_reason = "high-confidence rail prediction retained without structured station evidence"
     elif rail_applicability == "APPLICABLE" and structured_subway and probs["rail"] < probs[ml_mode] + margin:
         final_mode = "rail"
         correction_applied = final_mode != ml_mode

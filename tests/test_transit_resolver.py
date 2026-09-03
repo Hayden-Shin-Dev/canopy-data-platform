@@ -56,6 +56,15 @@ def test_non_rail_prediction_requires_strong_rail_confirmation() -> None:
     assert result["decision_status"] == "insufficient_context"
 
 
+def test_high_confidence_rail_is_retained_without_structured_evidence() -> None:
+    result = resolve_mode(
+        {"walk": 0.03, "bike": 0.01, "car": 0.06, "bus": 0.05, "rail": 0.86},
+        context={"rail_applicability": "APPLICABLE", "subway_context_score": 0.2},
+    )
+    assert result["final_mode"] == "rail"
+    assert result["decision_status"] == "high_confidence_ml"
+
+
 def test_rail_prediction_is_not_suppressed_outside_reference_coverage() -> None:
     result = resolve_mode(
         {"walk": 0.05, "bike": 0.02, "car": 0.20, "bus": 0.13, "rail": 0.60},
