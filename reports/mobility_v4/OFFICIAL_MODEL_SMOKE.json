@@ -1,6 +1,6 @@
 {
   "status": "BLOCKED",
-  "reason": "Docker daemon or official checkpoint runtime is unavailable",
+  "reason": "Official image load failed: Docker/WSL data disk ran out of host disk space",
   "official_contract": {
     "input_channels": 340,
     "timesteps": 60,
@@ -24,6 +24,19 @@
   },
   "docker": {
     "available": false,
+    "context": "desktop-linux",
+    "image_load": {
+      "attempted": true,
+      "result": "FAILED",
+      "error": "request returned 502 Bad Gateway during /images/load"
+    },
+    "host_disk": {
+      "docker_data_vhdx_bytes": 13325303808,
+      "host_free_bytes": 1024442368,
+      "error_evidence": "Docker log: There is not enough space on the disk"
+    },
+    "nvidia_runtime_declared": true,
+    "gpu_container_tested": false,
     "server_version": null,
     "error": "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified.",
     "latency_ms": 1106.068

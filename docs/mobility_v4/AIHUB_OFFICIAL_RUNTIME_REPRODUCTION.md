@@ -7,9 +7,11 @@ artifact는 변경하지 않는다.
 ## 현재 상태
 
 `reports/mobility_v4/OFFICIAL_MODEL_SMOKE.json`의 상태는 `BLOCKED`다.
-Windows 개발 환경에서 Docker CLI는 설치돼 있지만 Docker daemon이 실행되지
-않아 공식 이미지를 실행할 수 없었다. 따라서 checkpoint load 이후의 실제
-preprocessing, tensor inference, output class, latency는 아직 측정하지 않았다.
+공식 `image.tar.gz` 로드를 실제 시도했지만 Docker API가 502로 실패했다.
+Docker 로그에는 WSL data disk를 준비하는 과정에서 “There is not enough space on
+the disk”가 기록돼 있다. 호스트 C: 여유 공간은 약 1.0GB, Docker data VHDX는
+약 13.3GB다. 따라서 checkpoint load 이후의 실제 preprocessing, tensor
+inference, output class, latency는 아직 측정하지 않았다.
 
 체크포인트 자체는 읽기 전용으로 검사했고, Lightning archive와
 `model.fc.weight` 항목이 존재함을 확인했다. 원본 `last.chk`나 12GB Docker
@@ -26,7 +28,7 @@ python -m scripts.run_aihub_official_smoke `
   --output reports/mobility_v4/OFFICIAL_MODEL_SMOKE.json
 ```
 
-이 명령은 daemon이 없을 때 exit code 2와 `BLOCKED`를 반환한다. 센서나
+이 명령은 daemon이 없거나 이미지가 로드되지 않으면 exit code 2와 `BLOCKED`를 반환한다. 센서나
 checkpoint를 임의 값으로 채우지 않는다. 실제 공식 `run.sh` 재현은 Docker
 이미지 로드 후 공식 안내의 `/ml/data/origin/3.Test` 마운트 명령으로 별도
 수행해야 한다.
