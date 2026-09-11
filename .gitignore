@@ -4,19 +4,19 @@ __pycache__/
 .pytest_cache/
 .pytest-tmp/
 .venv/
-.env
-.env.*
-!.env.example
 catboost_info/
+
+# Environment files
+.env
+.env.local
+.env.*
+!**/.env.example
+!**/.env.shared
+*.secret.env
 
 # iOS local configuration
 **/Local.xcconfig
 !**/Local.xcconfig.example
-
-# Local Windows demo launcher build output
-/build/
-/dist/
-/*.spec
 
 # Local source data (large and redistributed separately)
 data/raw/**
