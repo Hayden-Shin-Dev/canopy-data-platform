@@ -1,5 +1,5 @@
-# Shared Contracts
+# 공통 계약
 
-Cross-system contracts and configuration shared by iOS, API, ML, and cloud components belong here.
+iOS, API, ML, cloud 컴포넌트가 함께 사용하는 계약과 설정을 관리합니다.
 
-Do not use this directory for code that is only shared within ML; use `ml/shared/` instead.
+ML 내부에서만 재사용하는 코드는 이 디렉터리가 아니라 `ml/shared/`에 둡니다.

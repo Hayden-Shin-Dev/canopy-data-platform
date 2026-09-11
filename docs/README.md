@@ -1,3 +1,3 @@
-# Documentation
+# 문서
 
-Project documentation is grouped by architectural concern. Use `decisions/` for architecture decision records and other durable team decisions.
+프로젝트 문서는 아키텍처 영역별로 구분합니다. 장기간 유지해야 하는 아키텍처 결정과 저장소 운영 결정은 `decisions/`에 기록합니다.

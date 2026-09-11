@@ -1,3 +1,3 @@
 # Cloud
 
-Cloud-provider-specific infrastructure and deployment definitions live here. Product application and ML code should remain outside this directory whenever practical.
+클라우드별 인프라와 배포 정의를 둡니다. 실제 제품 애플리케이션 및 ML 구현은 가능한 한 이 디렉터리와 분리합니다.

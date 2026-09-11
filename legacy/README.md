@@ -1,7 +1,7 @@
 # Legacy
 
-Deprecated, superseded, or not-yet-migrated implementation retained for reference belongs here.
+이전 구현, 대체된 구현, 아직 새 구조로 이관하지 않은 구현을 보존하는 영역입니다.
 
-`original-data-platform/` preserves the pre-monorepo prototype implementation. It is intentionally kept intact so that code can be migrated into `apps/`, `ml/`, `shared/`, or `tools/` deliberately rather than through partial moves.
+- `original-data-platform/`: 포크 당시 존재하던 기존 Canopy 데이터 플랫폼 구현
 
-No new feature development should occur under `legacy/`. When a legacy component is promoted, update its imports, tests, configuration, and documentation in the same change.
+`legacy/`에서는 신규 기능을 개발하지 않습니다. 기존 코드를 활성 구조로 옮길 때는 새 소유 위치와 의존성이 명확해야 하며, import와 테스트도 같은 변경에서 함께 정리합니다.

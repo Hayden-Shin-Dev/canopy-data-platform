@@ -1,9 +1,9 @@
-# Tools
+# 도구
 
-Development, maintenance, inspection, migration, and bootstrap utilities belong here. Deployable product code does not.
+개발, 유지보수, 검사, 마이그레이션, 초기 설정을 위한 보조 도구를 관리합니다. 실제 배포되는 제품 코드는 이곳에 두지 않습니다.
 
-- `ios/`: iOS development utilities
-- `ml/`: ML development and analysis utilities
-- `azure/`: Azure setup and operational helpers
-- `data/`: data download, validation, conversion, and inspection utilities
-- `repo/`: repository-wide bootstrap and validation utilities
+- `ios/`: iOS 개발 보조 도구
+- `ml/`: ML 개발 및 분석 도구
+- `azure/`: Azure 설정 및 운영 보조 도구
+- `data/`: 데이터 다운로드, 검증, 변환, 검사 도구
+- `repo/`: 저장소 전체에 적용되는 초기 설정, 환경 검사, 구조 검증 도구

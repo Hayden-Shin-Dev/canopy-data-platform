@@ -1,5 +1,5 @@
-# Machine Learning
+# 머신러닝
 
-ML model development, evaluation, inference, and shared ML infrastructure live here.
+ML 모델 개발, 평가, 추론, 공통 ML 인프라를 관리합니다.
 
-Each prediction task should have its own directory under `models/`. Reusable ML logic belongs under `shared/`.
+각 예측 과제는 `models/` 아래에 독립 디렉터리를 두고, 여러 모델에서 재사용하는 ML 전용 로직은 `shared/`에 둡니다.

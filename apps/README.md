@@ -1,8 +1,8 @@
-# Applications
+# 애플리케이션
 
-Deployable product applications live here.
+배포 가능한 제품 애플리케이션을 이 디렉터리에서 관리합니다.
 
-- `ios/`: iPhone application.
-- `api/`: backend/API consumed by applications and external clients.
+- `ios/`: iPhone 애플리케이션
+- `api/`: iOS 및 외부 클라이언트가 사용하는 백엔드/API
 
-Application code should not be placed under `tools/` or `cloud/`.
+애플리케이션 코드는 `tools/` 또는 `cloud/` 아래에 두지 않습니다.

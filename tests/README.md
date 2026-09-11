@@ -1,3 +1,3 @@
-# Cross-Component Tests
+# 공통 테스트
 
-Repository-level integration and end-to-end tests belong here. Component-specific unit tests should normally stay with their component.
+컴포넌트 간 통합 테스트와 E2E 테스트를 관리합니다. 개별 컴포넌트의 unit test는 원칙적으로 해당 컴포넌트와 가까운 위치에 둡니다.

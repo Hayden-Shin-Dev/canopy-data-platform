@@ -1,3 +1,3 @@
-# Repository Tools
+# 저장소 도구
 
-Repository-wide bootstrap, environment checking, structure validation, and developer convenience utilities belong here.
+저장소 전체의 초기 설정, 환경 검사, 구조 검증, 개발 편의 기능을 위한 도구를 둡니다.

@@ -1,5 +1,5 @@
-# iOS Application
+# iOS 애플리케이션
 
-Production iPhone application code belongs here.
+실제 iPhone 애플리케이션 코드를 둡니다.
 
-Development and maintenance utilities for iOS belong in `tools/ios/`.
+iOS 개발 및 유지보수용 보조 도구는 `tools/ios/`에서 관리합니다.
