@@ -9,6 +9,10 @@ __pycache__/
 !.env.example
 catboost_info/
 
+# iOS local configuration
+**/Local.xcconfig
+!**/Local.xcconfig.example
+
 # Local Windows demo launcher build output
 /build/
 /dist/
@@ -19,36 +23,29 @@ data/raw/**
 !data/raw/README.md
 !data/raw/**/
 !data/raw/**/README.md
+data/external/**
+!data/external/README.md
+!data/external/**/
+!data/external/**/README.md
 
 # Reproducible generated artifacts
-data/interim/*
+data/interim/**
+!data/interim/README.md
+!data/interim/**/
 !data/interim/**/README.md
 data/processed/**
+!data/processed/README.md
 !data/processed/**/
 !data/processed/**/README.md
-data/processed.zip
-data/reference/sgis/raw/**
-!data/reference/sgis/raw/README.md
-data/cache/transit/**
-!data/cache/transit/README.md
-models/**/*.cbm
-models/**/*.pkl
-models/**/*.joblib
-reports/**/runs/*
-!reports/**/runs/**/README.md
-reports/evaluation/dataset_v1/smoke_*/
-reports/evaluation_v3_baseline/predictions.jsonl
-reports/evaluation_v3_baseline/prediction_traces.jsonl
-reports/evaluation_v3_baseline_shards/
-reports/evaluation_v3_smoke/
-reports/evaluation_v3_aihub_*/
 
-# Frozen evaluation datasets are supplied locally and remain read-only.
-data/evaluation/**
+# Large/reference data may be supplied externally; keep documentation and small fixtures only.
+data/reference/**
+!data/reference/README.md
+!data/reference/**/
+!data/reference/**/README.md
 
 # Local logs and editor files
 *.log
-data/local/iphone_mobility/**
 .idea/
 .vscode/
 ~$*
