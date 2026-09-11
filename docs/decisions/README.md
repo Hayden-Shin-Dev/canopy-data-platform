@@ -1,3 +1,3 @@
-# Architecture Decisions
+# 아키텍처 결정 기록
 
-Record durable architecture and repository decisions here. Prefer small, dated Markdown records describing context, decision, and consequences.
+지속적으로 참고해야 하는 아키텍처 및 저장소 결정을 기록합니다. 각 문서는 날짜와 함께 배경, 결정 내용, 영향을 간결하게 남기는 것을 권장합니다.

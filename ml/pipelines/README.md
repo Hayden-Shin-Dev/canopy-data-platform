@@ -1,3 +1,3 @@
-# ML Pipelines
+# ML 파이프라인
 
-Cross-model orchestration for training, evaluation, and deployment belongs here.
+여러 모델에 공통으로 적용되는 학습, 평가, 배포 오케스트레이션을 관리합니다.

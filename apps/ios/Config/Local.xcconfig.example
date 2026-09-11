@@ -1,0 +1,5 @@
+// 로컬 iOS 개발용 예시
+// 실제 비밀값이 포함된 Local.xcconfig는 Git에 커밋하지 않습니다.
+
+API_BASE_URL = http://localhost:8000
+APP_ENV = development

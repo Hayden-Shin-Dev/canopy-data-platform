@@ -1,3 +1,3 @@
-# iOS Tools
+# iOS 도구
 
-Development and maintenance utilities supporting `apps/ios/` belong here.
+`apps/ios/` 개발과 유지보수를 지원하는 보조 도구를 둡니다.

@@ -1,5 +1,5 @@
-# Shared ML Components
+# 공통 ML 컴포넌트
 
-Reusable components shared across multiple ML tasks belong here.
+여러 ML 과제에서 재사용하는 컴포넌트를 관리합니다.
 
-Expected categories include data handling, preprocessing, shared features, metrics, evaluation utilities, and general ML utilities.
+예상 범위는 데이터 처리, 전처리, 공통 feature, metric, 평가 유틸리티, 일반 ML 유틸리티입니다.

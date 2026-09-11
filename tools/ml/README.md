@@ -1,3 +1,3 @@
-# ML Tools
+# ML 도구
 
-Developer utilities for ML experimentation, inspection, conversion, and benchmarking belong here. Production ML implementation belongs under `ml/`.
+ML 실험, 검사, 변환, 벤치마킹을 위한 개발자 도구를 둡니다. 실제 ML 구현은 `ml/`에서 관리합니다.

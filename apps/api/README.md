@@ -1,5 +1,5 @@
-# API Application
+# API 애플리케이션
 
-Production backend/API code belongs here.
+실제 서비스용 백엔드/API 코드를 둡니다.
 
-Cloud-specific deployment definitions belong under `cloud/azure/`.
+클라우드별 배포 정의는 `cloud/azure/`에서 관리합니다.

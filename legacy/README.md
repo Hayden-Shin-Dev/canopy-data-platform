@@ -1,5 +1,7 @@
 # Legacy
 
-Deprecated or superseded implementation retained for reference belongs here.
+이전 구현, 대체된 구현, 아직 새 구조로 이관하지 않은 구현을 보존하는 영역입니다.
 
-No new development should occur under `legacy/`. Code should not depend on legacy modules unless restoration is an explicit team decision.
+- `original-data-platform/`: 포크 당시 존재하던 기존 Canopy 데이터 플랫폼 구현
+
+`legacy/`에서는 신규 기능을 개발하지 않습니다. 기존 코드를 활성 구조로 옮길 때는 새 소유 위치와 의존성이 명확해야 하며, import와 테스트도 같은 변경에서 함께 정리합니다.
