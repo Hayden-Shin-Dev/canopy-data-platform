@@ -34,6 +34,11 @@ data/cache/transit/**
 models/**/*.cbm
 models/**/*.pkl
 models/**/*.joblib
+# Small production artifacts required by the local runtime
+!models/expected_behaviour/ktdb_population_baseline.pkl
+!models/mobility_recognition/aihub_canonical_raw120.joblib
+!models/mobility_recognition/aihub_hist120.joblib
+!models/mobility_recognition/geolife_hardened_120s_purity_090.joblib
 reports/**/runs/*
 !reports/**/runs/**/README.md
 reports/evaluation/dataset_v1/smoke_*/
