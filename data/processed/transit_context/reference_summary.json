@@ -1,0 +1,11 @@
+{
+  "subway_stations": 276,
+  "subway_timetable_rows": 424264,
+  "korail_stations": 202,
+  "subway_unmatched_station_keys": 185,
+  "sources": {
+    "subway_coordinates": "data/raw/transit/서울교통공사_1_8호선 역사 좌표(위경도) 정보_20250814.csv",
+    "subway_timetable": "data/raw/transit/서울교통공사_서울 도시철도 열차운행시각표_20260616.csv",
+    "korail_stations": "data/raw/transit/한국철도공사_역 위치 정보_20240401.csv"
+  }
+}

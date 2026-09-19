@@ -1,0 +1,66 @@
+{
+  "endpoint": "https://apis.data.go.kr/1613000/BusLcInfoInqireService/getCtyCodeList",
+  "status": "success",
+  "from_cache": false,
+  "service_probes": {
+    "bus_stops": {
+      "endpoint": "https://apis.data.go.kr/1613000/BusStop/getBusStop",
+      "status": "success",
+      "from_cache": false
+    },
+    "bus_routes": {
+      "endpoint": "https://apis.data.go.kr/1613000/BusRoutespecificStopInformation/getBusRoutespecificStopInformation",
+      "status": "success",
+      "from_cache": false
+    },
+    "bus_locations": {
+      "endpoint": "https://apis.data.go.kr/1613000/BusLcInfoInqireService/getCtyCodeList",
+      "status": "success",
+      "from_cache": false
+    }
+  },
+  "bus_stops_sample": {
+    "status": "success",
+    "rows": 377,
+    "pages": 1,
+    "coordinate_status": "not_provided_by_api",
+    "scope": {
+      "opr_ymd": "20250801",
+      "ctpv_cd": "29",
+      "sgg_cd": "29140"
+    }
+  },
+  "bus_routes_sample": {
+    "status": "success",
+    "rows": 1845,
+    "pages": 2,
+    "coordinate_status": "not_provided_by_api",
+    "scope": {
+      "opr_ymd": "20250801",
+      "ctpv_cd": "29",
+      "sgg_cd": "29140"
+    }
+  },
+  "national_bus_stop_file": "C:\\Users\\user\\Downloads\\개인통행실태조사(2021년기준)\\data\\raw\\transit\\국토교통부_전국 버스정류장 위치정보_20251031.csv",
+  "bus_coordinate_match": {
+    "api_row_count": 377,
+    "exact_id_match_count": 0,
+    "name_region_match_count": 31,
+    "matched_count": 31,
+    "unmatched_count": 346,
+    "coordinate_available_count": 31,
+    "coordinate_missing_count": 346,
+    "match_rate": 0.08222811671087533,
+    "region_code_map": {
+      "29": "24"
+    },
+    "matching_policy": "ID exact first; unique normalized name plus region second; ambiguous candidates remain unmatched",
+    "national_file_row_count": 227065,
+    "route_api_row_count": 1845,
+    "route_coordinate_available_count": 130,
+    "route_coordinate_missing_count": 1715,
+    "route_match_rate": 0.07046070460704607
+  },
+  "cache_path": "data/cache/transit/tago_city_codes.json",
+  "refresh": true
+}
